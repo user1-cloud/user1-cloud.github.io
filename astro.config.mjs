@@ -44,18 +44,18 @@ export default defineConfig({
     markdown: {
         remarkPlugins: [remarkMath],
         rehypePlugins: [
-        [rehypeKatex, { output: 'mathml' }],
-        [  
-            rehypeMermaid,  
-            {  
-            strategy: 'img-svg',  
-            dark: true,  
-            }  
-        ],   
+            [rehypeKatex, { output: 'html' }],
+            [
+            rehypeMermaid,
+            {
+                strategy: 'inline-svg',
+                dark: true,
+            }
+            ],
         ],
         syntaxHighlight: {
-        // type: 'shiki',
-        excludeLangs: ['math', 'mermaid']
+            type: 'shiki',
+            excludeLangs: ['math', 'mermaid']
         }
-    }
+    },
 });
