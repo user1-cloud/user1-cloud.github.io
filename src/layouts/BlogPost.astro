@@ -121,13 +121,13 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 		<Header />
 		<main>
 			<article>
-				<div class="hero-image">
+				<div class="hero-image fade-in">
 					{heroImage && <Image width={200} height={200} src={heroImage} alt="" />}
 				</div>
 
-				<div class="three-col-container">
+				<div class="three-col-container fade-in">
 					<!-- 左侧目录（自动生成） -->
-					<aside class="toc-sidebar">
+					<aside class="toc-sidebar fade-in">
 					<h3>目录</h3>
 					<ul id="toc-list" style="padding-left: 1em; margin:0; list-style: none;"></ul>
 					<script>
@@ -201,7 +201,7 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 					</div>
 
 					<!-- 右侧描述 -->
-					<aside class="desc-sidebar">
+					<aside class="desc-sidebar fade-in">
 						<p set:html={description}></p>
 					</aside>
 				</div>
