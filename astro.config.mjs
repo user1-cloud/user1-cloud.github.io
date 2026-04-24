@@ -14,7 +14,7 @@ const USERNAME = 'user1-cloud';
 
 // https://astro.build/config
 export default defineConfig({
-    site: 'https://${USERNAME}.github.io',
+    site: `https://${USERNAME}.github.io`,
     integrations: [expressiveCode(),mdx(), sitemap(), vue()],
     fonts: [
         {
