@@ -15,11 +15,11 @@ main {
     box-shadow: var(--box-shadow);
 }
 
-.article {
+/* article {
     width: 100%;
     margin: 0 auto;
     overflow-x: hidden;		
-}
+} */
 
 /* 三栏布局 */
 .three-col-container {
@@ -46,6 +46,7 @@ main {
     overflow-y: auto;
     scrollbar-width: none;
     font-family: "Palatino Linotype", "KaiTi", "STKaiti", "楷体", "华文楷体", var(--font-atkinson);
+    overscroll-behavior: contain;
 }
 .toc-sidebar h3 {
     margin-top: 0;
