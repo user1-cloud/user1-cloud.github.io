@@ -3,6 +3,7 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { defineConfig, fontProviders } from 'astro/config';
 import remarkMath from 'remark-math';
+import remarkGfm from 'remark-gfm';
 import rehypeKatex from 'rehype-katex';
 import expressiveCode from 'astro-expressive-code';
 import vue from '@astrojs/vue';
@@ -38,7 +39,7 @@ export default defineConfig({
     // ✅ 最稳定：LaTeX正常 + Mermaid不崩溃
     markdown: {
         remarkPlugins: [remarkMath],
-        rehypePlugins: [[rehypeKatex, { output: 'html' }]],
+        rehypePlugins: [[rehypeKatex, { output: 'html' }], remarkGfm],
         syntaxHighlight: {
             type: 'shiki',
             excludeLangs: ['math']
