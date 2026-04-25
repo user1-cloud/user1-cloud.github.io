@@ -15,7 +15,7 @@ document.addEventListener('astro:page-load', () => {
             });
         },
         {
-            threshold: 0.4,
+            threshold: 0.3,
             rootMargin: '0px 0px -50px 0px'
         }
     );

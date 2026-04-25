@@ -1,47 +1,112 @@
 ---
-import { Image } from 'astro:assets';
-import { getCollection } from 'astro:content';
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import FormattedDate from '../components/FormattedDate.astro';
-import Header from '../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { getCollection, type CollectionEntry } from 'astro:content';
 import BlogCard from './BlogCard.astro';
 
-const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+interface Props {
+  sort?: 'time' | 'dir';
+  dirOrder?: {
+    dir1: string[];
+    dir2: Record<string, string[]>;
+  };
+}
+
+const { sort = 'time', dirOrder = { dir1: [], dir2: {} } } = Astro.props;
+let posts = await getCollection('blog');
+
+posts = posts.map(post => {
+  const pathParts = post.id.split('/');
+  return {
+    ...post,
+    data: {
+      ...post.data,
+      dir1: post.data.dir1 ?? (pathParts.length >= 2 ? pathParts[0] : ''),
+      dir2: post.data.dir2 ?? (pathParts.length >= 3 ? pathParts[1] : ''),
+    }
+  };
+});
+
+if (sort === 'time') {
+  posts = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+}
+
+let orderedData: Array<[string, Array<[string, CollectionEntry<'blog'>[]]>]> = [];
+
+if (sort === 'dir') {
+  const grouped: Record<string, Record<string, CollectionEntry<'blog'>[]>> = {};
+  for (const post of posts) {
+    const d1 = post.data.dir1 || '未分类';
+    const d2 = post.data.dir2 || '';
+    grouped[d1] ??= {};
+    grouped[d1][d2] ??= [];
+    grouped[d1][d2].push(post);
+  }
+
+  const finalOrder: typeof orderedData = [];
+
+  for (const d1 of dirOrder.dir1) {
+    if (!grouped[d1]) continue;
+    const dir2Map = grouped[d1];
+    const dir2List: Array<[string, CollectionEntry<'blog'>[]]> = [];
+
+    // 1. 先渲染你配置的 dir2
+    const expectedDir2 = dirOrder.dir2[d1] || [];
+    for (const d2 of expectedDir2) {
+      if (dir2Map[d2]) {
+        const sortedPosts = dir2Map[d2].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+        dir2List.push([d2, sortedPosts]);
+      }
+    }
+
+    // 2. ✅ 关键修复：自动渲染没有二级目录的文章（dir2 = ""）
+    if (dir2Map[""]) {
+      const sortedPosts = dir2Map[""].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+      dir2List.push(["", sortedPosts]);
+    }
+
+    finalOrder.push([d1, dir2List]);
+  }
+
+  orderedData = finalOrder;
+}
 ---
 
-<head>
-	<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	<style>
-		main {
-			width: 80%;
-			
-			overflow: hidden;
-			flex-direction: column;
-		}
-
-		/* 卡片网格布局：全屏均匀分布 */
-		.card-grid {
-			margin: 8px;
-			display: grid;
-			grid-template-columns: 1fr 1fr;
-			grid-template-rows: masonry;
-			gap: 80px;
-			list-style: none;
-			padding: 0;
-		}
-	</style>
-</head>
+<style>
+  .card-grid {
+    margin: 8px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    place-items: center; /* 单个元素时自动居中 */
+    gap: 20px;
+    list-style: none;
+    padding: 0;
+  }
+</style>
 
 <main>
-    <ul class="card-grid">
-        {
-            posts.map((post) => (
-                <BlogCard post={post} />
-            ))
-        }
-    </ul>
+  {sort === 'time' ? (
+    <>
+      <h2>近期博客一览</h2>
+      <br />
+      <ul class="card-grid">
+        {posts.map((post) => <BlogCard post={post} />)}
+      </ul>
+    </>
+  ) : (
+    <div>
+      {(orderedData || []).map(([dir1, dir2List]) => (
+        <div>
+          <h2>{dir1}</h2>
+          {dir2List.map(([dir2, list]) => (
+            <div>
+              <!-- 空 dir2 不显示标题，但会显示文章 -->
+              {dir2 && <h3>{dir2}</h3>}
+              <ul class="card-grid">
+                {list.map(post => <BlogCard post={post} level={4} />)}
+              </ul>
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  )}
 </main>

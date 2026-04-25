@@ -6,8 +6,9 @@ type BlogPost = CollectionEntry<'blog'>;
 
 interface Props {
   post: BlogPost;
+  level?: 3 | 4;
 }
-const { post } = Astro.props;
+const { post, level = 3 } = Astro.props;
 ---
 
 <style>
@@ -110,7 +111,11 @@ const { post } = Astro.props;
             )}
 
             <div class="card-content">
-                <h2 class="card-title">{post.data.title}</h2>
+                {level === 4 ? (
+                  <h4 class="card-title">{post.data.title}</h4>
+                ) : (
+                  <h3 class="card-title">{post.data.title}</h3>
+                )}
                 <p class="card-description">{post.data.description}</p>
                 <p class="card-date">
                     <FormattedDate date={post.data.pubDate} />
