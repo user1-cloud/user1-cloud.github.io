@@ -170,3 +170,16 @@ hr {
 		transform: translateY(0);
 	}
 }
+
+.fade-in-on-scroll {
+	opacity: 0;
+	transform: translateY(30px);
+	transition: opacity 0.6s ease, transform 0.6s ease;
+	height: auto;
+}
+
+/* 进入视口时显示 */
+.fade-in-on-scroll.visible {
+	opacity: 1;
+	transform: translateY(0);
+}

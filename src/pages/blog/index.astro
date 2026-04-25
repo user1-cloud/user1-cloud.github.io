@@ -100,20 +100,6 @@ const posts = (await getCollection('blog')).sort(
 			margin-top: auto;
 		}
 
-		/* ====================== 淡入动画 ====================== */
-		.fade-in {
-			opacity: 0;
-			transform: translateY(30px);
-			transition: opacity 0.6s ease, transform 0.6s ease;
-			height: auto;
-		}
-
-		/* 进入视口时显示 */
-		.fade-in.visible {
-			opacity: 1;
-			transform: translateY(0);
-		}
-
 		/* 移动端适配 */
 		@media (max-width: 768px) {
 			.card-grid {
@@ -129,7 +115,7 @@ const posts = (await getCollection('blog')).sort(
 		<ul class="card-grid">
 			{
 				posts.map((post) => (
-					<li class="fade-in">
+					<li class="fade-in-on-scroll">
 						<article class="blog-card">
 							<a href={`/blog/${post.id}/`} class="card-link">
 								{post.data.heroImage && (
@@ -161,7 +147,7 @@ const posts = (await getCollection('blog')).sort(
 	{/* 滚动淡入监听脚本 */}
 	<script>
 		document.addEventListener('astro:page-load', () => {
-			const fadeElements = document.querySelectorAll('.fade-in');
+			const fadeElements = document.querySelectorAll('.fade-in-on-scroll');
 
 			const observer = new IntersectionObserver(
 				(entries) => {
@@ -177,7 +163,7 @@ const posts = (await getCollection('blog')).sort(
 					});
 				},
 				{
-					threshold: 0.9,
+					threshold: 0.4,
 					rootMargin: '0px 0px -50px 0px'
 				}
 			);
