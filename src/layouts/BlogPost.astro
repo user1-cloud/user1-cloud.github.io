@@ -50,12 +50,12 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 
 			/* 左侧目录 */
 			.toc-sidebar {
-				width: 20%;
+				width: 15%;
 				min-width: 0;
-				max-width: 20%;
+				max-width: 15%;
 				position: sticky;
 				top: 2rem;
-				padding: 1.2rem;
+				padding: 0.5rem;
 				border-radius: 10px;
 				line-height: 1.3;
 				font-size: 0.8em;
@@ -74,7 +74,7 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 
 			/* 中间正文 */
 			.prose {
-				width: 60%;
+				width: 70%;
 				padding: 1em;
 				color: rgb(var(--gray-dark));
 			}
@@ -96,12 +96,12 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 
 			/* 右侧描述 */
 			.desc-sidebar {
-				width: 20%;
+				width: 15%;
 				min-width: 0;
-				max-width: 20%;
+				max-width: 15%;
 				position: sticky;
 				top: 2rem;
-				padding: 1.2rem;
+				padding: 0.5rem;
 				border-radius: 10px;
 				line-height: 2;
 				font-size: 0.8em;
@@ -208,5 +208,7 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			</article>
 		</main>
 		<Footer />
+
+		<script src="../styles/animations/fade-in-on-scroll"></script>
 	</body>
 </html>

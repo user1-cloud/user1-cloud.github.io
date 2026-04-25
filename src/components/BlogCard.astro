@@ -1,0 +1,121 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import FormattedDate from './FormattedDate.astro';
+type BlogPost = CollectionEntry<'blog'>;
+
+interface Props {
+  post: BlogPost;
+}
+const { post } = Astro.props;
+---
+
+<style>
+/* 卡片网格布局：全屏均匀分布 */
+.card-grid {
+    margin: 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: masonry;
+    gap: 80px;
+    list-style: none;
+    padding: 0;
+}
+
+/* 卡片基础样式 */
+.blog-card {
+    background: transparent;
+    border-radius: 16px;
+    border: 2px solid transparent;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+/* 卡片悬停效果 */
+.blog-card:hover {
+    transform: translateY(-6px);
+    border: 2px solid #ffffff;
+}
+
+/* 卡片链接 */
+.card-link {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* 卡片图片 */
+.card-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+/* 卡片内容 */
+.card-content {
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+/* 标题 */
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+/* 描述 */
+.card-description {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 日期 */
+.card-date {
+    font-size: 0.85rem;
+    margin-top: auto;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+    .card-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+}
+</style>
+
+<li class="fade-in-on-scroll">
+    <article class="blog-card">
+        <a href={`/blog/${post.id}/`} class="card-link">
+            {post.data.heroImage && (
+                <Image
+                    class="card-image"
+                    width={600}
+                    height={400}
+                    src={post.data.heroImage}
+                    alt={post.data.title}
+                />
+            )}
+
+            <div class="card-content">
+                <h2 class="card-title">{post.data.title}</h2>
+                <p class="card-description">{post.data.description}</p>
+                <p class="card-date">
+                    <FormattedDate date={post.data.pubDate} />
+                </p>
+            </div>
+        </a>
+    </article>
+</li>

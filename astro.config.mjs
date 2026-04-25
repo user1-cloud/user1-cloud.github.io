@@ -15,7 +15,12 @@ export default defineConfig({
     outDir: './dist',
 
     // 只保留稳定不崩的插件
-    integrations: [expressiveCode(), mdx(), sitemap(), vue()],
+    integrations: [
+        expressiveCode(), 
+        mdx(), 
+        sitemap(), 
+        vue()
+    ],
 
     fonts: [{
         provider: fontProviders.local(),
