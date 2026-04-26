@@ -1,22 +1,14 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import Layout from '../layouts/BlogPost.astro';
 ---
 
-<!doctype html>
-<html lang="zh-CN">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
-		<main>
-			<!-- 只加了 class="fade-in" -->
-			<h1 class="fade-in">{SITE_DESCRIPTION}</h1>
-			<p class="fade-in" style="animation-delay: 0.2s">Welcome!</p>
-		</main>
-		<Footer />
-	</body>
-</html>
+<Layout
+	title="欢迎来到u1的书房"
+	description={SITE_DESCRIPTION}
+	pubDate={new Date()}
+>
+	<p>
+		你好！我是user1-cloud，欢迎来到我的个人主页。
+	</p>
+</Layout>

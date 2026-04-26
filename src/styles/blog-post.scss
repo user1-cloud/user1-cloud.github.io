@@ -1,41 +1,39 @@
-main {
+@layer components {
+  main {
     width: 100%;
     max-width: 95%;
     margin: 0 auto;
-}
-article {
+  }
+
+  article {
     width: 100%;
     margin: 0 auto;
-}
-.hero-image {
+  }
+
+  .hero-image {
     width: 100%;
     margin-bottom: 2rem;
     text-align: center;
-}
-.hero-image img {
-    display: block;
-    margin: 0 auto;
-    border-radius: 12px;
-    box-shadow: var(--box-shadow);
-}
+    
+    img {
+      display: block;
+      margin: 0 auto;
+      border-radius: 12px;
+      box-shadow: var(--box-shadow);
+    }
+  }
 
-/* article {
-    width: 100%;
-    margin: 0 auto;
-    overflow-x: hidden;		
-} */
-
-/* 三栏布局 */
-.three-col-container {
+  /* 三栏布局 */
+  .three-col-container {
     display: flex;
     justify-content: center;
     align-items: flex-start;
     /* overflow-x: auto; */
     width: 100%;
-}
+  }
 
-/* 左侧目录 */
-.toc-sidebar {
+  /* 左侧目录 */
+  .toc-sidebar {
     width: 15%;
     min-width: 0;
     max-width: 15%;
@@ -51,37 +49,42 @@ article {
     scrollbar-width: none;
     font-family: "Palatino Linotype", "KaiTi", "STKaiti", "楷体", "华文楷体", var(--font-atkinson);
     overscroll-behavior: contain;
-}
-.toc-sidebar h3 {
-    margin-top: 0;
-    font-size: 1rem;
-    font-weight: bold;
-}
+    
+    h3 {
+      margin-top: 0;
+      font-size: 1rem;
+      font-weight: bold;
+    }
+  }
 
-/* 中间正文 */
-.prose {
+  /* 中间正文 */
+  .prose {
     width: 70%;
     padding: 1em;
     color: rgb(var(--gray-dark));
-}
-.title {
+  }
+
+  .title {
     margin-bottom: 1em;
     padding: 1em 0;
     text-align: center;
     line-height: 1;
-}
-.title h1 {
-    margin: 0 0 0.5em 0;
-}
-.date {
-    color: rgb(var(--gray));
-}
-.last-updated-on {
-    font-style: italic;
-}
+    
+    h1 {
+      margin: 0 0 0.5em 0;
+    }
+  }
 
-/* 右侧描述 */
-.desc-sidebar {
+  .date {
+    color: rgb(var(--gray));
+  }
+
+  .last-updated-on {
+    font-style: italic;
+  }
+
+  /* 右侧描述 */
+  .desc-sidebar {
     width: 15%;
     min-width: 0;
     max-width: 15%;
@@ -99,11 +102,10 @@ article {
     margin: 0 0 1em 0;
     overflow-wrap: break-word;
     font-family: "Palatino Linotype", "KaiTi", "STKaiti", "楷体", "华文楷体", var(--font-atkinson);
-}
+  }
 
-
-/* 左侧目录导航栏相关 */
-#toc-list {
+  /* 左侧目录导航栏相关 */
+  #toc-list {
     padding-left: 1em;
     margin: 0;
     list-style: none;
@@ -112,38 +114,45 @@ article {
     /* 隐藏滚动条 */
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
-}
-/* 隐藏 Webkit 浏览器的滚动条 */
-#toc-list::-webkit-scrollbar {
-    display: none;
-}
+    
+    /* 隐藏 Webkit 浏览器的滚动条 */
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    
+    li {
+      margin: 0.4rem 0;
+      width: 100%;
+      
+      div {
+        display: block;
+        width: 100%;
+        padding: 0.5rem 0.8rem;
+        margin-left: -0.8rem;
+        color: inherit;
+        text-decoration: none;
+        cursor: pointer;
+        border-left: 4px solid transparent;
+        transition: border-left-color 0.2s ease;
+        box-sizing: border-box;
+        
+        &:hover {
+          border-left-color: #c4c4c4;
+        }
+      }
+      
+      &.toc-level-h3 div {
+        padding-left: 2rem;
+      }
+      
+      &.active div {
+        border-left-color: #9d93b8;
+        font-weight: 500;
+      }
+    }
+  }
 
-#toc-list li {
-    margin: 0.4rem 0;
-    width: 100%;
-}
-#toc-list li div {
-    display: block;
-    width: 100%;
-    padding: 0.5rem 0.8rem;
-    margin-left: -0.8rem;
-    color: inherit;
-    text-decoration: none;
-    cursor: pointer;
-    border-left: 4px solid transparent;
-    transition: border-left-color 0.2s ease;
-    box-sizing: border-box;
-}
-#toc-list li.toc-level-h3 div{
-    padding-left: 2rem;
-}
-#toc-list li.active div {
-    border-left-color: #9d93b8;
-    font-weight: 500;
-}
-#toc-list li div:hover {
-    border-left-color: #c4c4c4;
-}
-.toc-empty {
+  .toc-empty {
     color: #999;
+  }
 }
