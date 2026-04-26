@@ -116,7 +116,7 @@ const { post, level = 3 } = Astro.props;
                 ) : (
                   <h3 class="card-title">{post.data.title}</h3>
                 )}
-                <p class="card-description">{post.data.description}</p>
+                <p class="card-description">{post.data.description.replace(/<[^>]+>/g, '')}</p>
                 <p class="card-date">
                     <FormattedDate date={post.data.pubDate} />
                 </p>

@@ -159,6 +159,24 @@
     border: none;
     border-top: 1px solid rgb(var(--gray-light));
   }
+
+  html::-webkit-scrollbar {
+    width: 5px;
+    height: 10px;
+  }
+  
+  html::-webkit-scrollbar-track {
+    background: #121417;
+  }
+  
+  html::-webkit-scrollbar-thumb {
+    background-color: #121417;
+    border: 1px solid var(--accent-dark);
+  }
+
+  html::-webkit-scrollbar-thumb:hover {
+    background-color: var(--accent-dark);
+  }
 }
 
 @layer components {
