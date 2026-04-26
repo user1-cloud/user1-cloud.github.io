@@ -4,16 +4,18 @@
   License MIT: https://github.com/HermanMartinus/bearblog/blob/master/LICENSE.md
  */
 
+@import '../../node_modules/katex/dist/katex.min.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 
 :root {
   --accent: #6170ff;
   --accent-dark: #939fff;
   --black: 240, 240, 245;
   --gray: 160, 170, 190;
-  --gray-light: 40, 45, 56;
+  --gray-light: 80, 85, 96;
   --gray-dark: 230, 230, 240;
   --gray-gradient: #1a1c24, #121417;
   --box-shadow:
@@ -78,6 +80,16 @@
 
   h5 {
     font-size: 1.1em;
+  }
+
+  .visual-h2 {
+    @extend h2;
+    font-weight: bold
+  }
+
+  .visual-h3 {
+    @extend h3;
+    font-weight: bold
   }
 
   strong,
