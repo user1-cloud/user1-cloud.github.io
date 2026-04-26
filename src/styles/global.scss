@@ -11,8 +11,8 @@
 
 
 :root {
-  --accent: #6170ff;
-  --accent-dark: #939fff;
+  --accent: #bec4ff;
+  --accent-dark: #c7cbe7;
   --black: 240, 240, 245;
   --gray: 160, 170, 190;
   --gray-light: 80, 85, 96;
@@ -99,9 +99,10 @@
 
   a {
     color: var(--accent);
+    text-decoration: none;
     
     &:hover {
-      color: var(--accent);
+      color: var(--accent-dark);
     }
   }
 
