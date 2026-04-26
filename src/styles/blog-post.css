@@ -3,6 +3,10 @@ main {
     max-width: 95%;
     margin: 0 auto;
 }
+article {
+    width: 100%;
+    margin: 0 auto;
+}
 .hero-image {
     width: 100%;
     margin-bottom: 2rem;
@@ -95,4 +99,51 @@ main {
     margin: 0 0 1em 0;
     overflow-wrap: break-word;
     font-family: "Palatino Linotype", "KaiTi", "STKaiti", "楷体", "华文楷体", var(--font-atkinson);
+}
+
+
+/* 左侧目录导航栏相关 */
+#toc-list {
+    padding-left: 1em;
+    margin: 0;
+    list-style: none;
+    max-height: calc(100vh - 120px); /* 减去头部和边距的空间 */
+    overflow-y: auto;
+    /* 隐藏滚动条 */
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+/* 隐藏 Webkit 浏览器的滚动条 */
+#toc-list::-webkit-scrollbar {
+    display: none;
+}
+
+#toc-list li {
+    margin: 0.4rem 0;
+    width: 100%;
+}
+#toc-list li div {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 0.8rem;
+    margin-left: -0.8rem;
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    border-left: 4px solid transparent;
+    transition: border-left-color 0.2s ease;
+    box-sizing: border-box;
+}
+#toc-list li.toc-level-h3 div{
+    padding-left: 2rem;
+}
+#toc-list li.active div {
+    border-left-color: #9d93b8;
+    font-weight: 500;
+}
+#toc-list li div:hover {
+    border-left-color: #c4c4c4;
+}
+.toc-empty {
+    color: #999;
 }
