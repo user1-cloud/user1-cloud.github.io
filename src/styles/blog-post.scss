@@ -78,14 +78,14 @@
     position: sticky;
     top: 2rem;
     max-height: calc(100vh - 4rem);
-    
     overflow: hidden !important;
     display: flex;
     flex-direction: column;
+    background: transparent;
+    border-radius: 12px 0 0 12px;
+    z-index: 999;
 
     scrollbar-width: thin;
-    background: transparent;
-    border-radius: 12px;
     
     &::-webkit-scrollbar {
       width: 4px;
@@ -107,7 +107,7 @@
     }
   }
 
-  /* 🔥 全局状态控制：侧边栏折叠 */
+  /* 全局状态控制：侧边栏折叠 */
   html.sidebar-collapsed {
     .right-sidebar {
       width: 0;
@@ -267,7 +267,7 @@
     transition: transform 0.25s ease;
   }
 
-  /* 响应式 */
+  /* 平板 */
   @media (max-width: 1100px) {
     .content-main { width: 680px; }
     .right-sidebar { width: 240px; .sidebar-inner { width: 240px; } }
@@ -279,52 +279,42 @@
   }
 
   @media (max-width: 760px) {
-    .two-col-layout { justify-content: flex-start; }
-    .content-main { width: 100%; max-width: 100%; }
+    /* 1. 确保 html 和 body 允许溢出滚动 */
+    html, body {
+      overflow-x: hidden; /* 防止横向滚动 */
+      height: auto;       /* 允许高度自然增长 */
+    }
+
+    /* 2. 重置外层容器，确保不干扰定位 */
+    main {
+      max-width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      overflow: visible !important; /* 关键：防止 main 截断内部 fixed 元素 */
+    }
+
+    /* 3. 侧边栏改为 fixed 定位 */
     .right-sidebar {
-      position: fixed;
-      top: auto;
-      right: 0;
-      bottom: 0;
-      max-height: 70vh;
-      background: rgba(15, 23, 42, 0.98);
-      backdrop-filter: blur(12px);
-      border-radius: 20px 20px 0 0;
-      margin-left: 0;
-      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
-      z-index: 999;
-      width: 100% !important;
-      transition: transform 0.3s ease;
-      transform: translateY(100%);
-      
-      .sidebar-inner { width: 100%; padding: 1rem; }
-    }
+      position: fixed !important; /* 关键修改：从 sticky 改为 fixed */
+      top: 5vh;                     /* 贴在屏幕顶部，或者你想要的距离 */
+      right: 5vh;                   /* 贴在屏幕右侧 */
+      left: auto;                 /* 清除左侧定位 */
+      margin: 0 !important;       /* 清除 margin */
+      width: 240px;               /* 固定宽度 */
+      height: 80vh;              /* 关键：高度设为视口高度，确保占满全屏 */
+      max-height: 100vh;          /* 覆盖之前的 calc */
 
-    /* 移动端折叠状态 */
-    html.sidebar-collapsed {
-      .right-sidebar {
-        transform: translateY(100%);
-      }
-    }
-    html:not(.sidebar-collapsed) {
-      .right-sidebar {
-        transform: translateY(0);
-      }
-    }
+      z-index: 99;
     
-    .toggle-sidebar-btn {
-      top: auto;
-      bottom: 20px;
-      right: 20px;
-      transform: none;
-      &:active { transform: scale(0.96); }
+      transform: translateX(0);   /* 确保没有位移 */
     }
-  }
 
-  .toc-empty {
-    color: #64748b;
-    padding: 0.5rem 0 0.5rem 1rem;
-    font-style: italic;
-    font-size: 0.85rem;
+    /* 4. 侧边栏内部滚动处理 */
+    .sidebar-inner {
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;           /* 允许内部滚动 */
+      padding-bottom: 2rem;       /* 底部留白 */
+    }
   }
 }
