@@ -2,17 +2,26 @@
 import type { CollectionEntry } from 'astro:content';
 import { Image } from 'astro:assets';
 import FormattedDate from './FormattedDate.astro';
+
 type BlogPost = CollectionEntry<'blog'>;
 
 interface Props {
   post: BlogPost;
   level?: 3 | 4;
 }
+
 const { post, level = 3 } = Astro.props;
+
+// 生成随机柔和渐变
+function getRandomGradient() {
+  const h = Math.floor(Math.random() * 360);
+  return `linear-gradient(135deg, hsl(${h}, 35%, 24%), hsl(${h}, 30%, 16%))`;
+}
+
+const cardGradient = getRandomGradient();
 ---
 
 <style>
-/* 卡片网格布局：全屏均匀分布 */
 .card-grid {
     margin: 8px;
     display: grid;
@@ -23,23 +32,19 @@ const { post, level = 3 } = Astro.props;
     padding: 0;
 }
 
-/* 卡片基础样式 */
 .blog-card {
-    background: transparent;
     border-radius: 16px;
     border: 2px solid transparent;
     overflow: hidden;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, border-color 0.3s ease;
     cursor: pointer;
 }
 
-/* 卡片悬停效果 */
 .blog-card:hover {
     transform: translateY(-6px);
-    border: 2px solid #ffffff;
+    border-color: #ffffff;
 }
 
-/* 卡片链接 */
 .card-link {
     text-decoration: none;
     color: inherit;
@@ -48,14 +53,12 @@ const { post, level = 3 } = Astro.props;
     height: 100%;
 }
 
-/* 卡片图片 */
 .card-image {
     width: 100%;
     height: 200px;
     object-fit: cover;
 }
 
-/* 卡片内容 */
 .card-content {
     padding: 1.5rem;
     flex-grow: 1;
@@ -64,14 +67,12 @@ const { post, level = 3 } = Astro.props;
     gap: 0.8rem;
 }
 
-/* 标题 */
 .card-title {
     font-size: 1.25rem;
     font-weight: 600;
     line-height: 1.4;
 }
 
-/* 描述 */
 .card-description {
     font-size: 0.95rem;
     line-height: 1.6;
@@ -82,13 +83,11 @@ const { post, level = 3 } = Astro.props;
     text-overflow: ellipsis;
 }
 
-/* 日期 */
 .card-date {
     font-size: 0.85rem;
     margin-top: auto;
 }
 
-/* 移动端适配 */
 @media (max-width: 768px) {
     .card-grid {
         grid-template-columns: 1fr;
@@ -98,29 +97,29 @@ const { post, level = 3 } = Astro.props;
 </style>
 
 <li class="fade-in-on-scroll">
-    <article class="blog-card">
-        <a href={`/blog/${post.id}/`} class="card-link">
-            {post.data.heroImage && (
-                <Image
-                    class="card-image"
-                    width={600}
-                    height={400}
-                    src={post.data.heroImage}
-                    alt={post.data.title}
-                />
-            )}
+  <article class="blog-card" style={`background: ${cardGradient}`}>
+    <a href={`/blog/${post.id}/`} class="card-link">
+      {post.data.heroImage && (
+        <Image
+          class="card-image"
+          width={600}
+          height={400}
+          src={post.data.heroImage}
+          alt={post.data.title}
+        />
+      )}
 
-            <div class="card-content">
-                {level === 4 ? (
-                  <h4 class="card-title">{post.data.title}</h4>
-                ) : (
-                  <h3 class="card-title">{post.data.title}</h3>
-                )}
-                <p class="card-description">{post.data.description.replace(/<[^>]+>/g, '')}</p>
-                <p class="card-date">
-                    <FormattedDate date={post.data.pubDate} />
-                </p>
-            </div>
-        </a>
-    </article>
+      <div class="card-content">
+        {level === 4 ? (
+          <h4 class="card-title">{post.data.title}</h4>
+        ) : (
+          <h3 class="card-title">{post.data.title}</h3>
+        )}
+        <p class="card-description">{post.data.description.replace(/<[^>]+>/g, '')}</p>
+        <p class="card-date">
+          <FormattedDate date={post.data.pubDate} />
+        </p>
+      </div>
+    </a>
+  </article>
 </li>
