@@ -42,9 +42,7 @@ function buildToc() {
     const div = document.createElement('div');
     div.style.cursor = 'pointer';
     div.onclick = () => {
-      location.hash = id;
       (heading as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'start' });
-      scrollTocToView(li);
       setTimeout(updateActive, 100);
     };
     div.textContent = heading.textContent?.trim() || '';
@@ -56,20 +54,26 @@ function buildToc() {
   });
 }
 
-// 滚动目录项到可视区域
 function scrollTocToView(tocItem: HTMLLIElement) {
-  const tocList = document.getElementById('toc-list');
-  if (!tocList || !tocItem) return;
+  const tocArea = document.querySelector('.toc-area');
+  if (!tocArea || !tocItem) return;
 
-  const listTop = tocList.scrollTop;
-  const listHeight = tocList.clientHeight;
-  const itemTop = tocItem.offsetTop;
-  const itemHeight = tocItem.offsetHeight;
+  // 这里调整超前量，数字越大，目录越提前滚动上去
+  const leadOffset = -100; 
 
-  if (itemTop < listTop) {
-    tocList.scrollTo({ top: itemTop, behavior: 'smooth' });
-  } else if (itemTop + itemHeight > listTop + listHeight) {
-    tocList.scrollTo({ top: itemTop - listHeight + itemHeight, behavior: 'smooth' });
+  const areaRect = tocArea.getBoundingClientRect();
+  const itemRect = tocItem.getBoundingClientRect();
+
+  const itemTopInView = itemRect.top - areaRect.top;
+  const itemBottomInView = itemRect.bottom - areaRect.top;
+
+  // 向上滚出可视区（提前 leadOffset）
+  if (itemTopInView < -leadOffset) {
+    tocArea.scrollBy({ top: itemTopInView + leadOffset, behavior: 'smooth' });
+  }
+  // 向下滚出可视区（也提前一点）
+  else if (itemBottomInView > areaRect.height + leadOffset) {
+    tocArea.scrollBy({ top: itemBottomInView - areaRect.height - leadOffset, behavior: 'smooth' });
   }
 }
 
@@ -84,16 +88,14 @@ function setupScrollSpy() {
   updateActive();
 }
 
-// 高亮更新逻辑
+// 高亮更新逻辑（完全正确）
 function updateActive() {
   let bestMatchIndex = -1;
   const scrollY = window.scrollY;
-  // 你可以调整这个值：标题距离顶部多少时触发高亮（比如 100px）
   const offset = 100;
 
   for (let i = headingElements.length - 1; i >= 0; i--) {
     const heading = headingElements[i].element;
-    // ✅ 核心修复：获取标题相对于页面顶部的真实距离（无视父级布局）
     const top = heading.getBoundingClientRect().top + scrollY;
 
     if (scrollY + offset >= top) {

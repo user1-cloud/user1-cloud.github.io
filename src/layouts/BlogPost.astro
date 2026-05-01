@@ -1,4 +1,5 @@
 ---
+// 博客文章布局组件 - 两栏可折叠右侧栏版本
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
@@ -15,7 +16,6 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 
 <html lang="zh-cn">
 	<head>
-		<meta name="view-transition" content="same-origin" />
 		<BaseHead title={title} description={description} />
 	</head>
 
@@ -27,37 +27,90 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 					{heroImage && <Image width={200} height={200} src={heroImage} alt="" />}
 				</div>
 
-				<div class="three-col-container fade-in">
-					<aside class="toc-sidebar fade-in">
-						<h3>目录</h3>
-						<ul id="toc-list"></ul>
-					</aside>
-
-					<div class="prose">
-						<div class="title">
-							<div class="date">
-								<FormattedDate date={pubDate} />
-								{updatedDate && (
-									<div class="last-updated-on">
-										Last updated on <FormattedDate date={updatedDate} />
-									</div>
-								)}
+				<!-- 两栏布局容器，右侧栏可折叠 -->
+				<div class="two-col-layout fade-in">
+					<!-- 左侧：固定宽度的正文区域，宽度不变，内部文字永不重新换行 -->
+					<div class="content-main">
+						<div class="prose">
+							<div class="title">
+								<div class="date">
+									<FormattedDate date={pubDate} />
+									{updatedDate && (
+										<div class="last-updated-on">
+											Last updated on <FormattedDate date={updatedDate} />
+										</div>
+									)}
+								</div>
+								<h1>{title}</h1>
+								<hr />
 							</div>
-							<h1>{title}</h1>
-							<hr />
+							<slot />
 						</div>
-						<slot />
 					</div>
 
-					<aside class="desc-sidebar fade-in">
-						<p set:html={description}></p>
+					<!-- 右侧：可折叠侧边栏（目录 + 简介） -->
+					<aside class="right-sidebar" id="rightSidebar">
+						<div class="sidebar-inner">
+							<!-- 上栏：目录区 -->
+							<div class="toc-area">
+								<h3>目录</h3>
+								<ul id="toc-list"></ul>
+							</div>
+							<!-- 下栏：简介区 -->
+							<div class="desc-area">
+								<p set:html={description}></p>
+							</div>
+						</div>
 					</aside>
 				</div>
 			</article>
 		</main>
 		<Footer />
 
+		<!-- 扁平展开/收起按钮 (绝对定位) -->
+		<button class="toggle-sidebar-btn" id="toggleSidebarBtn" aria-label="切换侧边栏">
+		<span class="arrow-icon"></span>
+		</button>
+
+		<!-- 目录生成脚本  -->
 		<script src="../scripts/toc"></script>
+		<!-- 滚动渐现效果 -->
 		<script src="../scripts/fade-in-on-scroll"></script>
+		
+		<script>
+			function initSidebar() {
+				const storageKey = 'blog-sidebar-collapsed';
+				const btn = document.getElementById('toggleSidebarBtn');
+				if (!btn) return;
+
+				// 1. 每次都重新读取 localStorage 状态
+				const savedState = localStorage.getItem(storageKey);
+				const isCollapsed = savedState === 'true'; 
+
+				// 2. 强制同步状态到页面
+				if (isCollapsed) {
+					document.documentElement.classList.add('sidebar-collapsed');
+				} else {
+					document.documentElement.classList.remove('sidebar-collapsed');
+				}
+
+				// 3. 点击切换
+				function toggleSidebar() {
+					document.documentElement.classList.toggle('sidebar-collapsed');
+					const nowCollapsed = document.documentElement.classList.contains('sidebar-collapsed');
+					localStorage.setItem(storageKey, nowCollapsed);
+				}
+
+				// 安全绑定
+				btn.removeEventListener('click', toggleSidebar);
+				btn.addEventListener('click', toggleSidebar);
+			}
+
+			// 初始化
+			initSidebar();
+
+			// 路由切换后重新初始化
+			document.addEventListener('astro:after-swap', initSidebar);
+		</script>
 	</body>
 </html>
