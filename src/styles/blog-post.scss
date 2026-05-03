@@ -117,7 +117,7 @@
       transition: width 0.25s ease, margin 0.25s ease, opacity 0.2s ease, visibility 0s 0.25s;
     }
     .toggle-sidebar-btn .arrow-icon {
-      transform: rotate(-135deg);
+      transform: rotate(-135deg) translateX(-17.678%) translateY(17.678%);
     }
   }
 
@@ -238,7 +238,7 @@
     backdrop-filter: blur(8px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 20px;
-    padding: 12px 8px;
+    padding: 32px 8px;
     cursor: pointer;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
     transition: all 0.2s ease;
@@ -263,7 +263,7 @@
     height: 7px;
     border-top: 2px solid #e2e8f0;
     border-right: 2px solid #e2e8f0;
-    transform: rotate(45deg);
+    transform: rotate(45deg) translateX(-17.678%) translateY(17.678%);
     transition: transform 0.25s ease;
   }
 
