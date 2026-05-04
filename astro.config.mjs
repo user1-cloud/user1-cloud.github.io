@@ -1,4 +1,3 @@
-// @ts-check 可以保留，也可以删掉
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { defineConfig, fontProviders } from 'astro/config';
@@ -14,6 +13,8 @@ import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import { remarkMark } from 'remark-mark-highlight';
 
+import compress from 'astro-compress';
+
 const USERNAME = 'user1-cloud';
 
 export default defineConfig({
@@ -25,7 +26,8 @@ export default defineConfig({
     expressiveCode(),
     mdx(),
     sitemap(),
-    vue()
+    vue(),
+    compress(),
   ],
 
   fonts: [{
@@ -57,6 +59,6 @@ export default defineConfig({
   },
 
   vite: {
-    plugins: [tailwindcss()]
-  }
+    plugins: [tailwindcss()],
+  },
 });
