@@ -37,6 +37,7 @@ function buildToc() {
 
     // 创建目录项
     const li = document.createElement('li');
+    if (heading.tagName === 'H2') li.classList.add('toc-level-h2');
     if (heading.tagName === 'H3') li.classList.add('toc-level-h3');
 
     const div = document.createElement('div');
