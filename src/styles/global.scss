@@ -4,12 +4,11 @@
   License MIT: https://github.com/HermanMartinus/bearblog/blob/master/LICENSE.md
  */
 
+@import url('https://chinese-fonts-cdn.konghayao.deno.net/packages/mkwtyt/dist/MaoKenTangYuan/result.css');
 @import '../../node_modules/katex/dist/katex.min.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import url('https://chinese-fonts-cdn.konghayao.deno.net/packages/mkwtyt/dist/MaoKenTangYuan/result.css');
 
 :root {
   --accent: #bec4ff;
