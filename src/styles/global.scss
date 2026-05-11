@@ -9,6 +9,7 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://chinese-fonts-cdn.konghayao.deno.net/packages/mkwtyt/dist/MaoKenTangYuan/result.css');
 
 :root {
   --accent: #bec4ff;
@@ -21,6 +22,8 @@
   --box-shadow:
     0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%),
     0 16px 32px rgba(var(--gray), 33%);
+
+  --font-MaoKenTangYuan: 'MaoKenTangYuan (beta)'
 }
 
 @layer base {
@@ -30,7 +33,7 @@
   }
 
   body {
-    font-family: var(--font-atkinson);
+    font-family: var(--font-MaoKenTangYuan), var(--font-atkinson);
     margin: 0;
     padding: 0;
     text-align: left;
