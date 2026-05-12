@@ -264,3 +264,28 @@
     padding: 1em;
   }
 }
+
+@mixin link-underline {
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 20%;
+    bottom: 0;
+    width: 0;
+    height: 2px;
+    background: #ffffff;
+    border-radius: 999px;
+    transition: width 0.28s ease;
+  }
+
+  &:hover::after {
+    width: 60%;
+  }
+
+  // 激活态：下划线保持展开
+  &.active::after {
+    width: 60%;
+  }
+}

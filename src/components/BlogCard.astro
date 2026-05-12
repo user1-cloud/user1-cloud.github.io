@@ -21,7 +21,8 @@ function getRandomGradient() {
 const cardGradient = getRandomGradient();
 ---
 
-<style>
+<style lang="scss">
+@use '../styles/global.scss' as *; 
 .card-grid {
     margin: 8px;
     display: grid;
@@ -33,6 +34,7 @@ const cardGradient = getRandomGradient();
 }
 
 .blog-card {
+    @include link-underline;
     border-radius: 16px;
     overflow: hidden;
     transition: transform 0.3s ease, border-color 0.3s ease;
@@ -41,7 +43,6 @@ const cardGradient = getRandomGradient();
 
 .blog-card:hover {
     transform: translateY(-6px);
-    outline: 2px solid #ffffff;
 }
 
 .card-link {
