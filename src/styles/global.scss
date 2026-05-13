@@ -11,13 +11,31 @@
 @tailwind utilities;
 
 :root {
-  --accent: #bec4ff;
-  --accent-dark: #c7cbe7;
-  --black: 240, 240, 245;
-  --gray: 160, 170, 190;
-  --gray-light: 80, 85, 96;
-  --gray-dark: 230, 230, 240;
-  --gray-gradient: #1a1c24, #121417;
+    /* 背景系 */
+  --background: #000123;
+  --background-dark: #000014;
+  --background-light: #050736;
+
+  /* 主强调蓝紫 */
+  --accent: #617bff;
+  --accent-dark: #4a65e8;
+  --accent-light: #8398ff;
+
+  /* 文字前景 */
+  --foreground: #eaedf3;
+  --foreground-dark: #c9cfdd;
+  --foreground-light: #f2f4f8;
+
+  /* 柔和辅助/次要背景 */
+  --muted: #0c0e4f;
+  --muted-dark: #080a3a;
+  --muted-light: #14176b;
+
+  /* 边框分割线 */
+  --border: #303f8a;
+  --border-dark: #222e6b;
+  --border-light: #4556b3;
+
   --box-shadow:
     0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%),
     0 16px 32px rgba(var(--gray), 33%);
@@ -28,11 +46,11 @@
 @layer base {
   html {
     scrollbar-gutter: stable both-edges;
-    background-color: #121417;
+    background-color: var(--background);
   }
 
   body {
-    font-family: var(--font-MaoKenTangYuan), var(--font-atkinson);
+    font-family: var(--font-MaoKenTangYuan);
     margin: 0;
     padding: 0;
     text-align: left;
@@ -40,7 +58,7 @@
     background-size: 100% 600px;
     word-wrap: break-word;
     overflow-wrap: break-word;
-    color: rgb(var(--gray-dark));
+    color: rgb(var(--lavender));
     font-size: 18px;
     line-height: 1.7;
   }
@@ -59,7 +77,7 @@
   h5,
   h6 {
     margin: 0 0 0.5rem 0;
-    color: rgb(var(--black));
+    color: var(--foreground);
     line-height: 1.2;
   }
 
@@ -104,7 +122,7 @@
     text-decoration: none;
     
     &:hover {
-      color: var(--accent-dark);
+      color: var(--accent-light);
     }
   }
 
@@ -159,7 +177,7 @@
 
   hr {
     border: none;
-    border-top: 1px solid rgb(var(--gray-light));
+    border-top: 1px solid var(--foreground);
   }
 
   html::-webkit-scrollbar {
@@ -214,13 +232,13 @@
     margin: 1rem 0;
     
     th, td {
-      border: 1px solid #ddd;
+      border: 1px solid var(--border);
       padding: 0.5rem;
       text-align: left;
     }
     
     th {
-      background: #393939;
+      background: var(--background-dark);
     }
   }
 }

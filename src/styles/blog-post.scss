@@ -44,7 +44,7 @@
   .prose {
     width: 100%;
     padding: 1em;
-    color: #e2e8f0;
+    color: var(--foreground);
     box-sizing: border-box;
   }
 
@@ -56,12 +56,12 @@
     
     h1 {
       margin: 0 0 0.5em 0;
-      color: #f1f5f9;
+      color: var(--foreground-light);
     }
   }
 
   .date {
-    color: #94a3b8;
+    color: var(--foreground-light);
   }
 
   .last-updated-on {
@@ -82,17 +82,16 @@
     display: flex;
     flex-direction: column;
     background: transparent;
-    border-radius: 12px 0 0 12px;
     z-index: 999;
 
     scrollbar-width: thin;
     
     &::-webkit-scrollbar {
       width: 4px;
-      background: #1e293b;
+      background: transparent;
     }
     &::-webkit-scrollbar-thumb {
-      background: #475569;
+      background: var(--border);
       border-radius: 4px;
     }
     
@@ -121,16 +120,17 @@
     }
   }
 
-  /* 目录区域：可滚动 */
+  /* 目录区域：保留模糊 + 无边填充 只边框 */
   .toc-area {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
     margin-bottom: 1rem;
     padding: 0.8rem;
-    background: rgba(30, 41, 59, 0.6);
+    background: transparent;
+    border: 1px solid var(--foreground-light);
     border-radius: 16px;
-    backdrop-filter: blur(2px);
+    backdrop-filter: blur(8px);
 
     scrollbar-width: none;
     -ms-overflow-style: none;
@@ -147,21 +147,23 @@
       font-size: 1rem;
       font-weight: bold;
       padding-left: 0.5rem;
-      border-left: 3px solid #a5b4fc;
-      color: #f1f5f9;
+      border-left: 3px solid var(--accent);
+      color: var(--foreground-light);
     }
   }
 
-  /* 简介区域：固定在底部，不滚动 */
+  /* 简介区域：保留模糊 + 只边框 */
   .desc-area {
     flex-shrink: 0;
     padding: 0.8rem;
-    background: rgba(30, 41, 59, 0.4);
+    background: transparent;
+    border: 1px solid var(--foreground-light);
     border-radius: 16px;
+    backdrop-filter: blur(8px);
     font-size: 0.85em;
     line-height: 1.6;
     text-indent: 2em;
-    color: #cbd5e1;
+    color: var(--foreground-dark);
     
     max-height: 120px;
     overflow-y: auto;
@@ -188,7 +190,7 @@
     margin: 0;
     list-style: none;
     font-size: 0.85em;
-    color: #cbd5e1;
+    color: var(--foreground-dark);
     
     li {
       margin: 0.5rem 0;
@@ -208,8 +210,8 @@
         border-radius: 0 8px 8px 0;
         
         &:hover {
-          border-left-color: #64748b;
-          background: rgba(255, 255, 255, 0.03);
+          border-left-color: var(--border-light);
+          background: transparent;
         }
       }
 
@@ -222,37 +224,37 @@
       }
       
       &.active div {
-        border-left-color: #a5b4fc;
+        border-left-color: var(--accent-light);
         font-weight: 500;
-        background: rgba(165, 180, 252, 0.1);
-        color: #f1f5f9;
+        background: transparent;
+        color: var(--foreground-light);
       }
     }
   }
 
-  /* 折叠按钮 */
+  /* 折叠按钮：保留模糊、无实底、边框样式 */
   .toggle-sidebar-btn {
     position: fixed;
     right: 20px;
     top: 50%;
     transform: translateY(-50%);
     z-index: 1000;
-    background: rgba(30, 41, 59, 0.85);
+    background: transparent;
     backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-light);
     border-radius: 20px;
     padding: 32px 8px;
     cursor: pointer;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+    box-shadow: none;
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
 
     &:hover {
-      background: rgba(49, 62, 89, 0.95);
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
-      border-color: rgba(255, 255, 255, 0.15);
+      background: transparent;
+      box-shadow: none;
+      border-color: var(--accent);
     }
 
     &:active {
@@ -264,8 +266,8 @@
     display: inline-block;
     width: 7px;
     height: 7px;
-    border-top: 2px solid #e2e8f0;
-    border-right: 2px solid #e2e8f0;
+    border-top: 2px solid var(--foreground);
+    border-right: 2px solid var(--foreground);
     transform: rotate(45deg) translateX(-17.678%) translateY(17.678%);
     transition: transform 0.25s ease;
   }
@@ -282,42 +284,36 @@
   }
 
   @media (max-width: 760px) {
-    /* 1. 确保 html 和 body 允许溢出滚动 */
     html, body {
-      overflow-x: hidden; /* 防止横向滚动 */
-      height: auto;       /* 允许高度自然增长 */
+      overflow-x: hidden;
+      height: auto;
     }
 
-    /* 2. 重置外层容器，确保不干扰定位 */
     main {
       max-width: 100% !important;
       margin: 0 !important;
       padding: 0 !important;
-      overflow: visible !important; /* 关键：防止 main 截断内部 fixed 元素 */
+      overflow: visible !important;
     }
 
-    /* 3. 侧边栏改为 fixed 定位 */
     .right-sidebar {
-      position: fixed !important; /* 关键修改：从 sticky 改为 fixed */
-      top: 5vh;                     /* 贴在屏幕顶部，或者你想要的距离 */
-      right: 5vh;                   /* 贴在屏幕右侧 */
-      left: auto;                 /* 清除左侧定位 */
-      margin: 0 !important;       /* 清除 margin */
-      width: 240px;               /* 固定宽度 */
-      height: 80vh;              /* 关键：高度设为视口高度，确保占满全屏 */
-      max-height: 100vh;          /* 覆盖之前的 calc */
-
+      position: fixed !important;
+      top: 5vh;
+      right: 5vh;
+      left: auto;
+      margin: 0 !important;
+      width: 240px;
+      height: 80vh;
+      max-height: 100vh;
       z-index: 99;
-    
-      transform: translateX(0);   /* 确保没有位移 */
+      transform: translateX(0);
     }
 
-    /* 4. 侧边栏内部滚动处理 */
     .sidebar-inner {
       width: 100%;
       height: 100%;
-      overflow-y: auto;           /* 允许内部滚动 */
-      padding-bottom: 2rem;       /* 底部留白 */
+      overflow-y: auto;
+      padding-bottom: 2rem;
     }
   }
 }

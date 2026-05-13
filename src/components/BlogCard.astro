@@ -11,14 +11,6 @@ interface Props {
 }
 
 const { post, level = 3 } = Astro.props;
-
-// 生成随机柔和渐变
-function getRandomGradient() {
-  const h = Math.floor(Math.random() * 360);
-  return `linear-gradient(135deg, hsl(${h}, 35%, 24%), hsl(${h}, 30%, 16%))`;
-}
-
-const cardGradient = getRandomGradient();
 ---
 
 <style lang="scss">
@@ -97,7 +89,7 @@ const cardGradient = getRandomGradient();
 </style>
 
 <li class="fade-in-on-scroll">
-  <article class="blog-card" style={`background: ${cardGradient}`}>
+  <article class="blog-card">
     <a href={`/blog/${post.id}/`} class="card-link">
       {post.data.heroImage && (
         <Image
