@@ -120,7 +120,6 @@
     }
   }
 
-  /* 目录区域：保留模糊 + 无边填充 只边框 */
   .toc-area {
     flex: 1;
     min-height: 0;
@@ -128,7 +127,6 @@
     margin-bottom: 1rem;
     padding: 0.8rem;
     background: transparent;
-    border: 1px solid var(--foreground-light);
     border-radius: 16px;
     backdrop-filter: blur(8px);
 
@@ -157,7 +155,6 @@
     flex-shrink: 0;
     padding: 0.8rem;
     background: transparent;
-    border: 1px solid var(--foreground-light);
     border-radius: 16px;
     backdrop-filter: blur(8px);
     font-size: 0.85em;
