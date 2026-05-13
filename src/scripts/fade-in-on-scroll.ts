@@ -1,25 +1,28 @@
-// 监听 Astro 页面加载事件
 document.addEventListener('astro:page-load', () => {
-  // 获取所有需要淡入的元素（明确类型）
+  // 清理旧的观察器，防止 Astro 局部导航时重复绑定
+  if ((window as any).fadeObserver) {
+    (window as any).fadeObserver.disconnect();
+  }
+
   const fadeElements = document.querySelectorAll<HTMLElement>('.fade-in-on-scroll');
 
-  // 交叉观察器配置
-  const observerOptions: IntersectionObserverInit = {
-    threshold: 0.3,
-    rootMargin: '0px 0px -50px 0px',
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px', 
   };
 
-  // 创建观察器（TS 自动推导类型）
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
+        // 进入视口，添加可见类
         entry.target.classList.add('visible');
       } else {
+        // 离开视口，直接移除可见类，实现消失效果
         entry.target.classList.remove('visible');
       }
     });
   }, observerOptions);
 
-  // 监听所有元素
+  (window as any).fadeObserver = observer;
   fadeElements.forEach((el) => observer.observe(el));
 });
