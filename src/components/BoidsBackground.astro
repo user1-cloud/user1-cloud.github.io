@@ -1,5 +1,5 @@
 ---
-// Astro 极致丝滑的 CSS 流动光晕背景组件（随机位置与路径版）
+// Astro 极致丝滑的 CSS 流动光晕背景组件（完整修复版）
 ---
 
 <div class="fluid-background">
@@ -34,9 +34,12 @@
     position: absolute;
     border-radius: 50%;
     filter: blur(40px);
-    opacity: 0.7;
+    opacity: 0; /* 初始隐藏，由 JS 计算位置后淡入 */
     z-index: 0;
     will-change: transform;
+    /* 核心修改：用 translate(-50%, -50%) 让 top/left 坐标直接对应光斑中心点 */
+    transform: translate(-50%, -50%);
+    transition: opacity 0.5s ease; /* 加上透明度过渡，防止切换页面时闪烁 */
   }
 
   /* 蓝色光斑 */
@@ -44,12 +47,10 @@
     width: 50vw;
     height: 50vw;
     background: #1f3456;
-    /* 使用 CSS 变量控制初始位置 */
     top: var(--start-top);
     left: var(--start-left);
-    /* 动画时长也可以稍微随机，这里保持原样或用变量均可 */
     animation: float-generic 20s ease-in-out infinite alternate;
-    animation-delay: var(--delay); /* 随机延迟，打破同步感 */
+    animation-delay: var(--delay);
   }
 
   /* 紫色光斑 */
@@ -74,31 +75,34 @@
     animation-delay: var(--delay);
   }
 
-  /* 统一定义漂浮轨迹，通过变量控制偏移量 */
+  /* 统一定义漂浮轨迹 */
   @keyframes float-generic {
-    0% { transform: translate(0, 0) scale(1); }
+    0% { transform: translate(-50%, -50%) scale(1); }
     100% { 
-      /* 使用变量控制漂浮的终点位置，实现路径随机 */
-      transform: translate(var(--move-x), var(--move-y)) scale(1.1); 
+      /* 在中心点基础上，加上随机偏移量 */
+      transform: translate(calc(-50% + var(--move-x)), calc(-50% + var(--move-y))) scale(1.1); 
     }
   }
 </style>
 
-<script>
-  // 页面加载后执行，为每个光斑注入随机变量
-  document.addEventListener('DOMContentLoaded', () => {
+<script is:inline>
+  // 封装随机位置计算函数
+  function randomizeBlobs() {
     const blobs = document.querySelectorAll('.glow-blob');
     
     blobs.forEach(blob => {
-      // 1. 随机初始位置 (0% ~ 80% 之间，防止光斑完全溢出屏幕)
-      const startTop = Math.random() * 80;
-      const startLeft = Math.random() * 80;
+      // 1. 先隐藏光斑，防止位置跳变被用户看到
+      blob.style.opacity = '0';
+
+      // 2. 随机初始中心点位置 (限制在 10% ~ 90% 之间，防止边缘溢出)
+      const startTop = 10 + Math.random() * 80;
+      const startLeft = 10 + Math.random() * 80;
       
-      // 2. 随机漂浮路径 (向任意方向移动 -30vw ~ 30vw)
-      const moveX = (Math.random() - 0.5) * 60 + 'vw';
-      const moveY = (Math.random() - 0.5) * 60 + 'vh';
+      // 3. 随机漂浮路径 (在中心点基础上，向任意方向偏移 -20vw ~ 20vw)
+      const moveX = (Math.random() - 0.5) * 40 + 'vw';
+      const moveY = (Math.random() - 0.5) * 40 + 'vh';
       
-      // 3. 随机动画延迟 (0 ~ 5秒)，让它们的运动节奏错开
+      // 4. 随机动画延迟 (0 ~ 5秒)
       const delay = Math.random() * 5 + 's';
 
       // 将计算好的值赋给 CSS 变量
@@ -107,6 +111,17 @@
       blob.style.setProperty('--move-x', moveX);
       blob.style.setProperty('--move-y', moveY);
       blob.style.setProperty('--delay', delay);
+
+      // 5. 延迟一点点再显示，让位置先瞬移好，再淡入
+      setTimeout(() => {
+        blob.style.opacity = '0.7';
+      }, 50); 
     });
-  });
+  }
+
+  // 监听 Astro 页面切换完成事件（解决点击链接不随机的问题）
+  document.addEventListener('astro:after-swap', randomizeBlobs);
+  
+  // 同时也监听初次页面加载
+  document.addEventListener('DOMContentLoaded', randomizeBlobs);
 </script>
