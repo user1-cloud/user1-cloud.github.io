@@ -1,137 +1,12 @@
 ---
-// Astro 暗色系渐变流体背景组件
-// 直接放在 /components/ 文件夹里使用
+// Astro 极致丝滑的 CSS 流动光晕背景组件（随机位置与路径版）
 ---
 
 <div class="fluid-background">
-  <canvas id="darkFluidCanvas"></canvas>
+  <div class="glow-blob blob-1"></div>
+  <div class="glow-blob blob-2"></div>
+  <div class="glow-blob blob-3"></div>
 </div>
-
-<script is:inline>
-  // 定义一个初始化函数，把原来的动画逻辑包起来
-  function initFluidBackground() {
-    const canvas = document.getElementById('darkFluidCanvas');
-    // 防止页面上没有这个 canvas 时报错（比如你在某个不需要背景的页面没放这个组件）
-    if (!canvas) return; 
-    
-    const ctx = canvas.getContext('2d');
-    let w = (canvas.width = window.innerWidth);
-    let h = (canvas.height = window.innerHeight);
-
-    window.addEventListener('resize', () => {
-      w = canvas.width = window.innerWidth;
-      h = canvas.height = window.innerHeight;
-    });
-
-    let mouse = { x: null, y: null, active: false };
-    document.addEventListener('mousemove', (e) => {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
-      mouse.active = true;
-    });
-    document.addEventListener('mouseleave', () => {
-      mouse.active = false;
-    });
-
-    // 粒子类（社会行为 + 混沌运动）
-    class Blob {
-      constructor() {
-        this.x = Math.random() * w;
-        this.y = Math.random() * h;
-        this.vx = (Math.random() - 0.5) * 0.35;
-        this.vy = (Math.random() - 0.5) * 0.35;
-      }
-
-      update(blobs) {
-        // 极弱社会行为
-        for (let b of blobs) {
-          if (b === this) continue;
-          const dx = this.x - b.x;
-          const dy = this.y - b.y;
-          const d = Math.hypot(dx, dy);
-          if (d < 40 && d > 0) {
-            this.vx += dx * 0.007;
-            this.vy += dy * 0.007;
-          }
-        }
-
-        // 鼠标影响
-        if (mouse.active) {
-          const dx = this.x - mouse.x;
-          const dy = this.y - mouse.y;
-          const d = Math.hypot(dx, dy);
-          if (d < 160 && d > 10) {
-            this.vx += dx / d * 0.35;
-            this.vy += dy / d * 0.35;
-          }
-        }
-
-        // 混沌乱流
-        this.vx += (Math.random() - 0.5) * 0.02;
-        this.vy += (Math.random() - 0.5) * 0.02;
-
-        // 边界约束
-        if (this.x < 10) this.vx += 0.12;
-        if (this.x > w - 10) this.vx -= 0.12;
-        if (this.y < 10) this.vy += 0.12;
-        if (this.y > h - 10) this.vy -= 0.12;
-
-        // 限速
-        const s = Math.hypot(this.vx, this.vy);
-        if (s > 0.45) {
-          this.vx /= s;
-          this.vy /= s;
-        }
-
-        this.x += this.vx;
-        this.y += this.vy;
-      }
-    }
-
-    // 粒子数量（多，流动感强）
-    const blobs = Array.from({ length: 16 }, () => new Blob());
-
-    // 绘制暗色系渐变流体
-    function draw() {
-      // 1. 去掉上面两行 fillStyle 和 fillRect
-      // ctx.fillStyle = 'rgba(10, 13, 20, 0.15)';
-      // ctx.fillRect(0, 0, w, h);
-      
-      // 2. 改用 clearRect 彻底清空画布（保留真正的透明底色）
-      ctx.clearRect(0, 0, w, h);
-      
-      ctx.globalCompositeOperation = 'source-over';
-
-      blobs.forEach((b) => {
-        const size = 300;
-        const grad = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, size);
-
-        grad.addColorStop(0, 'rgba(30, 45, 70, 0.36)');
-        grad.addColorStop(0.5, 'rgba(22, 33, 55, 0.18)');
-        grad.addColorStop(1, 'rgba(10, 15, 25, 0)');
-
-        ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.arc(b.x, b.y, size, 0, Math.PI * 2);
-        ctx.fill();
-      });
-    }
-    
-    // 动画循环
-    function animate() {
-      blobs.forEach((b) => b.update(blobs));
-      draw();
-      requestAnimationFrame(animate);
-    }
-    animate();
-  }
-
-  // 监听 Astro 的页面加载事件
-  // 无论是首次进入网站，还是通过 ClientRouter 跳转页面，这个事件都会触发
-  document.addEventListener('astro:page-load', () => {
-    initFluidBackground();
-  });
-</script>
 
 <style>
   .fluid-background {
@@ -140,14 +15,98 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: transparent;
     z-index: -1;
     pointer-events: none;
+    background: #000123;
+    overflow: hidden;
   }
 
-  #darkFluidCanvas {
-    display: block;
-    width: 100%;
-    height: 100%;
+  .fluid-background::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    backdrop-filter: blur(80px);
+    -webkit-backdrop-filter: blur(80px);
+    z-index: 1;
+  }
+
+  .glow-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(40px);
+    opacity: 0.7;
+    z-index: 0;
+    will-change: transform;
+  }
+
+  /* 蓝色光斑 */
+  .blob-1 {
+    width: 50vw;
+    height: 50vw;
+    background: #1f3456;
+    /* 使用 CSS 变量控制初始位置 */
+    top: var(--start-top);
+    left: var(--start-left);
+    /* 动画时长也可以稍微随机，这里保持原样或用变量均可 */
+    animation: float-generic 20s ease-in-out infinite alternate;
+    animation-delay: var(--delay); /* 随机延迟，打破同步感 */
+  }
+
+  /* 紫色光斑 */
+  .blob-2 {
+    width: 40vw;
+    height: 40vw;
+    background: #311e4f;
+    top: var(--start-top);
+    left: var(--start-left);
+    animation: float-generic 22s ease-in-out infinite alternate;
+    animation-delay: var(--delay);
+  }
+
+  /* 青绿色光斑 */
+  .blob-3 {
+    width: 35vw;
+    height: 35vw;
+    background: #153b37;
+    top: var(--start-top);
+    left: var(--start-left);
+    animation: float-generic 25s ease-in-out infinite alternate;
+    animation-delay: var(--delay);
+  }
+
+  /* 统一定义漂浮轨迹，通过变量控制偏移量 */
+  @keyframes float-generic {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { 
+      /* 使用变量控制漂浮的终点位置，实现路径随机 */
+      transform: translate(var(--move-x), var(--move-y)) scale(1.1); 
+    }
   }
 </style>
+
+<script>
+  // 页面加载后执行，为每个光斑注入随机变量
+  document.addEventListener('DOMContentLoaded', () => {
+    const blobs = document.querySelectorAll('.glow-blob');
+    
+    blobs.forEach(blob => {
+      // 1. 随机初始位置 (0% ~ 80% 之间，防止光斑完全溢出屏幕)
+      const startTop = Math.random() * 80;
+      const startLeft = Math.random() * 80;
+      
+      // 2. 随机漂浮路径 (向任意方向移动 -30vw ~ 30vw)
+      const moveX = (Math.random() - 0.5) * 60 + 'vw';
+      const moveY = (Math.random() - 0.5) * 60 + 'vh';
+      
+      // 3. 随机动画延迟 (0 ~ 5秒)，让它们的运动节奏错开
+      const delay = Math.random() * 5 + 's';
+
+      // 将计算好的值赋给 CSS 变量
+      blob.style.setProperty('--start-top', `${startTop}%`);
+      blob.style.setProperty('--start-left', `${startLeft}%`);
+      blob.style.setProperty('--move-x', moveX);
+      blob.style.setProperty('--move-y', moveY);
+      blob.style.setProperty('--delay', delay);
+    });
+  });
+</script>
