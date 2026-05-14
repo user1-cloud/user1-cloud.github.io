@@ -1,0 +1,153 @@
+---
+// Astro 暗色系渐变流体背景组件
+// 直接放在 /components/ 文件夹里使用
+---
+
+<div class="fluid-background">
+  <canvas id="darkFluidCanvas"></canvas>
+</div>
+
+<script is:inline>
+  // 定义一个初始化函数，把原来的动画逻辑包起来
+  function initFluidBackground() {
+    const canvas = document.getElementById('darkFluidCanvas');
+    // 防止页面上没有这个 canvas 时报错（比如你在某个不需要背景的页面没放这个组件）
+    if (!canvas) return; 
+    
+    const ctx = canvas.getContext('2d');
+    let w = (canvas.width = window.innerWidth);
+    let h = (canvas.height = window.innerHeight);
+
+    window.addEventListener('resize', () => {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    });
+
+    let mouse = { x: null, y: null, active: false };
+    document.addEventListener('mousemove', (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+      mouse.active = true;
+    });
+    document.addEventListener('mouseleave', () => {
+      mouse.active = false;
+    });
+
+    // 粒子类（社会行为 + 混沌运动）
+    class Blob {
+      constructor() {
+        this.x = Math.random() * w;
+        this.y = Math.random() * h;
+        this.vx = (Math.random() - 0.5) * 0.35;
+        this.vy = (Math.random() - 0.5) * 0.35;
+      }
+
+      update(blobs) {
+        // 极弱社会行为
+        for (let b of blobs) {
+          if (b === this) continue;
+          const dx = this.x - b.x;
+          const dy = this.y - b.y;
+          const d = Math.hypot(dx, dy);
+          if (d < 40 && d > 0) {
+            this.vx += dx * 0.007;
+            this.vy += dy * 0.007;
+          }
+        }
+
+        // 鼠标影响
+        if (mouse.active) {
+          const dx = this.x - mouse.x;
+          const dy = this.y - mouse.y;
+          const d = Math.hypot(dx, dy);
+          if (d < 160 && d > 10) {
+            this.vx += dx / d * 0.35;
+            this.vy += dy / d * 0.35;
+          }
+        }
+
+        // 混沌乱流
+        this.vx += (Math.random() - 0.5) * 0.02;
+        this.vy += (Math.random() - 0.5) * 0.02;
+
+        // 边界约束
+        if (this.x < 10) this.vx += 0.12;
+        if (this.x > w - 10) this.vx -= 0.12;
+        if (this.y < 10) this.vy += 0.12;
+        if (this.y > h - 10) this.vy -= 0.12;
+
+        // 限速
+        const s = Math.hypot(this.vx, this.vy);
+        if (s > 0.45) {
+          this.vx /= s;
+          this.vy /= s;
+        }
+
+        this.x += this.vx;
+        this.y += this.vy;
+      }
+    }
+
+    // 粒子数量（多，流动感强）
+    const blobs = Array.from({ length: 16 }, () => new Blob());
+
+    // 绘制暗色系渐变流体
+    function draw() {
+      // 1. 去掉上面两行 fillStyle 和 fillRect
+      // ctx.fillStyle = 'rgba(10, 13, 20, 0.15)';
+      // ctx.fillRect(0, 0, w, h);
+      
+      // 2. 改用 clearRect 彻底清空画布（保留真正的透明底色）
+      ctx.clearRect(0, 0, w, h);
+      
+      ctx.globalCompositeOperation = 'source-over';
+
+      blobs.forEach((b) => {
+        const size = 300;
+        const grad = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, size);
+
+        grad.addColorStop(0, 'rgba(30, 45, 70, 0.36)');
+        grad.addColorStop(0.5, 'rgba(22, 33, 55, 0.18)');
+        grad.addColorStop(1, 'rgba(10, 15, 25, 0)');
+
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+    
+    // 动画循环
+    function animate() {
+      blobs.forEach((b) => b.update(blobs));
+      draw();
+      requestAnimationFrame(animate);
+    }
+    animate();
+  }
+
+  // 监听 Astro 的页面加载事件
+  // 无论是首次进入网站，还是通过 ClientRouter 跳转页面，这个事件都会触发
+  document.addEventListener('astro:page-load', () => {
+    initFluidBackground();
+  });
+</script>
+
+<style>
+  .fluid-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: transparent;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  #darkFluidCanvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+</style>

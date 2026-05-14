@@ -7,6 +7,8 @@ import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 
+import BoidsBackground from '../components/BoidsBackground.astro';
+
 // 专用css，放在BaseHead引用之后
 import '../styles/blog-post.scss';
 
@@ -72,6 +74,8 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 		<button class="toggle-sidebar-btn" id="toggleSidebarBtn" aria-label="切换侧边栏">
 		<span class="arrow-icon"></span>
 		</button>
+
+		<BoidsBackground/>
 
 		<!-- 目录生成脚本  -->
 		<script src="../scripts/toc"></script>
