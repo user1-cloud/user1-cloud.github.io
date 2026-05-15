@@ -9,6 +9,7 @@
 </div>
 
 <style>
+  @import "../styles/global.scss";
   .fluid-background {
     position: fixed;
     top: 0;
@@ -17,7 +18,7 @@
     height: 100vh;
     z-index: -1;
     pointer-events: none;
-    background: #000123;
+    background: var(--background);
     overflow: hidden;
   }
 
@@ -49,7 +50,7 @@
     background: #1f3456;
     top: var(--start-top);
     left: var(--start-left);
-    animation: float-generic 20s ease-in-out infinite alternate;
+    animation: float-generic 11s ease-in-out infinite alternate;
     animation-delay: var(--delay);
   }
 
@@ -60,7 +61,7 @@
     background: #311e4f;
     top: var(--start-top);
     left: var(--start-left);
-    animation: float-generic 22s ease-in-out infinite alternate;
+    animation: float-generic 7s ease-in-out infinite alternate;
     animation-delay: var(--delay);
   }
 
@@ -71,7 +72,7 @@
     background: #153b37;
     top: var(--start-top);
     left: var(--start-left);
-    animation: float-generic 25s ease-in-out infinite alternate;
+    animation: float-generic 5s ease-in-out infinite alternate;
     animation-delay: var(--delay);
   }
 
@@ -99,11 +100,11 @@
       const startLeft = 10 + Math.random() * 80;
       
       // 3. 随机漂浮路径 (在中心点基础上，向任意方向偏移 -20vw ~ 20vw)
-      const moveX = (Math.random() - 0.5) * 40 + 'vw';
-      const moveY = (Math.random() - 0.5) * 40 + 'vh';
+      const moveX = (Math.random() - 0.5) * 80 + 'vw';
+      const moveY = (Math.random() - 0.5) * 80 + 'vh';
       
-      // 4. 随机动画延迟 (0 ~ 5秒)
-      const delay = Math.random() * 5 + 's';
+      // 4. 随机动画延迟 (0 ~ 1秒)
+      const delay = Math.random() * 1 + 's';
 
       // 将计算好的值赋给 CSS 变量
       blob.style.setProperty('--start-top', `${startTop}%`);
