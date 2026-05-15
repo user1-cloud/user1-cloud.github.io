@@ -1,6 +1,7 @@
 ---
 const AboutHeroImage = 'https://avatars.githubusercontent.com/u/177993181?v=4';
 import Layout from '../layouts/BlogPost.astro';
+import ReadmeContent from '../../README.md';
 ---
 
 <Layout
@@ -12,17 +13,22 @@ import Layout from '../layouts/BlogPost.astro';
 	<h2>
 		个人信息
 	</h2>
+
+	<h3>
+		我是谁？
+	</h3>
+
 	<p>
 		我是user1-cloud
 	</p>
 
-	<h2>
-		联系我
-	</h2>
-
 	<h3>
-		邮箱
+		联系我
 	</h3>
+
+	<h4>
+		邮箱
+	</h4>
 
 	<p>
 		QQ邮箱：
@@ -31,4 +37,16 @@ import Layout from '../layouts/BlogPost.astro';
 		Outlook：
 	<a href="mailto:easbeasbeasb@outlook.com" target="_blank">easbeasbeasb@outlook.com</a>	
 	</p>
+
+	<h2>
+		网页自述
+	</h2>
+
+	<ReadmeContent components={{
+		h1: 'h2',
+		h2: 'h3',
+		h3: 'h4',
+		h4: 'h5',
+		h5: 'h6',
+	}} />
 </Layout>
