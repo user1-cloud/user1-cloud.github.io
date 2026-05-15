@@ -25,7 +25,7 @@ function buildToc() {
   tocItemElements.length = 0;
 
   // 只获取文章内容里的 h2、h3
-  const headings = document.querySelectorAll('.prose h2, .prose h3');
+  const headings = document.querySelectorAll('.prose > h2, .prose > h3');
   if (headings.length === 0) {
     tocList.innerHTML = '<li class="toc-empty">本部分无目录</li>';
     return;
