@@ -1,15 +1,17 @@
 ---
-// Astro 极致丝滑的 CSS 流动光晕背景组件（完整修复版）
+// CSS 流动光晕背景组件
 ---
 
 <div class="fluid-background">
   <div class="glow-blob blob-1"></div>
   <div class="glow-blob blob-2"></div>
   <div class="glow-blob blob-3"></div>
+  <div class="vignette"></div>
 </div>
 
 <style>
   @import "../styles/global.scss";
+
   .fluid-background {
     position: fixed;
     top: 0;
@@ -22,32 +24,24 @@
     overflow: hidden;
   }
 
-  .fluid-background::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    backdrop-filter: blur(80px);
-    -webkit-backdrop-filter: blur(80px);
-    z-index: 1;
-  }
-
+  /* 光斑公用样式 */
   .glow-blob {
     position: absolute;
     border-radius: 50%;
-    filter: blur(40px);
-    opacity: 0; /* 初始隐藏，由 JS 计算位置后淡入 */
+    filter: blur(70px);        /* 加大模糊半径，独立产生柔光效果 */
+    opacity: 0;
     z-index: 0;
     will-change: transform;
-    /* 核心修改：用 translate(-50%, -50%) 让 top/left 坐标直接对应光斑中心点 */
     transform: translate(-50%, -50%);
-    transition: opacity 0.5s ease; /* 加上透明度过渡，防止切换页面时闪烁 */
+    transition: opacity 0.5s ease;
+    mix-blend-mode: screen;    /* 让光斑叠加更柔和，类似之前的背景模糊混合感 */
   }
 
   /* 蓝色光斑 */
   .blob-1 {
-    width: 50vw;
-    height: 50vw;
-    background: #1f3456;
+    width: 60vw;
+    height: 60vw;
+    background: rgba(31, 52, 86, 0.7);
     top: var(--start-top);
     left: var(--start-left);
     animation: float-generic 11s ease-in-out infinite alternate;
@@ -56,9 +50,9 @@
 
   /* 紫色光斑 */
   .blob-2 {
-    width: 40vw;
-    height: 40vw;
-    background: #311e4f;
+    width: 50vw;
+    height: 50vw;
+    background: rgba(49, 30, 79, 0.65);
     top: var(--start-top);
     left: var(--start-left);
     animation: float-generic 7s ease-in-out infinite alternate;
@@ -67,62 +61,60 @@
 
   /* 青绿色光斑 */
   .blob-3 {
-    width: 35vw;
-    height: 35vw;
-    background: #153b37;
+    width: 45vw;
+    height: 45vw;
+    background: rgba(21, 59, 55, 0.6);
     top: var(--start-top);
     left: var(--start-left);
     animation: float-generic 5s ease-in-out infinite alternate;
     animation-delay: var(--delay);
   }
 
-  /* 统一定义漂浮轨迹 */
+  /* 柔光遮罩：模拟原 backdrop-filter 产生的整体雾化感 */
+  .vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.2) 90%);
+    backdrop-filter: blur(20px);  /* 轻量级模糊，即使偶尔失效也不影响主体 */
+    -webkit-backdrop-filter: blur(20px);
+    pointer-events: none;
+    z-index: 1;
+  }
+
   @keyframes float-generic {
-    0% { transform: translate(-50%, -50%) scale(1); }
-    100% { 
-      /* 在中心点基础上，加上随机偏移量 */
-      transform: translate(calc(-50% + var(--move-x)), calc(-50% + var(--move-y))) scale(1.1); 
+    0% {
+      transform: translate(-50%, -50%) scale(1);
+    }
+    100% {
+      transform: translate(calc(-50% + var(--move-x)), calc(-50% + var(--move-y))) scale(1.15);
     }
   }
 </style>
 
 <script is:inline>
-  // 封装随机位置计算函数
   function randomizeBlobs() {
     const blobs = document.querySelectorAll('.glow-blob');
-    
     blobs.forEach(blob => {
-      // 1. 先隐藏光斑，防止位置跳变被用户看到
       blob.style.opacity = '0';
 
-      // 2. 随机初始中心点位置 (限制在 10% ~ 90% 之间，防止边缘溢出)
       const startTop = 10 + Math.random() * 80;
       const startLeft = 10 + Math.random() * 80;
-      
-      // 3. 随机漂浮路径 (在中心点基础上，向任意方向偏移 -20vw ~ 20vw)
       const moveX = (Math.random() - 0.5) * 80 + 'vw';
       const moveY = (Math.random() - 0.5) * 80 + 'vh';
-      
-      // 4. 随机动画延迟 (0 ~ 1秒)
       const delay = Math.random() * 1 + 's';
 
-      // 将计算好的值赋给 CSS 变量
       blob.style.setProperty('--start-top', `${startTop}%`);
       blob.style.setProperty('--start-left', `${startLeft}%`);
       blob.style.setProperty('--move-x', moveX);
       blob.style.setProperty('--move-y', moveY);
       blob.style.setProperty('--delay', delay);
 
-      // 5. 延迟一点点再显示，让位置先瞬移好，再淡入
       setTimeout(() => {
-        blob.style.opacity = '0.7';
-      }, 50); 
+        blob.style.opacity = '0.85';
+      }, 50);
     });
   }
 
-  // 监听 Astro 页面切换完成事件（解决点击链接不随机的问题）
   document.addEventListener('astro:after-swap', randomizeBlobs);
-  
-  // 同时也监听初次页面加载
   document.addEventListener('DOMContentLoaded', randomizeBlobs);
 </script>
