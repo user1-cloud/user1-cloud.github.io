@@ -85,7 +85,7 @@ if (sort === 'dir') {
 <main>
   {sort === 'time' ? (
     <>
-      <h2>近期博客一览</h2>
+      <h2 class="mk-title">近期博客一览</h2>
       <br />
       <ul class="card-grid">
         {posts.map((post) => <BlogCard post={post} />)}
@@ -95,11 +95,11 @@ if (sort === 'dir') {
     <div>
       {(orderedData || []).map(([dir1, dir2List]) => (
         <div>
-          <h2>{dir1}</h2>
+          <h2 class="mk-title">{dir1}</h2>
           {dir2List.map(([dir2, list]) => (
             <div>
               <!-- 空 dir2 不显示标题，但会显示文章 -->
-              {dir2 && <h3>{dir2}</h3>}
+              {dir2 && <h3 class="mk-title">{dir2}</h3>}
               <ul class="card-grid">
                 {list.map(post => <BlogCard post={post} level={4} />)}
               </ul>
