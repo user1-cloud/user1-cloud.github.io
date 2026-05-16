@@ -16,7 +16,7 @@ type Props = CollectionEntry<'blog'>['data'];
 const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 ---
 
-<html lang="zh-cn">
+<html lang="zh-cn" class="sidebar-collapsed">
 	<head>
 		<BaseHead title={title} description={description} />
 	</head>
@@ -90,7 +90,7 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 
 				// 1. 每次都重新读取 localStorage 状态
 				const savedState = localStorage.getItem(storageKey);
-				const isCollapsed = savedState === 'true'; 
+				const isCollapsed = savedState === 'true' || savedState === null; 
 
 				// 2. 强制同步状态到页面
 				if (isCollapsed) {
