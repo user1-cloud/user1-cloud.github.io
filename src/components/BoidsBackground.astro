@@ -1,7 +1,3 @@
----
-// CSS 流动光晕背景组件
----
-
 <div class="fluid-background">
   <div class="glow-blob blob-1"></div>
   <div class="glow-blob blob-2"></div>
@@ -14,107 +10,122 @@
 
   .fluid-background {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
+    inset: 0;
     z-index: -1;
     pointer-events: none;
     background: var(--background);
     overflow: hidden;
   }
 
-  /* 光斑公用样式 */
   .glow-blob {
     position: absolute;
     border-radius: 50%;
-    filter: blur(70px);        /* 加大模糊半径，独立产生柔光效果 */
-    opacity: 0;
     z-index: 0;
-    will-change: transform;
+    /* 初始位置由 JS 设定 top/left */
     transform: translate(-50%, -50%);
-    transition: opacity 0.5s ease;
-    mix-blend-mode: screen;    /* 让光斑叠加更柔和，类似之前的背景模糊混合感 */
+    background: radial-gradient(circle, var(--blob-color) 0%, transparent 60%);
+    opacity: 0.85;
+    /* 核心：同时应用 X 和 Y 两个方向的无限循环动画 */
+    animation-name: floatX, floatY, breathe; 
+    animation-iteration-count: infinite, infinite, infinite;
+    animation-direction: alternate, alternate, alternate; /* 来回摆动更平滑 */
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1); /* 标准的平滑贝塞尔曲线 */
   }
 
   /* 蓝色光斑 */
   .blob-1 {
-    width: 60vw;
-    height: 60vw;
-    background: rgba(31, 52, 86, 0.7);
-    top: var(--start-top);
-    left: var(--start-left);
-    animation: float-generic 11s ease-in-out infinite alternate;
-    animation-delay: var(--delay);
+    width: 80vw; height: 80vw;
+    --blob-color: rgba(31, 52, 86, 0.6);
+    /* 基础动画时长，JS会在此基础上微调 */
+    animation-duration: 18s, 23s, 6s; 
   }
 
   /* 紫色光斑 */
   .blob-2 {
-    width: 50vw;
-    height: 50vw;
-    background: rgba(49, 30, 79, 0.65);
-    top: var(--start-top);
-    left: var(--start-left);
-    animation: float-generic 7s ease-in-out infinite alternate;
-    animation-delay: var(--delay);
+    width: 60vw; height: 60vw;
+    --blob-color: rgba(49, 30, 79, 0.55);
+    animation-duration: 22s, 17s, 5s;
   }
 
   /* 青绿色光斑 */
   .blob-3 {
-    width: 45vw;
-    height: 45vw;
-    background: rgba(21, 59, 55, 0.6);
-    top: var(--start-top);
-    left: var(--start-left);
-    animation: float-generic 5s ease-in-out infinite alternate;
-    animation-delay: var(--delay);
+    width: 42vw; height: 42vw;
+    --blob-color: rgba(21, 59, 55, 0.5);
+    animation-duration: 15s, 25s, 7s;
   }
 
-  /* 柔光遮罩：模拟原 backdrop-filter 产生的整体雾化感 */
+  /* X轴水平游动 */
+  @keyframes floatX {
+    from { margin-left: calc(var(--range-x) * -1); }
+    to { margin-left: var(--range-x); }
+  }
+
+  /* Y轴垂直游动 */
+  @keyframes floatY {
+    from { margin-top: calc(var(--range-y) * -1); }
+    to { margin-top: var(--range-y); }
+  }
+
+  /* 增加一个轻微的呼吸缩放效果，更有生命力 */
+  @keyframes breathe {
+    0% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.8; }
+    100% { transform: translate(-50%, -50%) scale(1.05); opacity: 0.9; }
+  }
+
   .vignette {
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.2) 90%);
-    backdrop-filter: blur(20px);  /* 轻量级模糊，即使偶尔失效也不影响主体 */
-    -webkit-backdrop-filter: blur(20px);
+    background: radial-gradient(circle at center, transparent 20%, rgba(0,0,0,0.25) 95%);
     pointer-events: none;
     z-index: 1;
-  }
-
-  @keyframes float-generic {
-    0% {
-      transform: translate(-50%, -50%) scale(1);
-    }
-    100% {
-      transform: translate(calc(-50% + var(--move-x)), calc(-50% + var(--move-y))) scale(1.15);
-    }
   }
 </style>
 
 <script is:inline>
+  let initialized = false;
+
   function randomizeBlobs() {
+    if (initialized) return;
+    initialized = true;
+
     const blobs = document.querySelectorAll('.glow-blob');
+    
     blobs.forEach(blob => {
-      blob.style.opacity = '0';
+      // 获取元素的实际渲染尺寸（vw单位需要换算成px才能精确计算边界）
+      const rect = blob.getBoundingClientRect();
+      const blobRadius = Math.max(rect.width, rect.height) / 2;
+      
+      // 计算安全活动范围：屏幕一半减去光斑半径，再乘以 0.8 留出一点边距
+      const maxMoveX = (window.innerWidth / 2 - blobRadius) * 0.8;
+      const maxMoveY = (window.innerHeight / 2 - blobRadius) * 0.8;
 
-      const startTop = 10 + Math.random() * 80;
-      const startLeft = 10 + Math.random() * 80;
-      const moveX = (Math.random() - 0.5) * 80 + 'vw';
-      const moveY = (Math.random() - 0.5) * 80 + 'vh';
-      const delay = Math.random() * 1 + 's';
+      // 设置 CSS 变量，作为 margin 偏移的最大距离
+      blob.style.setProperty('--range-x', `${Math.max(20, maxMoveX)}px`);
+      blob.style.setProperty('--range-y', `${Math.max(20, maxMoveY)}px`);
 
-      blob.style.setProperty('--start-top', `${startTop}%`);
-      blob.style.setProperty('--start-left', `${startLeft}%`);
-      blob.style.setProperty('--move-x', moveX);
-      blob.style.setProperty('--move-y', moveY);
-      blob.style.setProperty('--delay', delay);
-
-      setTimeout(() => {
-        blob.style.opacity = '0.85';
-      }, 50);
+      // 随机设定初始位置（保持在屏幕中间 60% 的区域内）
+      const startTop = 20 + Math.random() * 60 + '%';
+      const startLeft = 20 + Math.random() * 60 + '%';
+      blob.style.top = startTop;
+      blob.style.left = startLeft;
     });
   }
 
-  document.addEventListener('astro:after-swap', randomizeBlobs);
-  document.addEventListener('DOMContentLoaded', randomizeBlobs);
+  // Astro 环境下的稳健监听
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    randomizeBlobs();
+  } else {
+    document.addEventListener('DOMContentLoaded', randomizeBlobs);
+  }
+
+  document.addEventListener('astro:after-swap', () => {
+    initialized = false;
+    randomizeBlobs();
+  });
+  
+  // 窗口大小改变时重新计算边界，防止出现滚动条
+  window.addEventListener('resize', () => {
+     initialized = false;
+     randomizeBlobs();
+  });
 </script>
