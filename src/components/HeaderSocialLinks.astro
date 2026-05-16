@@ -1,0 +1,27 @@
+---
+import HeaderLink from "./HeaderLink.astro";
+import Icon from "./Icon.astro";
+---
+<div class="social-links">
+    <HeaderLink href="https://space.bilibili.com/1454195719" target="_blank">
+        <span class="sr-only">我的bilibili账号</span>
+        <Icon name='bilibili'>
+    </HeaderLink>
+    <HeaderLink href="https://user.qzone.qq.com/2931139019" target="_blank">
+        <span class="sr-only">我的qq空间</span>
+        <Icon name='qq'>
+    </HeaderLink>
+    <HeaderLink href="https://github.com/user1-cloud" target="_blank">
+        <span class="sr-only">我的GitHub</span>
+        <Icon name='github'>
+    </HeaderLink>
+</div>
+
+<style>
+	.social-links {
+		display: flex;
+		justify-content: center;
+		gap: 0.5em;
+        margin-top: 0.5em;
+	}
+</style>
