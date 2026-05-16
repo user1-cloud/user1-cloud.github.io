@@ -21,55 +21,55 @@
     position: absolute;
     border-radius: 50%;
     z-index: 0;
-    /* 初始位置由 JS 设定 top/left */
     transform: translate(-50%, -50%);
-    background: radial-gradient(circle, var(--blob-color) 0%, transparent 60%);
-    opacity: 0.85;
-    /* 核心：同时应用 X 和 Y 两个方向的无限循环动画 */
+    /* 核心优化1：增加极大的高斯模糊，让光斑彻底晕开 */
+    filter: blur(80px); 
+    /* 核心优化2：渐变范围扩大到70%，让中心发光区更大 */
+    background: radial-gradient(circle, var(--blob-color) 0%, transparent 70%);
+    opacity: 1; /* 整体不透明度拉满，亮度全靠颜色里的透明度控制 */
     animation-name: floatX, floatY, breathe; 
     animation-iteration-count: infinite, infinite, infinite;
-    animation-direction: alternate, alternate, alternate; /* 来回摆动更平滑 */
-    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1); /* 标准的平滑贝塞尔曲线 */
+    animation-direction: alternate, alternate, alternate;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  /* 蓝色光斑 */
+  /* 蓝色光斑 - 尺寸加大，颜色加深 */
   .blob-1 {
-    width: 80vw; height: 80vw;
-    --blob-color: rgba(31, 52, 86, 0.6);
-    /* 基础动画时长，JS会在此基础上微调 */
+    width: 120vw; height: 120vw;
+    /* 透明度从 0.6 提升到 0.85 */
+    --blob-color: rgba(31, 52, 86, 0.85);
     animation-duration: 18s, 23s, 6s; 
   }
 
-  /* 紫色光斑 */
+  /* 紫色光斑 - 尺寸加大，颜色加深 */
   .blob-2 {
-    width: 60vw; height: 60vw;
-    --blob-color: rgba(49, 30, 79, 0.55);
+    width: 90vw; height: 90vw;
+    /* 透明度从 0.55 提升到 0.8 */
+    --blob-color: rgba(49, 30, 79, 0.8);
     animation-duration: 22s, 17s, 5s;
   }
 
-  /* 青绿色光斑 */
+  /* 青绿色光斑 - 尺寸加大，颜色加深 */
   .blob-3 {
-    width: 42vw; height: 42vw;
-    --blob-color: rgba(21, 59, 55, 0.5);
+    width: 70vw; height: 70vw;
+    /* 透明度从 0.5 提升到 0.75 */
+    --blob-color: rgba(21, 59, 55, 0.75);
     animation-duration: 15s, 25s, 7s;
   }
 
-  /* X轴水平游动 */
   @keyframes floatX {
     from { margin-left: calc(var(--range-x) * -1); }
     to { margin-left: var(--range-x); }
   }
 
-  /* Y轴垂直游动 */
   @keyframes floatY {
     from { margin-top: calc(var(--range-y) * -1); }
     to { margin-top: var(--range-y); }
   }
 
-  /* 增加一个轻微的呼吸缩放效果，更有生命力 */
   @keyframes breathe {
-    0% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.8; }
-    100% { transform: translate(-50%, -50%) scale(1.05); opacity: 0.9; }
+    0% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.9; }
+    100% { transform: translate(-50%, -50%) scale(1.05); opacity: 1; }
   }
 
   .vignette {
