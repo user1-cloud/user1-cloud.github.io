@@ -1,112 +1,102 @@
-# 网页自述
+# 个人博客
 
-这是一个基于 **Astro** 构建的静态网站项目，用于搭建个人博客、作品集或内容展示平台，追求极致的性能与简洁的开发体验。
+基于 **Astro** 构建的静态个人博客，追求极致的性能与简洁的开发体验。
 
 ---
 
-## 项目特点
-- 基于 **Astro**：默认零 JavaScript，页面加载速度极快，SEO 友好
-- 使用 **pnpm** 包管理器，依赖安装快、磁盘占用低
-- 支持 Markdown / MDX 内容写作，轻松管理博客文章
-- 内置 TypeScript 支持，类型安全更省心
-- 静态站点构建，可直接部署到 GitHub Pages、Vercel、Netlify 等平台
+## 功能特性
+
+- **模糊搜索**：Ctrl+K 唤起搜索弹窗，基于 Fuse.js 模糊匹配，搜索结果高亮关键词
+- **分类与标签**：按文件夹层级自动分类（dir1/dir2），支持标签筛选与标签云页面
+- **暗色主题**：全局暗色配色，自定义 CSS 变量
+- **响应式布局**：自适应桌面端与移动端
+- **文章内目录**：右侧可折叠侧边栏，自动生成二级目录（h2/h3），滚动时高亮当前章节，折叠状态持久化到 localStorage
+- **Boids 背景动画**：首页粒子群集动画
+- **KaTeX 数学公式**：支持 LaTeX 数学公式渲染
+- **JSON-LD 结构化数据**：BlogPosting、BreadcrumbList、WebSite 等，SEO 友好
+- **RSS 订阅**：自动生成 `/rss.xml`
+- **robots.txt**：已配置搜索引擎爬取规则
+- **GitHub Pages 自动部署**：推送 master 分支自动构建部署
 
 ---
 
 ## 项目结构
+
 ```text
 /
-├── .codesandbox/            # CodeSandbox 在线环境配置（非必需）
-├── .github/                 # GitHub 相关配置（CI/CD、Issue模板等）
-├── .vscode/                 # VS Code 编辑器配置（推荐插件、设置）
-├── public/                  # 静态资源目录（不会被 Astro 处理，直接原样输出）
-│   └── favicon.ico          # 网站图标等放这里
-├── src/                     # 项目核心源码目录
-│   ├── assets/              # 静态资源（会被 Astro 处理，如图片、字体等）
-│   ├── components/          # Astro/React/Vue 等组件目录（可复用的 UI 组件）
-│   ├── content/             # 内容集合（Astro Content Collections，存放 Markdown/MDX 博客文章）
-│   │   └── blog/            # 博客文章目录（所有 .md/.mdx 文件都在这里）
-│   ├── layouts/             # 布局组件（可复用的页面布局，如 BaseLayout、BlogPostLayout）
-│   ├── pages/               # 页面路由目录（文件即路由，如 index.astro → /，blog/[slug].astro → /blog/xxx）
-│   ├── scripts/             # 自定义脚本（客户端交互逻辑、工具函数等）
-│   ├── styles/              # 全局样式文件（CSS/SCSS/PostCSS 等）
-│   ├── consts.ts            # 项目常量配置（如网站标题、作者信息、社交链接）
-│   └── content.config.ts    # Astro 内容集合配置文件（定义博客文章的 schema、类型）
-├── .gitignore               # Git 忽略文件配置
-├── .nojekyll                # 用于 GitHub Pages 部署，禁用 Jekyll 处理
-├── astro.config.mjs         # Astro 项目核心配置文件（站点设置、集成、适配器等）
-├── package.json             # 项目依赖、脚本、元信息配置
-├── pnpm-lock.yaml           # pnpm 依赖版本锁定文件
-├── pnpm-workspace.yaml      # pnpm 工作区配置（ monorepo 场景用，单项目可忽略）
-├── README.md                # 项目说明文档
-└── tsconfig.json            # TypeScript 配置文件
+├── .github/workflows/        # GitHub Actions 自动部署
+├── public/                   # 静态资源（原样输出）
+│   └── favicon.ico
+├── src/
+│   ├── assets/icons/         # SVG 图标文件
+│   ├── components/           # Astro 组件
+│   │   ├── BlogCard.astro    # 博客卡片
+│   │   ├── BlogList.astro    # 博客列表（支持按时间/目录排序）
+│   │   ├── BoidsBackground.astro  # 粒子群集背景动画
+│   │   ├── Header.astro      # 页面头部导航
+│   │   ├── Icon.astro        # SVG 图标组件
+│   │   └── SearchModal.astro # 搜索弹窗
+│   ├── content/blog/         # 博客文章（.md/.mdx，支持子目录分类）
+│   ├── layouts/
+│   │   └── BlogPost.astro    # 全局布局（头部/底部/侧边栏）
+│   ├── pages/                # 路由页面
+│   │   ├── index.astro       # 首页
+│   │   ├── about.astro       # 关于页
+│   │   ├── rss.xml.js        # RSS 订阅源
+│   │   └── blog/             # 博客路由
+│   │       ├── index.astro   # 博客列表页
+│   │       ├── [...slug].astro   # 文章详情页
+│   │       ├── category/     # 分类页面
+│   │       └── tag/          # 标签页面
+│   ├── scripts/              # 客户端脚本
+│   │   ├── search.ts         # 搜索逻辑（Fuse.js 模糊搜索 + 高亮）
+│   │   ├── toc.ts            # 目录生成与滚动高亮
+│   │   └── fade-in-on-scroll.ts  # 滚动渐入动画
+│   ├── styles/               # 全局样式（SCSS + Tailwind CSS）
+│   ├── consts.ts             # 站点常量（标题、描述）
+│   └── content.config.ts     # 内容集合 Schema 定义
+├── astro.config.mjs          # Astro 配置
+├── package.json
+├── tsconfig.json
+└── README.md
 ```
 
 ---
 
 ## 快速开始
 
-### 1. 克隆项目
 ```bash
-git clone https://github.com/user1-cloud/user1-cloud.github.io.git
-cd user1-cloud.github.io
+pnpm install          # 安装依赖
+pnpm run dev          # 启动开发服务器 → http://localhost:4321
+pnpm run build        # 构建生产版本到 dist/
+pnpm run preview      # 本地预览生产构建
 ```
-
-### 2. 安装依赖
-确保已安装 `pnpm`（推荐）：
-```bash
-pnpm install
-```
-
-### 3. 启动开发服务器
-```bash
-pnpm run dev
-```
-开发服务器默认运行在 `http://localhost:4321`，修改代码后会自动刷新页面。
-
-### 4. 构建生产版本
-```bash
-pnpm run build
-```
-构建完成后，静态文件会生成在 `dist/` 目录下，可直接部署到任意静态托管平台。
-
-### 5. 预览构建结果
-```bash
-pnpm run preview
-```
-在本地预览构建好的生产版本，确保部署前一切正常。
 
 ---
 
-## 如何使用
+## 添加博客文章
 
-### 添加博客文章
-在 `src/pages/blog/` 目录下创建 `.md` 或 `.mdx` 文件，使用 Markdown 格式编写文章，Astro 会自动生成对应的路由页面。
+在 `src/content/blog/` 目录下创建 `.md` 文件，可按子目录组织分类：
 
-示例文章头部：
 ```markdown
 ---
 title: "我的第一篇博客"
 description: "记录第一次用 Astro 写博客的感受"
 pubDate: 2026-05-15
-heroImage: ''
+tags: ["教程", "博客"]
 ---
 
-这里是文章正文内容...
+文章正文...
 ```
 
-### 修改网站配置
-编辑 `astro.config.mjs` 文件，可配置网站基础路径、集成插件、渲染选项等。
+- `title`（必填）：文章标题
+- `description`（必填）：文章简介
+- `pubDate`（必填）：发布日期
+- `tags`（可选）：标签列表
+- `dir1` / `dir2`（可选）：自定义分类层级，不填则自动取文件路径的前两级目录
 
 ---
 
-## 部署指南
-### GitHub Pages 部署
-项目已包含 `.github/` 目录，可通过 GitHub Actions 自动部署：
-1. 在仓库设置中开启 GitHub Pages
-2. 配置 Actions 部署工作流（已预设）
-3. 每次推送到 `master` 分支时，自动构建并部署到 Pages
+## 部署
 
-### 其他平台部署
-- **Vercel**：直接关联 GitHub 仓库，自动识别 Astro 项目并部署
-- **Netlify**：关联仓库后，设置构建命令为 `pnpm run build`，输出目录为 `dist/`
+推送 `master` 分支到 GitHub，Actions 自动构建并部署到 GitHub Pages。
