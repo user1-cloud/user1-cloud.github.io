@@ -2,6 +2,7 @@
 import { SITE_TITLE } from '../consts';
 import HeaderLink from './HeaderLink.astro';
 import HeaderSocialLinks from '../components/HeaderSocialLinks.astro'
+import Icon from './Icon.astro';
 ---
 
 <header>
@@ -13,8 +14,15 @@ import HeaderSocialLinks from '../components/HeaderSocialLinks.astro'
 			<HeaderLink href="/about">关于</HeaderLink>
 		</div>
 
-		<div id="header-social">
-			<HeaderSocialLinks/>
+		<div id="header-actions">
+			<button id="search-trigger-btn" class="search-trigger-btn"
+				aria-label="搜索文章 (Ctrl+K)" title="搜索 (Ctrl+K)" type="button">
+				<Icon name="search" />
+				<span class="search-kbd-hint">Ctrl+K</span>
+			</button>
+			<div id="header-social">
+				<HeaderSocialLinks/>
+			</div>
 		</div>
 	</nav>
 </header>
@@ -41,6 +49,45 @@ import HeaderSocialLinks from '../components/HeaderSocialLinks.astro'
 		display: flex;
 		gap: 0.5rem;
 		white-space: nowrap;
+	}
+
+	#header-actions {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+	.search-trigger-btn {
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+		background: transparent;
+		border: 1px solid var(--border);
+		border-radius: 8px;
+		padding: 4px 10px;
+		color: var(--foreground-dark);
+		cursor: pointer;
+		font-size: 0.85rem;
+		font-family: inherit;
+		transition: all 0.2s ease;
+		white-space: nowrap;
+	}
+
+	.search-trigger-btn:hover {
+		border-color: var(--accent);
+		color: var(--foreground);
+	}
+
+	.search-kbd-hint {
+		font-size: 0.7rem;
+		color: var(--foreground-dark);
+		opacity: 0.6;
+	}
+
+	@media (max-width: 640px) {
+		.search-kbd-hint {
+			display: none;
+		}
 	}
 
 	/* 使用 id 选择器 #header-social */

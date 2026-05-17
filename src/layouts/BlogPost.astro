@@ -8,6 +8,7 @@ import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 
 import BoidsBackground from '../components/BoidsBackground.astro';
+import SearchModal from '../components/SearchModal.astro';
 
 // 专用css，放在BaseHead引用之后
 import '../styles/blog-post.scss';
@@ -76,6 +77,8 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 		</button>
 
 		<BoidsBackground/>
+
+		<SearchModal />
 
 		<!-- 目录生成脚本  -->
 		<script src="../scripts/toc"></script>
