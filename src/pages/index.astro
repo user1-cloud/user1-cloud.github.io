@@ -1,6 +1,15 @@
 ---
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 import Layout from '../layouts/BlogPost.astro';
+import JsonLd from '../components/JsonLd.astro';
+
+const websiteLd = {
+	'@context': 'https://schema.org',
+	'@type': 'WebSite',
+	name: SITE_TITLE,
+	description: SITE_DESCRIPTION,
+	url: new URL('/', Astro.site).href,
+};
 ---
 
 <Layout
@@ -8,6 +17,8 @@ import Layout from '../layouts/BlogPost.astro';
 	description={SITE_DESCRIPTION}
 	pubDate={new Date()}
 >
+	<JsonLd slot="head" data={websiteLd} />
+
 	<p>
 		你好！我是user1-cloud，欢迎来到我的个人主页。
 	</p>

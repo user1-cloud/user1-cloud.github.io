@@ -1,6 +1,15 @@
 ---
 import Layout from '../../layouts/BlogPost.astro';
 import BlogList from '../../components/BlogList.astro';
+import JsonLd from '../../components/JsonLd.astro';
+
+const collectionPageLd = {
+	'@context': 'https://schema.org',
+	'@type': 'CollectionPage',
+	name: '博客目录',
+	description: '这里可以看到我的所有博客和文章',
+	url: new URL('/blog/', Astro.site).href,
+};
 ---
 
 <Layout
@@ -8,6 +17,8 @@ import BlogList from '../../components/BlogList.astro';
 	description="这里可以看到我的所有博客和文章"
 	pubDate={new Date()}
 >
+	<JsonLd slot="head" data={collectionPageLd} />
+
 	<BlogList sort="dir" 
 	dirOrder={{
     dir1: ['最新博客一览', '程序', '数学', '小说', '未分类'],

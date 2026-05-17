@@ -2,13 +2,16 @@
 import { getCollection } from 'astro:content';
 
 const posts = await getCollection('blog');
-const searchData = posts.map((post) => ({
-  title: post.data.title,
-  description: post.data.description.replace(/<[^>]+>/g, ''),
-  dir1: post.data.dir1 ?? '',
-  dir2: post.data.dir2 ?? '',
-  slug: post.id,
-}));
+const searchData = posts.map((post) => {
+  const pathSegments = post.id.split('/');
+  return {
+    title: post.data.title,
+    description: post.data.description.replace(/<[^>]+>/g, ''),
+    dir1: post.data.dir1 || (pathSegments.length >= 2 ? pathSegments[0] : ''),
+    dir2: post.data.dir2 || (pathSegments.length >= 3 ? pathSegments[1] : ''),
+    slug: post.id,
+  };
+});
 ---
 
 <script define:vars={{ searchData }}>
