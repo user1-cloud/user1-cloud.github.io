@@ -16,7 +16,7 @@ const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
 @use '../styles/global.scss' as *; 
 a {
 	/* 基础样式 */
-	color: var(--text-color, #e0e0e0);
+	color: var(--header-link-text);
 	text-decoration: none;
 	padding: 8px 14px;
 	position: relative;
@@ -32,7 +32,7 @@ a {
 
 	/* 悬停 */
 	&:hover {
-		color: #ffffff;
+		color: var(--header-link-hover);
 	}
 	
 	/* 激活 */

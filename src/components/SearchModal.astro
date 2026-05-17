@@ -60,7 +60,7 @@ const searchData = posts.map((post) => {
   }
 
   .search-modal::backdrop {
-    background: rgba(0, 0, 10, 0.8);
+    background: rgba(var(--backdrop-rgb), 0.8);
     backdrop-filter: blur(4px);
     animation: search-backdrop-in 0.15s ease-out;
   }
@@ -183,7 +183,7 @@ const searchData = posts.map((post) => {
     font-size: 0.7rem;
     font-weight: 500;
     color: var(--accent);
-    background: rgba(97, 123, 255, 0.12);
+    background: rgba(var(--accent-rgb), 0.12);
     padding: 2px 10px;
     border-radius: 999px;
     margin-bottom: 0.45rem;
@@ -203,7 +203,7 @@ const searchData = posts.map((post) => {
 
   :global(.search-highlight) {
     color: var(--accent-light);
-    background: rgba(97, 123, 255, 0.2);
+    background: rgba(var(--accent-rgb), 0.2);
     border-radius: 2px;
     padding: 0 1px;
   }

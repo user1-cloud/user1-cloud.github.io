@@ -65,15 +65,15 @@ const pageLd = {
     padding: 6px 16px;
     font-size: 0.9rem;
     color: var(--accent-light);
-    background: rgba(97, 123, 255, 0.08);
-    border: 1px solid rgba(97, 123, 255, 0.25);
+    background: rgba(var(--accent-rgb), 0.08);
+    border: 1px solid rgba(var(--accent-rgb), 0.25);
     border-radius: 999px;
     text-decoration: none;
     transition: all 0.2s ease;
   }
 
   .tag-cloud-item:hover {
-    background: rgba(97, 123, 255, 0.18);
+    background: rgba(var(--accent-rgb), 0.18);
     border-color: var(--accent);
     transform: translateY(-2px);
   }
@@ -81,7 +81,7 @@ const pageLd = {
   .tag-count {
     font-size: 0.75rem;
     color: var(--foreground-dark);
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--tag-count-bg);
     border-radius: 999px;
     padding: 1px 7px;
     min-width: 1.4em;

@@ -63,22 +63,22 @@ const safeUrl = initialUrl ? validateUrl(initialUrl) : 'https://example.com';
 
 <style>
   .mini-browser {
-    background-color: #1e1e1e;
+    background-color: var(--browser-bg);
     border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    box-shadow: var(--browser-shadow);
     overflow: hidden;
     display: flex;
     flex-direction: column;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    border: 1px solid #333;
+    border: 1px solid var(--browser-border);
   }
 
   .browser-chrome {
-    background: linear-gradient(to bottom, #2d2d2d, #252525);
+    background: linear-gradient(to bottom, var(--browser-chrome-top), var(--browser-chrome-bottom));
     padding: 8px 16px;
     display: flex;
     align-items: center;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid var(--browser-border);
     height: 48px;
   }
 
@@ -115,11 +115,11 @@ const safeUrl = initialUrl ? validateUrl(initialUrl) : 'https://example.com';
 
   .url-input {
     flex: 1;
-    min-width: 300px; /* 确保URL输入框足够长 */
-    background: #2d2d2d;
-    border: 1px solid #444;
+    min-width: 300px;
+    background: var(--browser-input-bg);
+    border: 1px solid var(--browser-input-border);
     border-radius: 4px;
-    color: #fff;
+    color: var(--browser-text);
     padding: 8px 12px;
     font-size: 14px;
     outline: none;
@@ -127,17 +127,17 @@ const safeUrl = initialUrl ? validateUrl(initialUrl) : 'https://example.com';
   }
 
   .url-input:focus {
-    border-color: #646cff;
-    box-shadow: 0 0 0 2px rgba(100, 108, 255, 0.3);
+    border-color: var(--browser-accent);
+    box-shadow: 0 0 0 2px rgba(var(--browser-accent-rgb), 0.3);
   }
 
   .url-input::placeholder {
-    color: #888;
+    color: var(--browser-placeholder);
   }
 
   .go-btn {
-    background: #646cff;
-    color: white;
+    background: var(--browser-accent);
+    color: var(--browser-text);
     border: none;
     border-radius: 4px;
     padding: 8px 16px;
@@ -149,7 +149,7 @@ const safeUrl = initialUrl ? validateUrl(initialUrl) : 'https://example.com';
   }
 
   .go-btn:hover {
-    background: #535bf2;
+    background: var(--browser-accent-hover);
     transform: translateY(-1px);
   }
 
@@ -165,7 +165,7 @@ const safeUrl = initialUrl ? validateUrl(initialUrl) : 'https://example.com';
   .browser-frame {
     width: 100%;
     height: 100%;
-    background-color: #161616;
+    background-color: var(--browser-frame-bg);
     border: none;
   }
 

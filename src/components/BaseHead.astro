@@ -61,3 +61,12 @@ if (image) {
 {imageURL && <meta property="twitter:image" content={imageURL} />}
 
 <ClientRouter fallback="animate" />
+
+<script is:inline>
+  (function() {
+    var theme = localStorage.getItem('blog-theme');
+    if (theme && ['dark-blue','dark-green','dark-purple'].indexOf(theme) !== -1) {
+      document.documentElement.setAttribute('data-theme', theme);
+    }
+  })();
+</script>

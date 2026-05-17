@@ -37,7 +37,7 @@
   .blob-1 {
     width: 120vw; height: 120vw;
     /* 透明度从 0.6 提升到 0.85 */
-    --blob-color: rgba(31, 52, 86, 0.85);
+    --blob-color: var(--blob-1);
     animation-duration: 18s, 23s, 6s; 
   }
 
@@ -45,7 +45,7 @@
   .blob-2 {
     width: 90vw; height: 90vw;
     /* 透明度从 0.55 提升到 0.8 */
-    --blob-color: rgba(49, 30, 79, 0.8);
+    --blob-color: var(--blob-2);
     animation-duration: 22s, 17s, 5s;
   }
 
@@ -53,7 +53,7 @@
   .blob-3 {
     width: 70vw; height: 70vw;
     /* 透明度从 0.5 提升到 0.75 */
-    --blob-color: rgba(21, 59, 55, 0.75);
+    --blob-color: var(--blob-3);
     animation-duration: 15s, 25s, 7s;
   }
 
@@ -75,7 +75,7 @@
   .vignette {
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at center, transparent 20%, rgba(0,0,0,0.25) 95%);
+    background: radial-gradient(circle at center, transparent 20%, var(--vignette-color) 95%);
     pointer-events: none;
     z-index: 1;
   }

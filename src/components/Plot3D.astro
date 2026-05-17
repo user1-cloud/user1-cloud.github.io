@@ -52,11 +52,11 @@ const plotId = "plot-" + Math.random().toString(36).slice(2);
 <!-- 1. 提前加载 Plotly，只加载一次，不阻塞渲染 -->
 <script src="https://cdn.plot.ly/plotly-latest.min.js" async></script>
 
-<div id={plotId} style={{
+<div id={plotId} class="plot-container" style={{
   width: `${width}px`,
   height: `${height}px`,
   margin: '1rem 0',
-  border: '1px solid #ddd',
+  border: '1px solid var(--plot-border)',
 }}></div>
 
 <script define:vars={{
@@ -92,20 +92,24 @@ const plotId = "plot-" + Math.random().toString(36).slice(2);
       displaylogo: false,
     };
 
+    const rootStyles = getComputedStyle(document.documentElement);
+    const plotBg = rootStyles.getPropertyValue('--plot-bg').trim() || '#121417';
+    const axisColor = rootStyles.getPropertyValue('--plot-axis-color').trim() || '#ffffff';
+
     const layout = {
       showlegend: false,
       autosize: true,
       margin: { l: 0, r: 0, t: 0, b: 0 },
       scene: {
-        xaxis: { visible: true, color: "#ffffff" },
-        yaxis: { visible: true, color: "#ffffff" },
-        zaxis: { visible: true, color: "#ffffff" },
-        bgcolor: "#121417",
+        xaxis: { visible: true, color: axisColor },
+        yaxis: { visible: true, color: axisColor },
+        zaxis: { visible: true, color: axisColor },
+        bgcolor: plotBg,
         domain: { x: [0, 1], y: [0, 1] },
         aspectmode: "data"
       },
-      paper_bgcolor: "#121417",
-      plot_bgcolor: "#121417"
+      paper_bgcolor: plotBg,
+      plot_bgcolor: plotBg
     };
 
     try {

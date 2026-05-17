@@ -1,0 +1,95 @@
+/* ===== 暗绿主题 ===== */
+
+html[data-theme="dark-green"] {
+  /* —— 背景系 —— */
+  --background: #001a14;
+  --background-dark: #000a08;
+  --background-light: #052e24;
+
+  /* —— 主强调翠绿 —— */
+  --accent: #34d399;
+  --accent-dark: #10b981;
+  --accent-light: #6ee7b7;
+
+  /* —— 文字前景 —— */
+  --foreground: #eaedf3;
+  --foreground-dark: #c9cfdd;
+  --foreground-light: #f2f4f8;
+
+  /* —— 柔和辅助/次要背景 —— */
+  --muted: #0c3d2e;
+  --muted-dark: #082b20;
+  --muted-light: #145238;
+
+  /* —— 边框分割线 —— */
+  --border: #237a4d;
+  --border-dark: #1a5c3a;
+  --border-light: #35996a;
+
+  /* —— RGB 分量 —— */
+  --accent-rgb: 52, 211, 153;
+  --accent-dark-rgb: 16, 185, 129;
+  --accent-light-rgb: 110, 231, 183;
+  --foreground-rgb: 234, 237, 243;
+  --foreground-dark-rgb: 201, 207, 221;
+  --foreground-light-rgb: 242, 244, 248;
+  --background-rgb: 0, 26, 20;
+  --background-dark-rgb: 0, 10, 8;
+  --background-light-rgb: 5, 46, 36;
+  --muted-rgb: 12, 61, 46;
+  --muted-dark-rgb: 8, 43, 32;
+  --muted-light-rgb: 20, 82, 56;
+  --border-rgb: 35, 122, 77;
+  --border-dark-rgb: 26, 92, 58;
+  --border-light-rgb: 53, 153, 106;
+
+  /* —— 阴影 —— */
+  --box-shadow: 0 2px 6px rgba(var(--foreground-dark-rgb), 0.25),
+                0 8px 24px rgba(var(--foreground-dark-rgb), 0.33),
+                0 16px 32px rgba(var(--foreground-dark-rgb), 0.33);
+  --hero-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+
+  /* —— 滚动条 —— */
+  --scrollbar-track: #121a17;
+  --scrollbar-thumb: #5e7a6b;
+
+  /* —— 链接下划线 —— */
+  --link-underline-color: #ffffff;
+
+  /* —— 搜索弹窗 —— */
+  --backdrop-rgb: 0, 0, 10;
+
+  /* —— 标签计数 —— */
+  --tag-count-bg: rgba(255, 255, 255, 0.08);
+
+  /* —— 导航链接 —— */
+  --header-link-text: #e0e0e0;
+  --header-link-hover: #ffffff;
+
+  /* —— MiniBrowser 组件 —— */
+  --browser-bg: #1e1e1e;
+  --browser-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  --browser-border: #333;
+  --browser-chrome-top: #2d2d2d;
+  --browser-chrome-bottom: #252525;
+  --browser-input-bg: #2d2d2d;
+  --browser-input-border: #444;
+  --browser-text: #fff;
+  --browser-placeholder: #888;
+  --browser-frame-bg: #161616;
+  --browser-accent: #34d399;
+  --browser-accent-hover: #10b981;
+  --browser-accent-rgb: 52, 211, 153;
+
+  /* —— Boids 背景光斑 —— */
+  --blob-1: rgba(31, 86, 70, 0.85);
+  --blob-2: rgba(30, 75, 45, 0.8);
+  --blob-3: rgba(21, 55, 52, 0.75);
+  --vignette-color: rgba(0, 0, 0, 0.25);
+
+  /* —— Plot3D 图表 —— */
+  --plot-bg: #121417;
+  --plot-axis-color: #ffffff;
+  --plot-border: #ddd;
+  --plot-default-color: #34d399;
+}
