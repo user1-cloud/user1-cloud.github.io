@@ -77,6 +77,21 @@ function escapeHtml(str: string): string {
   return div.innerHTML;
 }
 
+// ---- Highlight matches ----
+function highlightMatches(value: string, indices?: readonly [number, number][]): string {
+  if (!indices || indices.length === 0) return escapeHtml(value);
+
+  let result = '';
+  let lastEnd = 0;
+  for (const [start, end] of indices) {
+    result += escapeHtml(value.slice(lastEnd, start));
+    result += '<mark class="search-highlight">' + escapeHtml(value.slice(start, end + 1)) + '</mark>';
+    lastEnd = end + 1;
+  }
+  result += escapeHtml(value.slice(lastEnd));
+  return result;
+}
+
 // ---- Truncate text ----
 function truncate(str: string, maxLen: number): string {
   if (str.length <= maxLen) return str;
@@ -107,20 +122,42 @@ function renderResults(): void {
   const list = getResultsList();
   if (!list) return;
 
+  const input = getInput();
+  const hasQuery = input && input.value.trim().length > 0;
+
+  if (!hasQuery) {
+    list.innerHTML = '';
+    return;
+  }
+
   if (results.length === 0) {
     list.innerHTML = '<li class="search-no-results">没有找到相关文章</li>';
   } else {
     list.innerHTML = results
       .map((r, i) => {
         const item = r.item;
-        const category = [item.dir1, item.dir2].filter(Boolean).join(' / ');
+        const matches = r.matches || [];
+
+        const titleMatch = matches.find(m => m.key === 'title');
+        const descMatch = matches.find(m => m.key === 'description');
+        const dir1Match = matches.find(m => m.key === 'dir1');
+        const dir2Match = matches.find(m => m.key === 'dir2');
+
+        const titleHtml = highlightMatches(item.title, titleMatch?.indices);
+        const descHtml = highlightMatches(truncate(item.description, 200), descMatch?.indices);
+
+        const categoryParts: string[] = [];
+        if (item.dir1) categoryParts.push(highlightMatches(item.dir1, dir1Match?.indices));
+        if (item.dir2) categoryParts.push(highlightMatches(item.dir2, dir2Match?.indices));
+        const categoryHtml = categoryParts.join(' / ');
+
         const cls = i === selectedIndex ? 'search-result-item selected' : 'search-result-item';
         return `
         <li class="${cls}" data-index="${i}" role="option" aria-selected="${i === selectedIndex}">
           <a href="${buildPostUrl(item.slug)}" class="search-result-link" data-index="${i}">
-            <span class="search-result-title">${escapeHtml(item.title)}</span>
-            ${category ? `<span class="search-result-category">${escapeHtml(category)}</span>` : ''}
-            <span class="search-result-desc">${escapeHtml(truncate(item.description, 100))}</span>
+            <span class="search-result-title">${titleHtml}</span>
+            ${categoryHtml ? `<span class="search-result-category">${categoryHtml}</span>` : ''}
+            <span class="search-result-desc">${descHtml}</span>
           </a>
         </li>`;
       })
