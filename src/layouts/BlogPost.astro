@@ -14,7 +14,7 @@ import SearchModal from '../components/SearchModal.astro';
 import '../styles/blog-post.scss';
 
 type Props = CollectionEntry<'blog'>['data'];
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, dir1, dir2, tags = [] } = Astro.props;
 ---
 
 <html lang="zh-cn" class="sidebar-collapsed">
@@ -46,6 +46,23 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 									)}
 								</div>
 								<h1>{title}</h1>
+								{(dir1 || tags.length > 0) && (
+									<div class="post-meta">
+										{dir1 && (
+											<span class="post-category">
+												分类：<a href={`/blog/category/${dir1}/`}>{dir1}</a>
+												{dir2 && <span> / <a href={`/blog/category/${dir1}/${dir2}/`}>{dir2}</a></span>}
+											</span>
+										)}
+										{tags.length > 0 && (
+											<span class="post-tags">
+												{tags.map(tag => (
+													<a href={`/blog/tag/${encodeURIComponent(tag)}/`} class="tag-pill">{tag}</a>
+												))}
+											</span>
+										)}
+									</div>
+								)}
 								<hr />
 							</div>
 							<slot />
@@ -85,7 +102,7 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 		<script src="../scripts/toc"></script>
 		<!-- 滚动渐现效果 -->
 		<script src="../scripts/fade-in-on-scroll"></script>
-		
+
 		<script>
 			function initSidebar() {
 				const storageKey = 'blog-sidebar-collapsed';
@@ -94,7 +111,7 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 
 				// 1. 每次都重新读取 localStorage 状态
 				const savedState = localStorage.getItem(storageKey);
-				const isCollapsed = savedState === 'true' || savedState === null; 
+				const isCollapsed = savedState === 'true' || savedState === null;
 
 				// 2. 强制同步状态到页面
 				if (isCollapsed) {

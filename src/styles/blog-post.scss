@@ -67,6 +67,52 @@
   .last-updated-on {
     font-style: italic;
   }
+	.post-meta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
+		gap: 0.75rem;
+		margin: 0.75rem 0 0 0;
+		font-size: 0.9rem;
+	}
+
+	.post-category {
+		color: var(--foreground-dark);
+	}
+
+	.post-category a {
+		color: var(--accent-light);
+		text-decoration: none;
+	}
+
+	.post-category a:hover {
+		text-decoration: underline;
+	}
+
+	.post-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+	}
+
+	.tag-pill {
+		display: inline-block;
+		padding: 2px 10px;
+		font-size: 0.75rem;
+		color: var(--accent-light);
+		background: rgba(97, 123, 255, 0.12);
+		border: 1px solid rgba(97, 123, 255, 0.25);
+		border-radius: 999px;
+		text-decoration: none;
+		transition: background 0.2s ease, border-color 0.2s ease;
+		white-space: nowrap;
+	}
+
+	.tag-pill:hover {
+		background: rgba(97, 123, 255, 0.22);
+		border-color: var(--accent);
+	}
 
   /* ========= 右侧可折叠侧边栏 ========= */
   .right-sidebar {

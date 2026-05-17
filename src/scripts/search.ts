@@ -5,6 +5,7 @@ interface SearchItem {
   description: string;
   dir1: string;
   dir2: string;
+  tags: string;
   slug: string;
 }
 
@@ -24,8 +25,9 @@ function initFuse(data: SearchItem[]): Fuse<SearchItem> {
     keys: [
       { name: 'title', weight: 0.4 },
       { name: 'description', weight: 0.3 },
-      { name: 'dir1', weight: 0.15 },
-      { name: 'dir2', weight: 0.15 },
+      { name: 'dir1', weight: 0.1 },
+      { name: 'dir2', weight: 0.1 },
+      { name: 'tags', weight: 0.1 },
     ],
     threshold: 0.4,
     minMatchCharLength: 1,

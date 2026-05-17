@@ -3,6 +3,7 @@ title: 'VS Code Markdown 环境部署完整教程'
 description: 'VS Code 原生支持 Markdown 基础语法高亮，但缺少实时预览、自动排版、目录生成、公式与流程图渲染、图片快捷插入、文件导出等实用功能。'
 pubDate: '2026-4-25'
 heroImage: ''
+tags: ['VS Code', 'Markdown', '教程', '环境配置']
 ---
 
 # VS Code Markdown 环境部署教程

@@ -4,8 +4,8 @@ import { z } from 'astro/zod';
 
 const blog = defineCollection({
 	// Load Markdown and MDX files in the `src/content/blog/` directory.
-	loader: glob({ 
-		base: './src/content/blog', 
+	loader: glob({
+		base: './src/content/blog',
 		pattern: '**/*.{md,mdx}',
 	}),
 	// Type-check frontmatter using a schema
@@ -20,6 +20,7 @@ const blog = defineCollection({
 
 			dir1: z.string().optional(), // 一级目录
 			dir2: z.string().optional(), // 二级目录
+			tags: z.array(z.string()).default([]), // 标签
 		}),
 });
 

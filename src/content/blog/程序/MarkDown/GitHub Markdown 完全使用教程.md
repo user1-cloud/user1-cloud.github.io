@@ -3,6 +3,7 @@ title: 'GitHub Markdown 完全使用教程'
 description: '本文<strong>完全基于 GitHub 原生支持的 Markdown 语法</strong>，从基础到高级，包含<strong>完整使用方法、示例代码、渲染效果</strong>，是 GitHub 文档、README、Issue、PR、Discussions 通用标准教程。<hr>存在部分<ins>本网站不兼容</ins>的写法'
 pubDate: '4 24 2026'
 heroImage: ''
+tags: ['GitHub', 'Markdown', '教程']
 ---
 
 # GitHub Markdown 完全使用教程

@@ -62,6 +62,7 @@ const blogPostingLd = {
 		'@type': 'WebPage',
 		'@id': postUrl,
 	},
+	...(post.data.tags.length > 0 && { keywords: post.data.tags.join(', ') }),
 };
 
 const breadcrumbLd = {

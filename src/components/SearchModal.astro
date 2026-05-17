@@ -9,6 +9,7 @@ const searchData = posts.map((post) => {
     description: post.data.description.replace(/<[^>]+>/g, ''),
     dir1: post.data.dir1 || (pathSegments.length >= 2 ? pathSegments[0] : ''),
     dir2: post.data.dir2 || (pathSegments.length >= 3 ? pathSegments[1] : ''),
+    tags: (post.data.tags || []).join(', '),
     slug: post.id,
   };
 });

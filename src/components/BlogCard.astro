@@ -14,7 +14,7 @@ const { post, level = 3 } = Astro.props;
 ---
 
 <style lang="scss">
-@use '../styles/global.scss' as *; 
+@use '../styles/global.scss' as *;
 
 .blog-card {
     @include link-underline;
@@ -71,6 +71,29 @@ const { post, level = 3 } = Astro.props;
     font-size: 0.75rem;
     opacity: 0.6;
 }
+
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.card-tag {
+  display: inline-block;
+  padding: 1px 7px;
+  font-size: 0.7rem;
+  color: var(--accent-light);
+  background: rgba(97, 123, 255, 0.1);
+  border: 1px solid rgba(97, 123, 255, 0.2);
+  border-radius: 999px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.2s ease;
+}
+
+.card-tag:hover {
+  background: rgba(97, 123, 255, 0.2);
+}
 </style>
 
 <article class="blog-card fade-left-on-scroll">
@@ -91,6 +114,13 @@ const { post, level = 3 } = Astro.props;
         <h3 class="card-title mk-title">{post.data.title}</h3>
       )}
       <p class="card-description">{post.data.description.replace(/<[^>]+>/g, '')}</p>
+      {post.data.tags.length > 0 && (
+        <div class="card-tags">
+          {post.data.tags.map(tag => (
+            <span class="card-tag">{tag}</span>
+          ))}
+        </div>
+      )}
       <p class="card-date">
         <FormattedDate date={post.data.pubDate} />
       </p>

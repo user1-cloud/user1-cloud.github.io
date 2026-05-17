@@ -8,10 +8,11 @@ interface Props {
     dir1: string[];
     dir2: Record<string, string[]>;
   };
+  posts?: CollectionEntry<'blog'>[];
 }
 
-const { sort = 'time', dirOrder = { dir1: [], dir2: {} } } = Astro.props;
-let posts = await getCollection('blog');
+const { sort = 'time', dirOrder = { dir1: [], dir2: {} }, posts: externalPosts } = Astro.props;
+let posts = externalPosts ?? await getCollection('blog');
 
 posts = posts.map(post => {
   const pathParts = post.id.split('/');
@@ -57,7 +58,7 @@ if (sort === 'dir') {
       }
     }
 
-    // 2. ✅ 关键修复：自动渲染没有二级目录的文章（dir2 = ""）
+    // 2. 自动渲染没有二级目录的文章（dir2 = ""）
     if (dir2Map[""]) {
       const sortedPosts = dir2Map[""].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
       dir2List.push(["", sortedPosts]);
@@ -85,8 +86,8 @@ if (sort === 'dir') {
 <main>
   {sort === 'time' ? (
     <>
-      <h2 class="mk-title">近期博客一览</h2>
-      <br />
+      {!externalPosts && <h2 class="mk-title">近期博客一览</h2>}
+      {!externalPosts && <br />}
       <ul class="card-grid">
         {posts.map((post) => <BlogCard post={post} />)}
       </ul>
