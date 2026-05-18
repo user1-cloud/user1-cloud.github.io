@@ -1,8 +1,8 @@
 import { defineEcConfig } from 'astro-expressive-code';
 
 export default defineEcConfig({
-  themes: ['github-dark'],
-  useDarkModeMediaQuery: false,
+  themes: ['github-dark', 'github-light'],
+  useDarkModeMediaQuery: 'html[data-theme^="light"]',
 
   styleOverrides: {
     borderRadius: '8px',

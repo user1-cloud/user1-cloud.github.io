@@ -65,8 +65,17 @@ if (image) {
 <script is:inline>
   (function() {
     var theme = localStorage.getItem('blog-theme');
-    if (theme && ['dark-blue','dark-green','dark-purple'].indexOf(theme) !== -1) {
+    var validThemes = ['dark-blue','dark-green','dark-purple','light-blue','light-green','light-rose'];
+    if (theme && validThemes.indexOf(theme) !== -1) {
       document.documentElement.setAttribute('data-theme', theme);
+    }
+    if (theme && theme.indexOf('light-') === 0) {
+      document.addEventListener('DOMContentLoaded', function() {
+        var blocks = document.querySelectorAll('.expressive-code');
+        for (var i = 0; i < blocks.length; i++) {
+          blocks[i].setAttribute('data-theme', 'github-light');
+        }
+      });
     }
   })();
 </script>
