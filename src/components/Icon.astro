@@ -29,4 +29,12 @@ const { name } = Astro.props;
 const iconHtml = icons[name];
 ---
 
-<span set:html={iconHtml}></span>
+<span class="icon" set:html={iconHtml}></span>
+
+<style>
+	.icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+</style>
