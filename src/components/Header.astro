@@ -137,14 +137,6 @@ import Icon from './Icon.astro';
 
   function applyTheme(name) {
     document.documentElement.setAttribute('data-theme', name);
-    // 同步 expressive-code 语法高亮主题
-    document.querySelectorAll('.expressive-code').forEach(el => {
-      if (name.startsWith('light-')) {
-        el.setAttribute('data-theme', 'github-light');
-      } else {
-        el.removeAttribute('data-theme');
-      }
-    });
   }
 
   function cycleTheme() {

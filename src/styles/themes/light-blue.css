@@ -3,13 +3,13 @@
 html[data-theme="light-blue"] {
   /* —— 背景系 —— */
   --background: #f4f6fb;
-  --background-dark: #e8ecf4;
-  --background-light: #ffffff;
+  --background-dark: #ffffff;
+  --background-light: #e8ecf4;
 
   /* —— 主强调蓝 —— */
   --accent: #4565d8;
-  --accent-dark: #3451c0;
-  --accent-light: #6b85e6;
+  --accent-dark: #6b85e6;
+  --accent-light: #3451c0;
 
   /* —— 文字前景 —— */
   --foreground: #1a1f36;
@@ -18,30 +18,30 @@ html[data-theme="light-blue"] {
 
   /* —— 柔和辅助/次要背景 —— */
   --muted: #e1e7f5;
-  --muted-dark: #d3daee;
-  --muted-light: #eef1fa;
+  --muted-dark: #eef1fa;
+  --muted-light: #d3daee;
 
   /* —— 边框分割线 —— */
   --border: #c5cee2;
-  --border-dark: #b0bbd4;
-  --border-light: #d8dff0;
+  --border-dark: #d8dff0;
+  --border-light: #b0bbd4;
 
   /* —— RGB 分量 —— */
   --accent-rgb: 69, 101, 216;
-  --accent-dark-rgb: 52, 81, 192;
-  --accent-light-rgb: 107, 133, 230;
+  --accent-dark-rgb: 107, 133, 230;
+  --accent-light-rgb: 52, 81, 192;
   --foreground-rgb: 26, 31, 54;
   --foreground-dark-rgb: 60, 66, 87;
   --foreground-light-rgb: 15, 20, 25;
   --background-rgb: 244, 246, 251;
-  --background-dark-rgb: 232, 236, 244;
-  --background-light-rgb: 255, 255, 255;
+  --background-dark-rgb: 255, 255, 255;
+  --background-light-rgb: 232, 236, 244;
   --muted-rgb: 225, 231, 245;
-  --muted-dark-rgb: 211, 218, 238;
-  --muted-light-rgb: 238, 241, 250;
+  --muted-dark-rgb: 238, 241, 250;
+  --muted-light-rgb: 211, 218, 238;
   --border-rgb: 197, 206, 226;
-  --border-dark-rgb: 176, 187, 212;
-  --border-light-rgb: 216, 223, 240;
+  --border-dark-rgb: 216, 223, 240;
+  --border-light-rgb: 176, 187, 212;
 
   /* —— 阴影 —— */
   --box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08),
