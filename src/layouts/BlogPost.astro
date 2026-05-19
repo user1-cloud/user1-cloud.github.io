@@ -37,7 +37,7 @@ const slugMatch = Astro.url.pathname.match(/^\/blog\/(.+)/);
 const currentSlug = slugMatch ? decodeURIComponent(slugMatch[1].replace(/\/+$/, '')) : '';
 ---
 
-<html lang="zh-cn" class="sidebar-collapsed">
+<html lang="zh-cn" class="sidebar-collapsed left-sidebar-collapsed">
 	<head>
 		<BaseHead title={title} description={description} />
 		<slot name="head" />
@@ -145,7 +145,7 @@ const currentSlug = slugMatch ? decodeURIComponent(slugMatch[1].replace(/\/+$/, 
 
 				// 1. 每次都重新读取 localStorage 状态
 				const savedState = localStorage.getItem(storageKey);
-				const isCollapsed = savedState === 'true' || savedState === null;
+				const isCollapsed = savedState === 'true';
 
 				// 2. 强制同步状态到页面
 				if (isCollapsed) {
