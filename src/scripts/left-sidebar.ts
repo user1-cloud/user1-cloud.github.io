@@ -38,6 +38,10 @@ function findArticleBySlug(slug: string): HTMLElement | null {
   return null;
 }
 
+function isMobile(): boolean {
+  return window.innerWidth < 900;
+}
+
 function updateIndicator(): void {
   const container = document.querySelector('.left-sidebar .sidebar-inner');
   if (!container) return;
@@ -49,7 +53,9 @@ function updateIndicator(): void {
     const target = findArticleBySlug(slug);
     if (target) {
       expandAncestors(target);
-      target.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      if (!isMobile()) {
+        target.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      }
     }
   }
 }
@@ -138,6 +144,11 @@ function applyExpandedState(): void {
 }
 
 function applyCollapsedState(): void {
+  // 移动端不使用 left-sidebar-collapsed 类（走覆盖层模式）
+  if (window.innerWidth < 900) {
+    document.documentElement.classList.remove('left-sidebar-collapsed');
+    return;
+  }
   if (state.collapsed) {
     document.documentElement.classList.add('left-sidebar-collapsed');
   } else {
@@ -145,18 +156,31 @@ function applyCollapsedState(): void {
   }
 }
 
+function closeMobileOverlay(): void {
+  if (window.innerWidth >= 900) return;
+  const sidebar = document.getElementById('leftSidebar');
+  const backdrop = document.querySelector('.left-sidebar-overlay-backdrop');
+  const btn = document.getElementById('toggleLeftSidebarBtn');
+  if (sidebar) sidebar.classList.remove('overlay-open');
+  if (backdrop) backdrop.classList.remove('open');
+  if (btn) btn.classList.remove('overlay-open');
+}
+
 function handleSidebarToggleClick(): void {
   if (window.innerWidth < 900) {
     const sidebar = document.getElementById('leftSidebar');
     const backdrop = document.querySelector('.left-sidebar-overlay-backdrop');
+    const btn = document.getElementById('toggleLeftSidebarBtn');
     if (!sidebar || !backdrop) return;
     const isOpen = sidebar.classList.contains('overlay-open');
     if (isOpen) {
       sidebar.classList.remove('overlay-open');
       backdrop.classList.remove('open');
+      if (btn) btn.classList.remove('overlay-open');
     } else {
       sidebar.classList.add('overlay-open');
       backdrop.classList.add('open');
+      if (btn) btn.classList.add('overlay-open');
     }
   } else {
     document.documentElement.classList.toggle('left-sidebar-collapsed');
@@ -185,20 +209,17 @@ document.addEventListener('click', (e: Event) => {
     return;
   }
 
+  // 左侧栏内文章链接 — 移动端点击后关闭覆盖层
+  const articleLink = target.closest('.ls-tree a[data-slug]');
+  if (articleLink) {
+    closeMobileOverlay();
+    return;
+  }
+
   // 左侧栏切换按钮
   if (target.closest('#toggleLeftSidebarBtn')) {
     handleSidebarToggleClick();
     return;
-  }
-
-  // 覆盖层背景点击关闭
-  const backdrop = document.querySelector('.left-sidebar-overlay-backdrop');
-  if (backdrop && e.target === backdrop) {
-    const sidebar = document.getElementById('leftSidebar');
-    if (sidebar) {
-      sidebar.classList.remove('overlay-open');
-      backdrop.classList.remove('open');
-    }
   }
 });
 

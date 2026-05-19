@@ -37,7 +37,7 @@ const slugMatch = Astro.url.pathname.match(/^\/blog\/(.+)/);
 const currentSlug = slugMatch ? decodeURIComponent(slugMatch[1].replace(/\/+$/, '')) : '';
 ---
 
-<html lang="zh-cn" class="sidebar-collapsed left-sidebar-expanded">
+<html lang="zh-cn" class="sidebar-collapsed">
 	<head>
 		<BaseHead title={title} description={description} />
 		<slot name="head" />
