@@ -89,7 +89,29 @@ function setupScrollSpy() {
   updateActive();
 }
 
-// 高亮更新逻辑（完全正确）
+function getRelativeTop(el: HTMLElement, ancestor: HTMLElement): number {
+  return el.getBoundingClientRect().top - ancestor.getBoundingClientRect().top + ancestor.scrollTop;
+}
+
+function updateRightIndicator() {
+  const container = document.querySelector('.toc-area');
+  const indicator = document.querySelector('.toc-area .position-indicator');
+  if (!container || !indicator) return;
+
+  const active = document.querySelector('#toc-list li.active');
+  if (!active) {
+    indicator.classList.remove('visible');
+    return;
+  }
+
+  const relTop = getRelativeTop(active as HTMLElement, container as HTMLElement);
+  const h = (active as HTMLElement).offsetHeight;
+  indicator.style.top = relTop + 'px';
+  indicator.style.height = h + 'px';
+  indicator.classList.add('visible');
+}
+
+// 高亮更新逻辑
 function updateActive() {
   let bestMatchIndex = -1;
   const scrollY = window.scrollY;
@@ -112,5 +134,6 @@ function updateActive() {
     scrollTocToView(active);
   }
 
+  updateRightIndicator();
   ticking = false;
 }

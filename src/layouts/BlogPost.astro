@@ -1,23 +1,43 @@
 ---
-// 博客文章布局组件 - 两栏可折叠右侧栏版本
+// 博客文章布局组件 - 三栏可折叠双侧栏版本
 import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
+import LeftSidebar from '../components/LeftSidebar.astro';
+import { resolveDirs } from '../lib/utils';
 
 import BoidsBackground from '../components/BoidsBackground.astro';
 import SearchModal from '../components/SearchModal.astro';
 
-// 专用css，放在BaseHead引用之后
+// 专用css
 import '../styles/blog-post.scss';
+import '../styles/left-sidebar.scss';
 
 type Props = CollectionEntry<'blog'>['data'];
 const { title, description, pubDate, updatedDate, heroImage, dir1, dir2, tags = [] } = Astro.props;
+
+// 构建左侧栏数据
+const allPosts = await getCollection('blog');
+const sidebarData = allPosts.map(post => {
+  const dirs = resolveDirs(post);
+  return {
+    title: post.data.title,
+    slug: post.id,
+    pubDate: post.data.pubDate,
+    dir1: dirs.dir1,
+    dir2: dirs.dir2,
+    tags: post.data.tags || [],
+  };
+});
+const slugMatch = Astro.url.pathname.match(/^\/blog\/(.+)/);
+const currentSlug = slugMatch ? decodeURIComponent(slugMatch[1].replace(/\/+$/, '')) : '';
 ---
 
-<html lang="zh-cn" class="sidebar-collapsed">
+<html lang="zh-cn" class="sidebar-collapsed left-sidebar-expanded">
 	<head>
 		<BaseHead title={title} description={description} />
 		<slot name="head" />
@@ -31,9 +51,12 @@ const { title, description, pubDate, updatedDate, heroImage, dir1, dir2, tags = 
 					{heroImage && <Image width={200} height={200} src={heroImage} alt="" />}
 				</div>
 
-				<!-- 两栏布局容器，右侧栏可折叠 -->
-				<div class="two-col-layout">
-					<!-- 左侧：固定宽度的正文区域，宽度不变，内部文字永不重新换行 -->
+				<!-- 三栏布局容器 -->
+				<div class="three-col-layout">
+					<!-- 左侧：可折叠侧边栏（目录树 / 标签树） -->
+					<LeftSidebar posts={sidebarData} currentSlug={currentSlug} />
+
+					<!-- 中间：正文区域 -->
 					<div class="content-main fade-in">
 						<div class="prose">
 							<div class="title">
@@ -74,6 +97,7 @@ const { title, description, pubDate, updatedDate, heroImage, dir1, dir2, tags = 
 						<div class="sidebar-inner">
 							<!-- 上栏：目录区 -->
 							<div class="toc-area">
+								<div class="position-indicator"></div>
 								<h3>目录</h3>
 								<ul id="toc-list"></ul>
 							</div>
@@ -89,16 +113,26 @@ const { title, description, pubDate, updatedDate, heroImage, dir1, dir2, tags = 
 		</main>
 		<Footer />
 
-		<!-- 扁平展开/收起按钮 (绝对定位) -->
-		<button class="toggle-sidebar-btn" id="toggleSidebarBtn" aria-label="切换侧边栏">
-		<span class="arrow-icon"></span>
+		<!-- 左侧栏折叠按钮 -->
+		<button class="toggle-left-sidebar-btn" id="toggleLeftSidebarBtn" aria-label="切换左侧栏">
+			<span class="arrow-icon"></span>
+		</button>
+
+		<!-- 右侧栏折叠按钮 -->
+		<button class="toggle-right-sidebar-btn" id="toggleSidebarBtn" aria-label="切换侧边栏">
+			<span class="arrow-icon"></span>
 		</button>
 
 		<BoidsBackground/>
 
+		<!-- 移动端左侧栏覆盖层背景 -->
+		<div class="left-sidebar-overlay-backdrop"></div>
+
 		<SearchModal />
 
-		<!-- 目录生成脚本  -->
+		<!-- 左侧栏脚本 -->
+		<script src="../scripts/left-sidebar"></script>
+		<!-- 目录生成脚本 -->
 		<script src="../scripts/toc"></script>
 		<!-- 滚动渐现效果 -->
 		<script src="../scripts/fade-in-on-scroll"></script>

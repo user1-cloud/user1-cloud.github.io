@@ -1,0 +1,470 @@
+@layer components {
+  .left-sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 2rem;
+    max-height: calc(100vh - 4rem);
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    background: transparent;
+    z-index: 998;
+    transition: width 0.25s ease, opacity 0.2s ease;
+
+    .sidebar-inner {
+      padding: 0 0.5rem 0.5rem 0.8rem;
+      overflow-y: auto;
+      overflow-x: hidden;
+      position: relative;
+      height: 100%;
+
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+  }
+
+  /* 工具栏：搜索 + 主题横向布局 */
+  .ls-toolbar {
+    display: flex;
+    gap: 0.4rem;
+    padding: 0.5rem 0.5rem 0 0.8rem;
+  }
+
+  /* 搜索按钮 */
+  .ls-search-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex: 1;
+    min-width: 0;
+    padding: 0.4rem 0.5rem;
+    font-size: 0.82rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--foreground-dark);
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+
+    &:hover {
+      border-color: var(--accent);
+      color: var(--foreground);
+    }
+
+    .search-kbd-hint {
+      display: none;
+    }
+  }
+
+  /* 主题切换按钮 — 位于左侧栏 */
+  .ls-theme-selector {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .ls-theme-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.5rem;
+    font-size: 0.82rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--foreground-dark);
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+
+    &:hover {
+      border-color: var(--accent);
+      color: var(--foreground);
+    }
+  }
+
+  .ls-theme-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    z-index: 9999;
+    background: var(--background-dark);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: var(--box-shadow);
+    padding: 4px;
+    min-width: 130px;
+  }
+
+  .ls-theme-dropdown > div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    color: var(--foreground);
+    transition: background 0.15s ease;
+    white-space: nowrap;
+
+    &:hover {
+      background: var(--muted);
+    }
+
+    &.current {
+      background: var(--muted);
+      font-weight: 600;
+    }
+  }
+
+  .theme-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* 模式切换标签栏 */
+  .ls-mode-toggle {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 0.5rem;
+
+    button {
+      flex: 1;
+      padding: 0.4rem 0.25rem;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--foreground-dark);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.82rem;
+      transition: color 0.2s, border-color 0.2s;
+
+      &.active {
+        color: var(--accent);
+        border-bottom-color: var(--accent);
+      }
+
+      &:hover {
+        color: var(--foreground);
+      }
+    }
+  }
+
+  /* 树形列表 */
+  .ls-tree {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.85em;
+  }
+
+  .tree-node {
+    margin: 0;
+  }
+
+  .node-header {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.32rem 0.4rem;
+    cursor: pointer;
+    border-radius: 0 6px 6px 0;
+    transition: background 0.15s;
+    user-select: none;
+
+    &:hover {
+      background: rgba(var(--accent-rgb), 0.06);
+    }
+  }
+
+  .node-arrow {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid var(--foreground-dark);
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .node-header.expanded .node-arrow {
+    transform: rotate(90deg);
+  }
+
+  .node-label {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--foreground);
+    font-weight: 600;
+    font-size: 0.9em;
+  }
+
+  .node-count {
+    font-size: 0.7rem;
+    color: var(--foreground-dark);
+    background: rgba(var(--accent-rgb), 0.1);
+    border-radius: 999px;
+    padding: 0 6px;
+    flex-shrink: 0;
+  }
+
+  .node-children {
+    list-style: none;
+    padding-left: 1.2rem;
+    margin: 0;
+    overflow: hidden;
+    max-height: 2000px;
+    transition: max-height 0.3s ease;
+
+    &.collapsed {
+      max-height: 0 !important;
+    }
+  }
+
+  /* 文章条目 */
+  .article-item {
+    margin: 0;
+    position: relative;
+
+    a {
+      display: block;
+      padding: 0.28rem 0.4rem;
+      color: var(--foreground-dark);
+      text-decoration: none;
+      border-radius: 0 6px 6px 0;
+      font-size: 0.85em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: all 0.15s;
+
+      &:hover {
+        color: var(--foreground);
+        background: rgba(var(--accent-rgb), 0.06);
+      }
+
+      &.current {
+        color: var(--accent-light);
+        background: rgba(var(--accent-rgb), 0.08);
+        font-weight: 500;
+      }
+    }
+  }
+
+  /* ===== 树形连接线 ===== */
+  @keyframes connector-draw {
+    from {
+      opacity: 0;
+      transform: scaleY(0);
+    }
+    to {
+      opacity: 1;
+      transform: scaleY(1);
+    }
+  }
+
+  @keyframes connector-fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* 包含当前文章路径的 node-children：左侧垂直线 */
+  .node-children.active-path {
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0.55rem;
+      top: 0;
+      width: 1.5px;
+      height: 100%;
+      background: var(--accent);
+      opacity: 0;
+      transform: scaleY(0);
+      transform-origin: top;
+      animation: connector-draw 0.5s ease forwards;
+      border-radius: 1px;
+    }
+  }
+
+  /* 路径上的 node-header：水平连接线 */
+  .tree-node.has-current > .node-header {
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0.55rem;
+      top: 50%;
+      width: 0.55rem;
+      height: 1.5px;
+      background: var(--accent);
+      opacity: 0;
+      transform: translateY(-50%);
+      animation: connector-fade 0.35s ease forwards;
+      animation-delay: 0.2s;
+      border-radius: 1px;
+    }
+  }
+
+  /* 当前文章的连接线 */
+  .article-item a.current {
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: -0.45rem;
+      top: 50%;
+      width: 0.55rem;
+      height: 1.5px;
+      background: var(--accent-light);
+      opacity: 0;
+      transform: translateY(-50%);
+      animation: connector-fade 0.35s ease forwards;
+      animation-delay: 0.45s;
+      border-radius: 1px;
+    }
+  }
+
+  /* ===== 左侧栏折叠（桌面端） ===== */
+  html.left-sidebar-collapsed {
+    .left-sidebar {
+      width: 0;
+      opacity: 0;
+      visibility: hidden;
+      transition: width 0.25s ease, opacity 0.2s ease, visibility 0s 0.25s;
+      overflow: hidden;
+    }
+
+    .toggle-left-sidebar-btn .arrow-icon {
+      transform: rotate(45deg) translateX(-17.678%) translateY(17.678%);
+    }
+  }
+
+  /* ===== 左侧栏折叠按钮（左侧视口边缘） ===== */
+  .toggle-left-sidebar-btn {
+    position: fixed;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1000;
+    background: transparent;
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border-light);
+    border-radius: 20px;
+    padding: 32px 8px;
+    cursor: pointer;
+    box-shadow: none;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background: transparent;
+      box-shadow: none;
+      border-color: var(--accent);
+    }
+
+    &:active {
+      transform: translateY(-50%) scale(0.96);
+    }
+
+    .arrow-icon {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-top: 2px solid var(--foreground);
+      border-right: 2px solid var(--foreground);
+      transform: rotate(-135deg) translateX(-17.678%) translateY(17.678%);
+      transition: transform 0.25s ease;
+    }
+  }
+
+  /* ===== 移动端覆盖层背景 ===== */
+  .left-sidebar-overlay-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(var(--backdrop-rgb), 0.4);
+    z-index: 997;
+
+    &.open {
+      display: block;
+    }
+  }
+
+  /* ===== 响应式 ===== */
+
+  /* 1100-1399px: 缩小 */
+  @media (max-width: 1399px) and (min-width: 1100px) {
+    .left-sidebar {
+      width: 200px;
+    }
+  }
+ 
+  /* 900-1099px: 紧凑模式 */
+  @media (max-width: 1099px) and (min-width: 900px) {
+    .left-sidebar {
+      width: 160px;
+      font-size: 0.8em;
+    }
+
+    .ls-toolbar {
+      gap: 0.25rem;
+    }
+
+    .ls-search-btn span,
+    .ls-theme-btn span {
+      display: none;
+    }
+
+    .ls-search-btn,
+    .ls-theme-btn {
+      padding: 0.35rem;
+      justify-content: center;
+    }
+  }
+
+  /* < 900px: 覆盖层模式 */
+  @media (max-width: 899px) {
+    .left-sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      height: 100vh;
+      width: 280px;
+      z-index: 2000;
+      border-radius: 0 16px 16px 0;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+
+      &.overlay-open {
+        transform: translateX(0);
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.3);
+      }
+    }
+
+    .toggle-left-sidebar-btn {
+      left: 8px;
+      top: 50%;
+    }
+  }
+}
