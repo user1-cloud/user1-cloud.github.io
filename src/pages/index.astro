@@ -1,26 +1,160 @@
 ---
+import { getCollection } from 'astro:content';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 import Layout from '../layouts/BlogPost.astro';
 import JsonLd from '../components/JsonLd.astro';
+import BlogList from '../components/BlogList.astro';
+import GitHubContributions from '../components/GitHubContributions.astro';
 
 const websiteLd = {
-	'@context': 'https://schema.org',
-	'@type': 'WebSite',
-	name: SITE_TITLE,
-	description: SITE_DESCRIPTION,
-	url: new URL('/', Astro.site).href,
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: SITE_TITLE,
+  description: SITE_DESCRIPTION,
+  url: new URL('/', Astro.site).href,
 };
+
+const allPosts = await getCollection('blog');
+const recentPosts = allPosts
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 6);
+
+// 站点统计
+const totalArticles = allPosts.length;
+const allTags = new Set<string>();
+const allCategories = new Set<string>();
+for (const post of allPosts) {
+  for (const tag of post.data.tags || []) {
+    allTags.add(tag);
+  }
+  const segs = post.id.split('/');
+  if (segs.length > 0) allCategories.add(segs[0]);
+}
+const totalTags = allTags.size;
+const totalCategories = allCategories.size;
 ---
 
 <Layout
-	title="u1的书房"
-	description={SITE_DESCRIPTION}
-	pubDate={new Date()}
+  title="u1的书房"
+  description={SITE_DESCRIPTION}
+  pubDate={new Date()}
 >
-	<JsonLd slot="head" data={websiteLd} />
+  <JsonLd slot="head" data={websiteLd} />
 
-	<p>
-		你好！我是user1-cloud，欢迎来到我的个人主页。
-	</p>
+  <div class="home-page">
+    <!-- 欢迎语 -->
+    <section class="welcome">
+      <h2 class="mk-title" style="display:inline;">你好！</h2>
+      <h2 style="display:inline;">我是 user1-cloud</h2>
+      <p>欢迎来到我的个人主页。</p>
+    </section>
 
+    <!-- 站点统计 -->
+    <h2 class="mk-title" style="display:none;">站点统计</h2>
+    <section class="site-stats">
+      <div class="stat-card fade-up-on-scroll">
+        <div class="stat-number">{totalArticles}</div>
+        <div class="stat-label">文章</div>
+      </div>
+      <div class="stat-card fade-up-on-scroll" style="animation-delay: 0.1s">
+        <div class="stat-number">{totalCategories}</div>
+        <div class="stat-label">分类</div>
+      </div>
+      <div class="stat-card fade-up-on-scroll" style="animation-delay: 0.2s">
+        <div class="stat-number">{totalTags}</div>
+        <div class="stat-label">标签</div>
+      </div>
+    </section>
+
+    <!-- GitHub 贡献墙 -->
+    <GitHubContributions />
+
+    <!-- 近期博客 -->
+    <section class="recent-posts">
+      <h2 class="mk-title section-title">近期文章</h2>
+      <BlogList sort="time" posts={recentPosts} />
+    </section>
+  </div>
 </Layout>
+
+<style>
+  .home-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    text-align: center;
+  }
+
+  .welcome {
+    margin-bottom: 2rem;
+  }
+
+  .welcome h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: var(--foreground-light);
+  }
+
+  .welcome p {
+    color: var(--foreground-dark);
+    font-size: 1.1rem;
+  }
+
+  /* 站点统计卡片 */
+  .site-stats {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin: 2.5rem 0;
+  }
+
+  .stat-card {
+    background: rgba(var(--muted-rgb), 0.4);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem 2.5rem;
+    min-width: 120px;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+  }
+
+  .stat-number {
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--accent-light);
+    line-height: 1.2;
+  }
+
+  .stat-label {
+    font-size: 0.9rem;
+    color: var(--foreground-dark);
+    margin-top: 0.3rem;
+  }
+
+  .section-title {
+    font-size: 1.4rem;
+    margin: 3rem 0 1.5rem;
+    color: var(--foreground-light);
+    text-align: center;
+  }
+
+  @media (max-width: 760px) {
+    .site-stats {
+      gap: 1rem;
+    }
+
+    .stat-card {
+      padding: 1rem 1.5rem;
+      min-width: 90px;
+    }
+
+    .stat-number {
+      font-size: 1.8rem;
+    }
+  }
+</style>

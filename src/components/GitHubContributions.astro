@@ -1,0 +1,296 @@
+---
+// GitHub 贡献墙 — 服务端渲染网格骨架，客户端着色
+const WEEKS = 53;
+const DAYS = 7;
+const CELL_SIZE = 12;
+const GAP = 3;
+const COL_WIDTH = CELL_SIZE + GAP; // 15px
+
+// 生成日期范围：最近 53 周的周日到周六
+function pad(n: number) { return String(n).padStart(2, '0'); }
+function fmt(d: Date) { return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; }
+
+const today = new Date();
+const dayOfWeek = today.getDay(); // 0=Sun
+const lastSaturday = new Date(today);
+lastSaturday.setDate(today.getDate() - dayOfWeek - 1); // go back to last Saturday
+
+const startDate = new Date(lastSaturday);
+startDate.setDate(lastSaturday.getDate() - WEEKS * 7 + 1); // go back 53*7 days
+
+// 生成每周的 dates 数组
+type WeekDates = { date: string; month: number }[];
+const allWeeks: WeekDates[] = [];
+const cursor = new Date(startDate);
+for (let w = 0; w < WEEKS; w++) {
+  const week: WeekDates = [];
+  for (let d = 0; d < DAYS; d++) {
+    week.push({ date: fmt(cursor), month: cursor.getMonth() });
+    cursor.setDate(cursor.getDate() + 1);
+  }
+  allWeeks.push(week);
+}
+
+// 计算月份标签
+const MONTH_NAMES = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+const monthCols: { label: string; col: number }[] = [];
+let lastMonth = -1;
+for (let c = 0; c < allWeeks.length; c++) {
+  const m = allWeeks[c]![0]!.month;
+  if (m !== lastMonth) {
+    monthCols.push({ label: MONTH_NAMES[m]!, col: c });
+    lastMonth = m;
+  }
+}
+---
+
+<div class="gh-contributions">
+  <h2 class="mk-title section-title">GitHub 贡献墙</h2>
+  <div class="gh-grid-wrapper" id="gh-grid-wrapper">
+    <!-- 月份标签 -->
+    <div class="gh-month-labels">
+      {monthCols.map((m, i) => {
+        const nextCol = i + 1 < monthCols.length ? monthCols[i + 1]!.col : WEEKS;
+        const span = nextCol - m.col;
+        return <span style={`width:${span * COL_WIDTH}px;flex-shrink:0;`}>{m.label}</span>;
+      })}
+    </div>
+    <!-- 网格 — 所有方块服务端渲染 -->
+    <div class="gh-grid" id="gh-grid" style={`grid-template-columns:repeat(${WEEKS},${CELL_SIZE}px);`}>
+      {allWeeks.flat().map(day => (
+        <div class="gh-cell" data-date={day.date} title={day.date}></div>
+      ))}
+    </div>
+    <!-- 图例 -->
+    <div class="gh-legend">
+      <span class="gh-legend-label">Less</span>
+      <div class="gh-legend-cell empty"></div>
+      <div class="gh-legend-cell level-1"></div>
+      <div class="gh-legend-cell level-2"></div>
+      <div class="gh-legend-cell level-3"></div>
+      <div class="gh-legend-cell level-4"></div>
+      <span class="gh-legend-label">More</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .gh-contributions {
+    margin: 3rem auto;
+    max-width: 900px;
+    text-align: center;
+  }
+
+  .section-title {
+    font-size: 1.4rem;
+    margin-bottom: 1.5rem;
+    color: var(--foreground-light);
+  }
+
+  .gh-grid-wrapper {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 1.25rem 1.25rem 1rem;
+    background: rgba(var(--muted-rgb), 0.3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow-x: auto;
+    max-width: 100%;
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  .gh-grid-wrapper::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .gh-grid-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 3px;
+  }
+
+  .gh-grid-wrapper::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 3px;
+  }
+
+  .gh-grid-wrapper::-webkit-scrollbar-thumb:hover {
+    background: var(--border-light);
+  }
+
+  .gh-month-labels {
+    display: flex;
+    font-size: 0.65rem;
+    color: var(--foreground-dark);
+    white-space: nowrap;
+  }
+
+  .gh-month-labels span {
+    flex-shrink: 0;
+  }
+
+  .gh-grid {
+    display: grid;
+    grid-template-rows: repeat(7, 12px);
+    grid-auto-flow: column;
+    gap: 3px;
+  }
+
+  .gh-cell {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    background: transparent;
+  }
+
+  .gh-cell.level-1 {
+    background: rgba(var(--accent-rgb), 0.25);
+    border-color: rgba(var(--accent-rgb), 0.35);
+  }
+
+  .gh-cell.level-2 {
+    background: rgba(var(--accent-rgb), 0.5);
+    border-color: rgba(var(--accent-rgb), 0.6);
+  }
+
+  .gh-cell.level-3 {
+    background: rgba(var(--accent-rgb), 0.75);
+    border-color: rgba(var(--accent-rgb), 0.85);
+  }
+
+  .gh-cell.level-4 {
+    background: rgba(var(--accent-rgb), 1);
+    border-color: var(--accent);
+  }
+
+  .gh-legend {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.7rem;
+    color: var(--foreground-dark);
+    align-self: flex-end;
+  }
+
+  .gh-legend-label {
+    margin: 0 2px;
+  }
+
+  .gh-legend-cell {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+  }
+
+  .gh-legend-cell.empty {
+    border: 1px solid var(--border);
+    background: transparent;
+  }
+
+  .gh-legend-cell.level-1 {
+    background: rgba(var(--accent-rgb), 0.25);
+    border: 1px solid rgba(var(--accent-rgb), 0.35);
+  }
+
+  .gh-legend-cell.level-2 {
+    background: rgba(var(--accent-rgb), 0.5);
+    border: 1px solid rgba(var(--accent-rgb), 0.6);
+  }
+
+  .gh-legend-cell.level-3 {
+    background: rgba(var(--accent-rgb), 0.75);
+    border: 1px solid rgba(var(--accent-rgb), 0.85);
+  }
+
+  .gh-legend-cell.level-4 {
+    background: rgb(var(--accent-rgb));
+    border: 1px solid var(--accent);
+  }
+
+  @media (max-width: 760px) {
+    .gh-grid-wrapper {
+      padding: 0.75rem;
+    }
+
+    .gh-grid {
+      grid-template-rows: repeat(7, 10px);
+      gap: 2px;
+    }
+
+    .gh-cell {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+    }
+
+    .gh-legend-cell {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+    }
+  }
+</style>
+
+<script>
+  (function() {
+    var USERNAME = 'user1-cloud';
+
+    function levelToNum(level) {
+      switch (level) {
+        case 'FIRST_QUARTILE': return 1;
+        case 'SECOND_QUARTILE': return 2;
+        case 'THIRD_QUARTILE': return 3;
+        case 'FOURTH_QUARTILE': return 4;
+        default: return 0;
+      }
+    }
+
+    async function colorize() {
+      var cells = document.querySelectorAll('#gh-grid .gh-cell[data-date]');
+      if (!cells.length) return;
+
+      try {
+        var res = await fetch('https://github-contributions-api.deno.dev/' + USERNAME + '.json');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        var json = await res.json();
+        var weeks = json.contributions;
+        if (!Array.isArray(weeks)) throw new Error('数据格式异常');
+
+        // Build date→{level, count} map from API response
+        var dataMap = {};
+        for (var w = 0; w < weeks.length; w++) {
+          for (var d = 0; d < weeks[w].length; d++) {
+            var day = weeks[w][d];
+            dataMap[day.date] = {
+              level: levelToNum(day.contributionLevel),
+              count: day.contributionCount
+            };
+          }
+        }
+
+        // Apply level classes to existing cells
+        for (var i = 0; i < cells.length; i++) {
+          var cell = cells[i];
+          var date = cell.getAttribute('data-date');
+          var info = dataMap[date];
+          if (info) {
+            cell.setAttribute('title', date + ': ' + info.count + ' 次贡献');
+            if (info.level > 0) {
+              cell.className = 'gh-cell level-' + info.level;
+            }
+          }
+        }
+      } catch (err) {
+        // Cells remain as empty grid — no JS needed to show the grid
+        console.warn('GitHub contributions fetch failed:', err.message);
+      }
+    }
+
+    colorize();
+    document.addEventListener('astro:page-load', colorize);
+  })();
+</script>
