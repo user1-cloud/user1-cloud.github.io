@@ -1,11 +1,11 @@
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
-import { defineConfig, fontProviders } from 'astro/config';
+import { defineConfig } from 'astro/config';
 import remarkMath from 'remark-math';
 import remarkGfm from 'remark-gfm';
 import rehypeKatex from 'rehype-katex';
 import expressiveCode from 'astro-expressive-code';
-import vue from '@astrojs/vue';
+
 import tailwindcss from '@tailwindcss/vite';
 
 import remarkEmoji from 'remark-emoji';
@@ -26,11 +26,8 @@ export default defineConfig({
     expressiveCode(),
     mdx(),
     sitemap(),
-    vue(),
     compress(),
   ],
-
-  fonts: [],
 
   markdown: {
     remarkPlugins: [

@@ -1,6 +1,7 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
 import BlogCard from './BlogCard.astro';
+import { resolveDirs } from '../lib/utils';
 
 interface Props {
   sort?: 'time' | 'dir';
@@ -14,17 +15,7 @@ interface Props {
 const { sort = 'time', dirOrder = { dir1: [], dir2: {} }, posts: externalPosts } = Astro.props;
 let posts = externalPosts ?? await getCollection('blog');
 
-posts = posts.map(post => {
-  const pathParts = post.id.split('/');
-  return {
-    ...post,
-    data: {
-      ...post.data,
-      dir1: post.data.dir1 ?? (pathParts.length >= 2 ? pathParts[0] : ''),
-      dir2: post.data.dir2 ?? (pathParts.length >= 3 ? pathParts[1] : ''),
-    }
-  };
-});
+posts = posts.map(post => ({ ...post, data: { ...post.data, ...resolveDirs(post) } }));
 
 if (sort === 'time') {
   posts = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
@@ -85,13 +76,9 @@ if (sort === 'dir') {
 
 <main>
   {sort === 'time' ? (
-    <>
-      {!externalPosts && <h2 class="mk-title">近期博客一览</h2>}
-      {!externalPosts && <br />}
-      <ul class="card-grid">
-        {posts.map((post) => <BlogCard post={post} />)}
-      </ul>
-    </>
+    <ul class="card-grid">
+      {posts.map((post) => <BlogCard post={post} />)}
+    </ul>
   ) : (
     <div>
       {(orderedData || []).map(([dir1, dir2List]) => (

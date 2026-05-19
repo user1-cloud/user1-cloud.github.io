@@ -1,14 +1,16 @@
 ---
 import { getCollection } from 'astro:content';
+import { resolveDirs } from '../lib/utils';
+import Icon from './Icon.astro';
 
 const posts = await getCollection('blog');
 const searchData = posts.map((post) => {
-  const pathSegments = post.id.split('/');
+  const { dir1, dir2 } = resolveDirs(post);
   return {
     title: post.data.title,
     description: post.data.description.replace(/<[^>]+>/g, ''),
-    dir1: post.data.dir1 || (pathSegments.length >= 2 ? pathSegments[0] : ''),
-    dir2: post.data.dir2 || (pathSegments.length >= 3 ? pathSegments[1] : ''),
+    dir1,
+    dir2,
     tags: (post.data.tags || []).join(', '),
     slug: post.id,
   };
@@ -22,10 +24,7 @@ const searchData = posts.map((post) => {
 <dialog id="search-modal" class="search-modal" aria-label="搜索文章">
   <div class="search-modal-content">
     <div class="search-input-wrapper">
-      <svg class="search-input-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="11" cy="11" r="8"/>
-        <path d="m21 21-4.3-4.3"/>
-      </svg>
+      <span class="search-input-icon"><Icon name="search" /></span>
       <input
         type="text"
         id="search-input"
@@ -35,9 +34,7 @@ const searchData = posts.map((post) => {
         aria-label="搜索文章"
       />
       <button id="search-close-btn" class="search-close-btn" aria-label="关闭搜索" type="button">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
-        </svg>
+        <Icon name="close" />
       </button>
     </div>
     <ul id="search-results" class="search-results" role="listbox" aria-label="搜索结果">

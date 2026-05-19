@@ -3,6 +3,7 @@ import { type CollectionEntry, getCollection, render } from 'astro:content';
 import BlogPost from '../../layouts/BlogPost.astro';
 import BlogCard from '../../components/BlogCard.astro';
 import JsonLd from '../../components/JsonLd.astro';
+import { resolveDirs } from '../../lib/utils';
 
 export async function getStaticPaths() {
 	const posts = await getCollection('blog');
@@ -30,9 +31,7 @@ const breadcrumbItems = [
 	{ '@type': 'ListItem', position: 2, name: '博客', item: blogUrl },
 ];
 
-const pathSegments = post.id.split('/');
-const dir1 = post.data.dir1 || (pathSegments.length >= 2 ? pathSegments[0] : '');
-const dir2 = post.data.dir2 || (pathSegments.length >= 3 ? pathSegments[1] : '');
+const { dir1, dir2 } = resolveDirs(post);
 
 let pos = 3;
 if (dir1) {

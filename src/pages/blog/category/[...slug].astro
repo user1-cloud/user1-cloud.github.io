@@ -3,14 +3,13 @@ import { getCollection } from 'astro:content';
 import Layout from '../../../layouts/BlogPost.astro';
 import BlogList from '../../../components/BlogList.astro';
 import JsonLd from '../../../components/JsonLd.astro';
+import { resolveDirs } from '../../../lib/utils';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
   const pathSet = new Set<string>();
   for (const post of posts) {
-    const pathSegments = post.id.split('/');
-    const dir1 = post.data.dir1 || (pathSegments.length >= 2 ? pathSegments[0] : '');
-    const dir2 = post.data.dir2 || (pathSegments.length >= 3 ? pathSegments[1] : '');
+    const { dir1, dir2 } = resolveDirs(post);
     if (dir1) {
       pathSet.add(dir1);
       if (dir2) pathSet.add(`${dir1}/${dir2}`);
@@ -27,9 +26,7 @@ const filterDir2 = segments.length >= 2 ? segments[1] : '';
 
 const allPosts = await getCollection('blog');
 const filtered = allPosts.filter(post => {
-  const pathSegments = post.id.split('/');
-  const d1 = post.data.dir1 || (pathSegments.length >= 2 ? pathSegments[0] : '');
-  const d2 = post.data.dir2 || (pathSegments.length >= 3 ? pathSegments[1] : '');
+  const { dir1: d1, dir2: d2 } = resolveDirs(post);
   if (filterDir2) return d1 === filterDir1 && d2 === filterDir2;
   return d1 === filterDir1;
 });
