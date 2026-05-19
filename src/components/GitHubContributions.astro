@@ -253,6 +253,10 @@ for (let c = 0; c < allWeeks.length; c++) {
       var cells = document.querySelectorAll('#gh-grid .gh-cell[data-date]');
       if (!cells.length) return;
 
+      // 初始滚动到最右侧（最新贡献）
+      var wrapper = document.getElementById('gh-grid-wrapper');
+      if (wrapper) wrapper.scrollLeft = wrapper.scrollWidth;
+
       try {
         var res = await fetch('https://github-contributions-api.deno.dev/' + USERNAME + '.json');
         if (!res.ok) throw new Error('HTTP ' + res.status);
