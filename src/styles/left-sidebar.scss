@@ -456,7 +456,8 @@
       z-index: 2000;
       border-radius: 0 16px 16px 0;
       transform: translateX(-100%);
-      transition: transform 0.3s ease;
+      visibility: hidden;
+      transition: transform 0.3s ease, visibility 0s 0.3s;
       display: flex;
       flex-direction: column;
       background: rgba(var(--background-rgb), 0.75);
@@ -465,7 +466,9 @@
 
       &.overlay-open {
         transform: translateX(0);
+        visibility: visible;
         box-shadow: 4px 0 24px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease, visibility 0s;
       }
 
       .sidebar-inner {
@@ -494,16 +497,9 @@
       }
     }
 
-    /* 桌面端折叠类在移动端应被忽略 */
-    html.left-sidebar-collapsed .left-sidebar {
-      width: 280px;
-      opacity: 1;
+    /* 桌面端折叠类在移动端应被忽略 — overlay-open 时恢复可见 */
+    html.left-sidebar-collapsed .left-sidebar.overlay-open {
       visibility: visible;
-      overflow: visible;
-    }
-
-    html.left-sidebar-collapsed .left-sidebar:not(.overlay-open) {
-      transform: translateX(-100%);
     }
   }
 }
