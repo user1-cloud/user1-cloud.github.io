@@ -1,10 +1,16 @@
 ---
 import { getCollection } from 'astro:content';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { execSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+import { SITE_DESCRIPTION, SITE_TITLE, SITE_START_DATE } from '../consts';
+import { countWords } from '../lib/utils';
 import Layout from '../layouts/BlogPost.astro';
 import JsonLd from '../components/JsonLd.astro';
 import BlogList from '../components/BlogList.astro';
 import GitHubContributions from '../components/GitHubContributions.astro';
+import MonthlyChart from '../components/MonthlyChart.astro';
+import GitHubRepoStats from '../components/GitHubRepoStats.astro';
+import GitHubLanguages from '../components/GitHubLanguages.astro';
 
 const websiteLd = {
   '@context': 'https://schema.org',
@@ -32,6 +38,99 @@ for (const post of allPosts) {
 }
 const totalTags = allTags.size;
 const totalCategories = allCategories.size;
+
+// 建站天数
+const daysSinceLaunch = Math.floor((Date.now() - SITE_START_DATE.getTime()) / 86400000);
+
+// 累计总字数
+let totalWords = 0;
+for (const post of allPosts) {
+  totalWords += countWords(post.body || '');
+}
+
+// 月度发文统计
+const monthMap = new Map<string, number>();
+for (const post of allPosts) {
+  const d = post.data.pubDate;
+  const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+  monthMap.set(key, (monthMap.get(key) || 0) + 1);
+}
+const sortedMonths = [...monthMap.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+const monthLabels = sortedMonths.map(([k]) => `${parseInt(k.split('-')[1]!, 10)}月`);
+const monthCounts = sortedMonths.map(([, v]) => v);
+
+// 仓库代码统计
+const EXT_MAP: Record<string, { name: string; color: string }> = {
+  '.ts': { name: 'TypeScript', color: '#3178c6' },
+  '.tsx': { name: 'TypeScript', color: '#3178c6' },
+  '.js': { name: 'JavaScript', color: '#f1e05a' },
+  '.jsx': { name: 'JavaScript', color: '#f1e05a' },
+  '.mjs': { name: 'JavaScript', color: '#f1e05a' },
+  '.astro': { name: 'Astro', color: '#ff5a03' },
+  '.md': { name: 'Markdown', color: '#083fa1' },
+  '.mdx': { name: 'MDX', color: '#fcb32c' },
+  '.css': { name: 'CSS', color: '#563d7c' },
+  '.scss': { name: 'SCSS', color: '#c6538c' },
+  '.json': { name: 'JSON', color: '#292929' },
+  '.yaml': { name: 'YAML', color: '#cb171e' },
+  '.yml': { name: 'YAML', color: '#cb171e' },
+  '.html': { name: 'HTML', color: '#e34c26' },
+  '.svg': { name: 'SVG', color: '#ff9900' },
+  '.sh': { name: 'Shell', color: '#89e051' },
+  '.bash': { name: 'Shell', color: '#89e051' },
+  '.py': { name: 'Python', color: '#3572A5' },
+  '.toml': { name: 'TOML', color: '#9c4221' },
+  '.xml': { name: 'XML', color: '#0060ac' },
+  '.sql': { name: 'SQL', color: '#e38c00' },
+};
+
+const BINARY_EXTS = new Set(['.png','.jpg','.jpeg','.gif','.ico','.webp','.woff','.woff2','.ttf','.eot','.otf','.pdf','.zip','.gz','.tar','.mp4','.mp3','.lock']);
+const SKIP_FILES = new Set(['pnpm-lock.yaml','package-lock.json','yarn.lock','bun.lockb']);
+
+let repoLanguages: { name: string; lines: number; percentage: number; color: string }[] = [];
+let totalRepoLines = 0;
+try {
+  const output = execSync('git ls-files', { encoding: 'utf-8' });
+  const files = output.trim().split('\n');
+  const langLines: Record<string, { lines: number; color: string }> = {};
+
+  for (const file of files) {
+    const base = file.split('/').pop() || '';
+    if (SKIP_FILES.has(base)) continue;
+    const ext = file.substring(file.lastIndexOf('.')).toLowerCase();
+    if (BINARY_EXTS.has(ext)) continue;
+    // Handle Dockerfile (no extension)
+    let info = EXT_MAP[ext];
+    if (!info && base === 'Dockerfile') info = { name: 'Dockerfile', color: '#384d54' };
+    if (!info) continue;
+
+    try {
+      const content = readFileSync(file, 'utf-8');
+      const lines = content.split('\n').filter(l => l.trim() !== '').length;
+      if (!langLines[info.name]) langLines[info.name] = { lines: 0, color: info.color };
+      langLines[info.name]!.lines += lines;
+    } catch {
+      // skip unreadable files
+    }
+  }
+
+  totalRepoLines = Object.values(langLines).reduce((s, v) => s + v.lines, 0);
+  repoLanguages = Object.entries(langLines)
+    .map(([name, data]) => ({
+      name,
+      lines: data.lines,
+      percentage: totalRepoLines > 0 ? Math.round((data.lines / totalRepoLines) * 100) : 0,
+      color: data.color,
+    }))
+    .filter(l => l.percentage > 0)
+    .sort((a, b) => b.lines - a.lines);
+} catch {
+  // git not available — leave empty
+}
+
+function fmtNum(n: number): string {
+  return n >= 10000 ? (n / 10000).toFixed(1) + '万' : String(n);
+}
 ---
 
 <Layout
@@ -49,22 +148,44 @@ const totalCategories = allCategories.size;
       <p>欢迎来到我的个人主页。</p>
     </section>
 
-    <!-- 站点统计 -->
-    <h2 class="mk-title" style="visibility:hidden;height:0;margin:0;overflow:hidden;">站点统计</h2>
+    <!-- 统计 -->
+    <h2 class="mk-title sr-only">数据统计</h2>
+    
     <section class="site-stats">
       <div class="stat-card fade-up-on-scroll">
         <div class="stat-number">{totalArticles}</div>
         <div class="stat-label">文章</div>
       </div>
-      <div class="stat-card fade-up-on-scroll" style="animation-delay: 0.1s">
+      <div class="stat-card fade-up-on-scroll" style="animation-delay: 0.05s">
         <div class="stat-number">{totalCategories}</div>
         <div class="stat-label">分类</div>
       </div>
-      <div class="stat-card fade-up-on-scroll" style="animation-delay: 0.2s">
+      <div class="stat-card fade-up-on-scroll" style="animation-delay: 0.1s">
         <div class="stat-number">{totalTags}</div>
         <div class="stat-label">标签</div>
       </div>
+      <div class="stat-card fade-up-on-scroll" style="animation-delay: 0.15s">
+        <div class="stat-number">{daysSinceLaunch}</div>
+        <div class="stat-label">建站天数</div>
+      </div>
+      <div class="stat-card fade-up-on-scroll" style="animation-delay: 0.2s">
+        <div class="stat-number">{fmtNum(totalWords)}</div>
+        <div class="stat-label">累计字数</div>
+      </div>
+      <div class="stat-card fade-up-on-scroll" style="animation-delay: 0.25s">
+        <div class="stat-number">{fmtNum(totalRepoLines)}</div>
+        <div class="stat-label">代码行数</div>
+      </div>
     </section>
+
+    <!-- 月度发文折线图 -->
+    <MonthlyChart labels={monthLabels} counts={monthCounts} />
+
+    <!-- 仓库语言构成 -->
+    <GitHubRepoStats languages={repoLanguages} totalLines={totalRepoLines} />
+
+    <!-- GitHub 个人语言构成 -->
+    <GitHubLanguages />
 
     <!-- GitHub 贡献墙 -->
     <GitHubContributions />
@@ -100,21 +221,20 @@ const totalCategories = allCategories.size;
     font-size: 1.1rem;
   }
 
-  /* 站点统计卡片 */
+  /* 站点统计卡片 — 3 列网格 */
   .site-stats {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    flex-wrap: wrap;
-    margin: 2.5rem 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin: 2.5rem auto;
+    max-width: 760px;
   }
 
   .stat-card {
     background: rgba(var(--muted-rgb), 0.4);
     border: 1px solid var(--border);
     border-radius: 16px;
-    padding: 1.5rem 2.5rem;
-    min-width: 120px;
+    padding: 1.5rem 1rem;
     transition: transform 0.2s ease, border-color 0.2s ease;
   }
 
@@ -124,7 +244,7 @@ const totalCategories = allCategories.size;
   }
 
   .stat-number {
-    font-size: 2.4rem;
+    font-size: 2.2rem;
     font-weight: 700;
     color: var(--accent-light);
     line-height: 1.2;
@@ -143,18 +263,40 @@ const totalCategories = allCategories.size;
     text-align: center;
   }
 
+  /* 图表和统计卡片之间的间距 */
+  .home-page :global(.monthly-chart-card),
+  .home-page :global(.repo-stats-card),
+  .home-page :global(#gh-languages-root) {
+    margin-top: 1.5rem;
+  }
+
   @media (max-width: 760px) {
     .site-stats {
+      grid-template-columns: repeat(2, 1fr);
       gap: 1rem;
     }
 
     .stat-card {
-      padding: 1rem 1.5rem;
-      min-width: 90px;
+      padding: 1rem 0.8rem;
     }
 
     .stat-number {
       font-size: 1.8rem;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .site-stats {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.6rem;
+    }
+
+    .stat-card {
+      padding: 0.8rem 0.5rem;
+    }
+
+    .stat-number {
+      font-size: 1.5rem;
     }
   }
 </style>

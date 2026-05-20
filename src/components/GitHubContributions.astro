@@ -1,5 +1,7 @@
 ---
 // GitHub 贡献墙 — 服务端渲染网格骨架，客户端着色
+import { GITHUB_USERNAME } from '../consts';
+
 const WEEKS = 53;
 const DAYS = 7;
 const CELL_SIZE = 12;
@@ -44,8 +46,8 @@ for (let c = 0; c < allWeeks.length; c++) {
 }
 ---
 
-<div class="gh-contributions">
-  <h2 class="mk-title section-title">GitHub 贡献墙</h2>
+<div class="gh-contributions" data-username={GITHUB_USERNAME}>
+  <div class="stat-label" style="text-align:center;margin-bottom:0.5rem;">我在GitHub上的贡献</div>
   <div class="gh-grid-wrapper" id="gh-grid-wrapper">
     <!-- 月份标签 -->
     <div class="gh-month-labels">
@@ -81,14 +83,8 @@ for (let c = 0; c < allWeeks.length; c++) {
     text-align: center;
   }
 
-  .section-title {
-    font-size: 1.4rem;
-    margin-bottom: 1.5rem;
-    color: var(--foreground-light);
-  }
-
   .gh-grid-wrapper {
-    display: inline-flex;
+    display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 6px;
@@ -237,7 +233,9 @@ for (let c = 0; c < allWeeks.length; c++) {
 
 <script>
   (function() {
-    var USERNAME = 'user1-cloud';
+    var root = document.querySelector('.gh-contributions');
+    if (!root) return;
+    var USERNAME = root.getAttribute('data-username') || 'user1-cloud';
 
     function levelToNum(level) {
       switch (level) {
