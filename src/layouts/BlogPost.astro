@@ -14,6 +14,7 @@ import BoidsBackground from '../components/BoidsBackground.astro';
 import SearchModal from '../components/SearchModal.astro';
 
 // 专用css
+import '../styles/_sidebar-shared.scss';
 import '../styles/blog-post.scss';
 import '../styles/left-sidebar.scss';
 
@@ -93,7 +94,7 @@ const currentSlug = slugMatch ? decodeURIComponent(slugMatch[1].replace(/\/+$/, 
 					</div>
 
 					<!-- 右侧：可折叠侧边栏（目录 + 简介） -->
-					<aside class="right-sidebar" id="rightSidebar">
+					<aside class="right-sidebar sidebar-panel" id="rightSidebar">
 						<div class="sidebar-inner">
 							<!-- 上栏：目录区 -->
 							<div class="toc-area">
@@ -114,12 +115,12 @@ const currentSlug = slugMatch ? decodeURIComponent(slugMatch[1].replace(/\/+$/, 
 		<Footer />
 
 		<!-- 左侧栏折叠按钮 -->
-		<button class="toggle-left-sidebar-btn" id="toggleLeftSidebarBtn" aria-label="切换左侧栏">
+		<button class="toggle-left-sidebar-btn sidebar-toggle-btn" id="toggleLeftSidebarBtn" aria-label="切换左侧栏">
 			<span class="arrow-icon"></span>
 		</button>
 
 		<!-- 右侧栏折叠按钮 -->
-		<button class="toggle-right-sidebar-btn" id="toggleSidebarBtn" aria-label="切换侧边栏">
+		<button class="toggle-right-sidebar-btn sidebar-toggle-btn" id="toggleSidebarBtn" aria-label="切换侧边栏">
 			<span class="arrow-icon"></span>
 		</button>
 

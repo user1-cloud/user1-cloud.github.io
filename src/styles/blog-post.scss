@@ -120,22 +120,13 @@
 
   /* ========= 右侧可折叠侧边栏 ========= */
   .right-sidebar {
-    width: 260px;
-    flex-shrink: 0;
     margin-left: 1rem;
-    transition: width 0.25s ease, margin-left 0.25s ease, opacity 0.2s ease;
     overflow-x: hidden;
-    position: sticky;
-    top: 2rem;
-    max-height: calc(100vh - 4rem);
     overflow: hidden !important;
-    display: flex;
-    flex-direction: column;
-    background: transparent;
     z-index: 999;
 
     scrollbar-width: thin;
-    
+
     &::-webkit-scrollbar {
       width: 4px;
       background: transparent;
@@ -144,9 +135,9 @@
       background: var(--border);
       border-radius: 4px;
     }
-    
+
     .sidebar-inner {
-      width: 260px;
+      width: var(--sidebar-width);
       padding: 0.5rem 0.5rem 0.5rem 0.2rem;
       box-sizing: border-box;
       flex: 1;
@@ -175,15 +166,8 @@
     }
   }
 
-  /* 全局状态控制：侧边栏折叠 */
+  /* 右侧栏折叠时箭头转向 */
   html.sidebar-collapsed {
-    .right-sidebar {
-      width: 0;
-      margin-left: 0;
-      opacity: 0;
-      visibility: hidden;
-      transition: width 0.25s ease, margin-left 0.25s ease, opacity 0.2s ease, visibility 0s 0.25s;
-    }
     .toggle-right-sidebar-btn .arrow-icon {
       transform: rotate(-135deg) translateX(-17.678%) translateY(17.678%);
     }
@@ -296,56 +280,23 @@
     }
   }
 
-  /* 折叠按钮：保留模糊、无实底、边框样式 */
+  /* 右侧折叠按钮定位与箭头方向 */
   .toggle-right-sidebar-btn {
-    position: fixed;
     right: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 1000;
-    background: transparent;
-    backdrop-filter: blur(8px);
-    border: 1px solid var(--border-light);
-    border-radius: 20px;
-    padding: 32px 8px;
-    cursor: pointer;
-    box-shadow: none;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 
-    &:hover {
-      background: transparent;
-      box-shadow: none;
-      border-color: var(--accent);
+    .arrow-icon {
+      transform: rotate(45deg) translateX(-17.678%) translateY(17.678%);
     }
-
-    &:active {
-      transform: translateY(-50%) scale(0.96);
-    }
-  }
-
-  .arrow-icon {
-    display: inline-block;
-    width: 7px;
-    height: 7px;
-    border-top: 2px solid var(--foreground);
-    border-right: 2px solid var(--foreground);
-    transform: rotate(45deg) translateX(-17.678%) translateY(17.678%);
-    transition: transform 0.25s ease;
   }
 
   /* 1100-1399px */
   @media (max-width: 1399px) and (min-width: 1100px) {
     .content-main { max-width: none; }
-    .right-sidebar { width: 220px; .sidebar-inner { width: 220px; } }
   }
 
   /* 900-1099px */
   @media (max-width: 1099px) and (min-width: 900px) {
     .content-main { max-width: none; }
-    .right-sidebar { width: 160px; .sidebar-inner { width: 160px; } }
   }
 
   /* 760-899px */

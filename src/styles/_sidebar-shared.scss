@@ -1,0 +1,76 @@
+@layer components {
+  :root {
+    --sidebar-width: 240px;
+  }
+
+  @media (max-width: 1399px) and (min-width: 1100px) {
+    :root { --sidebar-width: 220px; }
+  }
+
+  @media (max-width: 1099px) and (min-width: 900px) {
+    :root { --sidebar-width: 160px; }
+  }
+
+  /* 共享的侧栏结构样式 */
+  .sidebar-panel {
+    width: var(--sidebar-width);
+    flex-shrink: 0;
+    position: sticky;
+    top: 2rem;
+    max-height: calc(100vh - 4rem);
+    display: flex;
+    flex-direction: column;
+    background: transparent;
+    transition: width 0.25s ease, margin-left 0.25s ease, opacity 0.2s ease;
+  }
+
+  /* 桌面端双栏折叠 */
+  @media (min-width: 900px) {
+    html.left-sidebar-collapsed .left-sidebar,
+    html.sidebar-collapsed .right-sidebar {
+      width: 0 !important;
+      margin-left: 0;
+      opacity: 0;
+      visibility: hidden;
+      transition: width 0.25s ease, margin-left 0.25s ease, opacity 0.2s ease, visibility 0s 0.25s;
+    }
+  }
+
+  /* 共享的折叠按钮 */
+  .sidebar-toggle-btn {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1000;
+    background: transparent;
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border-light);
+    border-radius: 20px;
+    padding: 32px 8px;
+    cursor: pointer;
+    box-shadow: none;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background: transparent;
+      box-shadow: none;
+      border-color: var(--accent);
+    }
+
+    &:active {
+      transform: translateY(-50%) scale(0.96);
+    }
+
+    .arrow-icon {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-top: 2px solid var(--foreground);
+      border-right: 2px solid var(--foreground);
+      transition: transform 0.25s ease;
+    }
+  }
+}
