@@ -1,6 +1,6 @@
 @layer components {
   .left-sidebar {
-    width: 240px;
+    width: 220px;
     flex-shrink: 0;
     position: sticky;
     top: 2rem;
@@ -418,7 +418,7 @@
   /* 1100-1399px: 缩小 */
   @media (max-width: 1399px) and (min-width: 1100px) {
     .left-sidebar {
-      width: 200px;
+      width: 220px;
     }
   }
  
