@@ -35,9 +35,6 @@ function buildToc() {
   headings.forEach((heading) => {
     const el = heading as HTMLElement;
 
-    // 跳过不可见的标题（display:none 等），避免点击无效
-    if (el.offsetParent === null) return;
-
     const id = `heading-${tocIndex++}`;
     el.id = id;
 
@@ -49,14 +46,12 @@ function buildToc() {
     const div = document.createElement('div');
     div.style.cursor = 'pointer';
     div.onclick = () => {
-      // 直接激活被点击条目，不再依赖滚动监听的偏移判断
       tocItemElements.forEach(item => item.classList.remove('active'));
       li.classList.add('active');
       updateRightIndicator();
 
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-      // 平滑滚动结束后再次确认，防止滚动中途 scroll spy 误判
       let confirmed = false;
       const confirmActive = () => {
         if (confirmed) return;
@@ -125,35 +120,41 @@ function updateRightIndicator() {
   const indicator = document.querySelector('.toc-area .position-indicator');
   if (!container || !indicator) return;
 
-  // 找出当前视口中所有可见的标题
   const viewportHeight = window.innerHeight;
   let firstVisibleIdx = -1;
   let lastVisibleIdx = -1;
 
   for (let i = 0; i < headingElements.length; i++) {
     const rect = headingElements[i].element.getBoundingClientRect();
-    if (rect.top < viewportHeight && rect.bottom > 0) {
+    if (rect.top < viewportHeight && rect.bottom >= 0) {
       if (firstVisibleIdx === -1) firstVisibleIdx = i;
       lastVisibleIdx = i;
     }
   }
 
+  // 找活跃标题的索引
+  let activeIdx = -1;
+  const active = document.querySelector('#toc-list li.active');
+  if (active) {
+    activeIdx = tocItemElements.indexOf(active as HTMLLIElement);
+  }
+
   if (firstVisibleIdx === -1) {
-    // 所有标题都在视口之外时，回退到当前活跃标题
-    const active = document.querySelector('#toc-list li.active');
-    if (!active) {
+    if (activeIdx === -1) {
       indicator.classList.remove('visible');
       return;
     }
-    const relTop = getRelativeTop(active as HTMLElement, container as HTMLElement);
-    const h = (active as HTMLElement).offsetHeight;
+    const item = tocItemElements[activeIdx] as HTMLElement;
+    const relTop = getRelativeTop(item, container as HTMLElement);
     indicator.style.top = relTop + 'px';
-    indicator.style.height = h + 'px';
+    indicator.style.height = item.offsetHeight + 'px';
     indicator.classList.add('visible');
     return;
   }
 
-  const firstItem = tocItemElements[firstVisibleIdx] as HTMLElement;
+  // 起点取活跃标题和第一个可见标题中更靠上的，避免活跃标题刚滚出视口时竖线顶部跳跃
+  const startIdx = activeIdx >= 0 ? Math.min(activeIdx, firstVisibleIdx) : firstVisibleIdx;
+  const firstItem = tocItemElements[startIdx] as HTMLElement;
   const lastItem = tocItemElements[lastVisibleIdx] as HTMLElement;
 
   const topRel = getRelativeTop(firstItem, container as HTMLElement);
