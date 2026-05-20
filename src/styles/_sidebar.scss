@@ -14,6 +14,7 @@
   /* 共享的侧栏结构样式 */
   .sidebar-panel {
     width: var(--sidebar-width);
+    font-size: 0.85rem;
     flex-shrink: 0;
     position: sticky;
     top: 2rem;
@@ -24,16 +25,24 @@
     transition: width 0.25s ease, margin-left 0.25s ease, opacity 0.2s ease;
   }
 
-  /* 桌面端双栏折叠 */
+  /* 左侧栏折叠（仅桌面端） */
   @media (min-width: 900px) {
-    html.left-sidebar-collapsed .left-sidebar,
-    html.sidebar-collapsed .right-sidebar {
+    html.left-sidebar-collapsed .left-sidebar {
       width: 0 !important;
       margin-left: 0;
       opacity: 0;
       visibility: hidden;
       transition: width 0.25s ease, margin-left 0.25s ease, opacity 0.2s ease, visibility 0s 0.25s;
     }
+  }
+
+  /* 右侧栏折叠（全宽度） */
+  html.sidebar-collapsed .right-sidebar {
+    width: 0 !important;
+    margin-left: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: width 0.25s ease, margin-left 0.25s ease, opacity 0.2s ease, visibility 0s 0.25s;
   }
 
   /* 共享的折叠按钮 */

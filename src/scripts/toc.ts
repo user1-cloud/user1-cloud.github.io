@@ -31,9 +31,15 @@ function buildToc() {
     return;
   }
 
-  headings.forEach((heading, index) => {
-    const id = `heading-${index}`;
-    (heading as HTMLElement).id = id;
+  let tocIndex = 0;
+  headings.forEach((heading) => {
+    const el = heading as HTMLElement;
+
+    // 跳过不可见的标题（display:none 等），避免点击无效
+    if (el.offsetParent === null) return;
+
+    const id = `heading-${tocIndex++}`;
+    el.id = id;
 
     // 创建目录项
     const li = document.createElement('li');
@@ -43,16 +49,37 @@ function buildToc() {
     const div = document.createElement('div');
     div.style.cursor = 'pointer';
     div.onclick = () => {
-      (heading as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'start' });
-      setTimeout(updateActive, 100);
+      // 直接激活被点击条目，不再依赖滚动监听的偏移判断
+      tocItemElements.forEach(item => item.classList.remove('active'));
+      li.classList.add('active');
+      updateRightIndicator();
+
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      // 平滑滚动结束后再次确认，防止滚动中途 scroll spy 误判
+      let confirmed = false;
+      const confirmActive = () => {
+        if (confirmed) return;
+        confirmed = true;
+        tocItemElements.forEach(item => item.classList.remove('active'));
+        li.classList.add('active');
+        updateRightIndicator();
+      };
+      window.addEventListener('scrollend', confirmActive, { once: true });
+      setTimeout(confirmActive, 500);
     };
     div.textContent = heading.textContent?.trim() || '';
     li.appendChild(div);
     tocList.appendChild(li);
 
-    headingElements.push({ element: heading as HTMLElement, tocItem: li });
+    headingElements.push({ element: el, tocItem: li });
     tocItemElements.push(li);
   });
+
+  if (headingElements.length === 0) {
+    tocList.innerHTML = '<li class="toc-empty">本部分无目录</li>';
+    return;
+  }
 }
 
 function scrollTocToView(tocItem: HTMLLIElement) {
@@ -98,16 +125,42 @@ function updateRightIndicator() {
   const indicator = document.querySelector('.toc-area .position-indicator');
   if (!container || !indicator) return;
 
-  const active = document.querySelector('#toc-list li.active');
-  if (!active) {
-    indicator.classList.remove('visible');
+  // 找出当前视口中所有可见的标题
+  const viewportHeight = window.innerHeight;
+  let firstVisibleIdx = -1;
+  let lastVisibleIdx = -1;
+
+  for (let i = 0; i < headingElements.length; i++) {
+    const rect = headingElements[i].element.getBoundingClientRect();
+    if (rect.top < viewportHeight && rect.bottom > 0) {
+      if (firstVisibleIdx === -1) firstVisibleIdx = i;
+      lastVisibleIdx = i;
+    }
+  }
+
+  if (firstVisibleIdx === -1) {
+    // 所有标题都在视口之外时，回退到当前活跃标题
+    const active = document.querySelector('#toc-list li.active');
+    if (!active) {
+      indicator.classList.remove('visible');
+      return;
+    }
+    const relTop = getRelativeTop(active as HTMLElement, container as HTMLElement);
+    const h = (active as HTMLElement).offsetHeight;
+    indicator.style.top = relTop + 'px';
+    indicator.style.height = h + 'px';
+    indicator.classList.add('visible');
     return;
   }
 
-  const relTop = getRelativeTop(active as HTMLElement, container as HTMLElement);
-  const h = (active as HTMLElement).offsetHeight;
-  indicator.style.top = relTop + 'px';
-  indicator.style.height = h + 'px';
+  const firstItem = tocItemElements[firstVisibleIdx] as HTMLElement;
+  const lastItem = tocItemElements[lastVisibleIdx] as HTMLElement;
+
+  const topRel = getRelativeTop(firstItem, container as HTMLElement);
+  const bottomRel = getRelativeTop(lastItem, container as HTMLElement) + lastItem.offsetHeight;
+
+  indicator.style.top = topRel + 'px';
+  indicator.style.height = (bottomRel - topRel) + 'px';
   indicator.classList.add('visible');
 }
 
@@ -115,7 +168,7 @@ function updateRightIndicator() {
 function updateActive() {
   let bestMatchIndex = -1;
   const scrollY = window.scrollY;
-  const offset = 100;
+  const offset = 20;
 
   for (let i = headingElements.length - 1; i >= 0; i--) {
     const heading = headingElements[i].element;

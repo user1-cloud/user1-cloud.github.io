@@ -158,7 +158,7 @@
     list-style: none;
     padding: 0;
     margin: 0;
-    font-size: 0.85em;
+    font-size: 1em;
   }
 
   .tree-node {
@@ -367,10 +367,6 @@
 
   /* 900-1099px: 紧凑模式 */
   @media (max-width: 1099px) and (min-width: 900px) {
-    .left-sidebar {
-      font-size: 0.8em;
-    }
-
     .ls-toolbar {
       gap: 0.25rem;
     }

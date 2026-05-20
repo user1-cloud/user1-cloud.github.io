@@ -159,7 +159,7 @@
     opacity: 0;
     pointer-events: none;
     z-index: 10;
-    transition: top 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+    transition: top 0.35s cubic-bezier(0.4, 0, 0.2, 1), height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
 
     &.visible {
       opacity: 1;
@@ -200,10 +200,9 @@
     h3 {
       margin-top: 0;
       margin-bottom: 0.75rem;
-      font-size: 1rem;
+      font-size: 0.85rem;
       font-weight: bold;
       padding-left: 0.5rem;
-      border-left: 3px solid var(--accent);
       color: var(--foreground-light);
     }
   }
@@ -219,7 +218,7 @@
     line-height: 1.6;
     text-indent: 2em;
     color: var(--foreground-dark);
-    
+
     max-height: 120px;
     overflow-y: auto;
 
@@ -228,7 +227,7 @@
 
     scrollbar-width: none;
     -ms-overflow-style: none;
-    
+
     &::-webkit-scrollbar {
       display: none;
     }
@@ -261,6 +260,12 @@
         cursor: pointer;
         box-sizing: border-box;
         border-radius: 0 8px 8px 0;
+        transition: color 0.15s, background 0.15s;
+
+        &:hover {
+          color: var(--foreground);
+          background: rgba(var(--accent-rgb), 0.06);
+        }
       }
 
       &.toc-level-h2 div {
