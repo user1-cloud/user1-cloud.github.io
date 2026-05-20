@@ -50,7 +50,7 @@ const LANG_COLORS: Record<string, string> = {
     </div>
 
     <!-- 真实内容 -->
-    <div class="ghl-content" id="ghl-content" style="display:none;">
+    <div id="ghl-content" style="display:none;">
       <div class="lang-chart-row">
         <svg class="lang-pie" viewBox="0 0 200 200" id="ghl-pie" aria-label="GitHub 个人语言构成饼图"></svg>
         <div class="lang-legend" id="ghl-legend"></div>
@@ -76,7 +76,6 @@ const LANG_COLORS: Record<string, string> = {
     margin-bottom: 1rem;
   }
 
-  /* 骨架样式 */
   .ghl-skeleton {
     display: flex;
     flex-direction: column;
@@ -109,7 +108,7 @@ const LANG_COLORS: Record<string, string> = {
   }
 </style>
 
-<script is:inline>
+<script>
   (function() {
     var root = document.getElementById('ghl-root');
     if (!root) return;
@@ -139,11 +138,63 @@ const LANG_COLORS: Record<string, string> = {
       return 'M' + CX + ',' + CY + ' L' + x1.toFixed(2) + ',' + y1.toFixed(2) + ' A' + R + ',' + R + ' 0 ' + large + ' 1 ' + x2.toFixed(2) + ',' + y2.toFixed(2) + ' Z';
     }
 
-    async function load() {
+    function renderPie(entries, totalBytes) {
+      var pie = document.getElementById('ghl-pie');
+      if (!pie) return;
+      pie.innerHTML = '';
+      var currentAngle = -PI / 2;
+      for (var i = 0; i < entries.length; i++) {
+        var pct = Math.round((entries[i].bytes / totalBytes) * 100);
+        if (pct < 1) pct = 1;
+        var sliceAngle = (pct / 100) * 2 * PI;
+        var start = currentAngle;
+        currentAngle += sliceAngle;
+
+        var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', slicePath(start, currentAngle));
+        path.setAttribute('fill', getColor(entries[i].name));
+        path.setAttribute('stroke', 'var(--background)');
+        path.setAttribute('stroke-width', '1.5');
+
+        var title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+        title.textContent = entries[i].name + ': ' + fmt(entries[i].bytes) + ' bytes (' + pct + '%)';
+        path.appendChild(title);
+        pie.appendChild(path);
+      }
+
+      var center = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      center.setAttribute('cx', String(CX));
+      center.setAttribute('cy', String(CY));
+      center.setAttribute('r', String(INNER_R));
+      center.setAttribute('fill', 'var(--background)');
+      pie.appendChild(center);
+
+      var legend = document.getElementById('ghl-legend');
+      if (!legend) return;
+      legend.innerHTML = '';
+      for (var i = 0; i < entries.length; i++) {
+        var pct = Math.round((entries[i].bytes / totalBytes) * 100);
+        var item = document.createElement('div');
+        item.className = 'lang-legend-item';
+        item.innerHTML =
+          '<span class="lang-legend-dot" style="background:' + getColor(entries[i].name) + ';"></span>' +
+          '<span class="lang-legend-name">' + entries[i].name + '</span>' +
+          '<span class="lang-legend-pct">' + pct + '%</span>';
+        legend.appendChild(item);
+      }
+
+      var total = document.getElementById('ghl-total');
+      if (total) total.textContent = '共 ' + fmt(totalBytes) + ' bytes';
+    }
+
+    function showContent() {
       var skeleton = document.getElementById('ghl-skeleton');
       var content = document.getElementById('ghl-content');
-      if (!skeleton || !content) return;
+      if (skeleton) skeleton.style.display = 'none';
+      if (content) content.style.display = '';
+    }
 
+    async function load() {
       try {
         var reposRes = await fetch('https://api.github.com/users/' + USERNAME + '/repos?per_page=100&type=owner');
         if (!reposRes.ok) throw new Error('repos HTTP ' + reposRes.status);
@@ -151,20 +202,19 @@ const LANG_COLORS: Record<string, string> = {
         if (!Array.isArray(repos) || repos.length === 0) throw new Error('no repos');
 
         var langTotals = {};
-        var requests = repos
-          .filter(function(r) { return !r.fork; })
-          .map(function(r) {
-            return fetch(r.languages_url)
-              .then(function(res) { return res.ok ? res.json() : {}; })
-              .catch(function() { return {}; });
-          });
+        var ownRepos = repos.filter(function(r) { return !r.fork; });
 
-        var allLangs = await Promise.all(requests);
-        for (var i = 0; i < allLangs.length; i++) {
-          var langs = allLangs[i];
-          for (var name in langs) {
-            if (!langs.hasOwnProperty(name)) continue;
-            langTotals[name] = (langTotals[name] || 0) + langs[name];
+        for (var i = 0; i < ownRepos.length; i++) {
+          try {
+            var res = await fetch(ownRepos[i].languages_url);
+            if (!res.ok) continue;
+            var langs = await res.json();
+            for (var name in langs) {
+              if (!langs.hasOwnProperty(name)) continue;
+              langTotals[name] = (langTotals[name] || 0) + langs[name];
+            }
+          } catch (e) {
+            // skip failed repo language fetches
           }
         }
 
@@ -174,58 +224,13 @@ const LANG_COLORS: Record<string, string> = {
           entries.push({ name: name, bytes: langTotals[name] });
         }
         entries.sort(function(a, b) { return b.bytes - a.bytes; });
-
         if (entries.length === 0) throw new Error('no languages');
 
         var totalBytes = entries.reduce(function(s, e) { return s + e.bytes; }, 0);
         var topEntries = entries.slice(0, 8);
 
-        // 渲染饼图
-        var pie = document.getElementById('ghl-pie');
-        pie.innerHTML = '';
-        var currentAngle = -PI / 2;
-        for (var i = 0; i < topEntries.length; i++) {
-          var pct = Math.round((topEntries[i].bytes / totalBytes) * 100);
-          if (pct < 1) pct = 1;
-          var sliceAngle = (pct / 100) * 2 * PI;
-          var start = currentAngle;
-          currentAngle += sliceAngle;
-          var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-          path.setAttribute('d', slicePath(start, currentAngle));
-          path.setAttribute('fill', getColor(topEntries[i].name));
-          path.setAttribute('stroke', 'var(--background)');
-          path.setAttribute('stroke-width', '1.5');
-          var title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
-          title.textContent = topEntries[i].name + ': ' + fmt(topEntries[i].bytes) + ' bytes (' + pct + '%)';
-          path.appendChild(title);
-          pie.appendChild(path);
-        }
-        // 中心圆（甜甜圈效果）
-        var center = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        center.setAttribute('cx', CX);
-        center.setAttribute('cy', CY);
-        center.setAttribute('r', INNER_R);
-        center.setAttribute('fill', 'var(--background)');
-        pie.appendChild(center);
-
-        // 渲染图例
-        var legend = document.getElementById('ghl-legend');
-        legend.innerHTML = '';
-        for (var i = 0; i < topEntries.length; i++) {
-          var pct = Math.round((topEntries[i].bytes / totalBytes) * 100);
-          var item = document.createElement('div');
-          item.className = 'lang-legend-item';
-          item.innerHTML =
-            '<span class="lang-legend-dot" style="background:' + getColor(topEntries[i].name) + ';"></span>' +
-            '<span class="lang-legend-name">' + topEntries[i].name + '</span>' +
-            '<span class="lang-legend-pct">' + pct + '%</span>';
-          legend.appendChild(item);
-        }
-
-        document.getElementById('ghl-total').textContent = '共 ' + fmt(totalBytes) + ' bytes';
-
-        skeleton.style.display = 'none';
-        content.style.display = '';
+        renderPie(topEntries, totalBytes);
+        showContent();
       } catch (err) {
         console.warn('GitHub languages fetch failed:', err.message);
       }
