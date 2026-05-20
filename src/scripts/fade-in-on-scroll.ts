@@ -1,34 +1,37 @@
+let ticking = false;
+let pendingAdd: Element[] = [];
+let pendingRemove: Element[] = [];
+
+function flush() {
+  pendingAdd.forEach((el) => el.classList.add('visible'));
+  pendingRemove.forEach((el) => el.classList.remove('visible'));
+  pendingAdd = [];
+  pendingRemove = [];
+  ticking = false;
+}
+
 document.addEventListener('astro:page-load', () => {
-  if ((window as any).fadeObserver) {
-    (window as any).fadeObserver.disconnect();
-  }
-
-  // 把所有动画类写在这里
-  const fadeElements = document.querySelectorAll<HTMLElement>(
-    `.fade-down-on-scroll,
-    .fade-up-on-scroll,
-    .fade-left-on-scroll,
-    .fade-right-on-scroll,
-    .fade-scale-on-scroll,
-    .fade-only-on-scroll
-    `
-  );
-
-  const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px',
-  };
-
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
+        pendingAdd.push(entry.target);
       } else {
-        entry.target.classList.remove('visible');
+        pendingRemove.push(entry.target);
       }
     });
-  }, observerOptions);
 
-  (window as any).fadeObserver = observer;
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(flush);
+    }
+  }, {
+    threshold: 0.05,
+    rootMargin: '0px 0px 40px 0px',
+  });
+
+  const fadeElements = document.querySelectorAll<HTMLElement>(
+    '.fade-down-on-scroll, .fade-up-on-scroll, .fade-left-on-scroll, .fade-right-on-scroll, .fade-scale-on-scroll, .fade-only-on-scroll'
+  );
+
   fadeElements.forEach((el) => observer.observe(el));
 });

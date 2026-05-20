@@ -10,7 +10,6 @@ import Header from '../components/Header.astro';
 import LeftSidebar from '../components/LeftSidebar.astro';
 import { resolveDirs } from '../lib/utils';
 
-import BoidsBackground from '../components/BoidsBackground.astro';
 import SearchModal from '../components/SearchModal.astro';
 
 // 专用css
@@ -123,8 +122,6 @@ const currentSlug = slugMatch ? decodeURIComponent(slugMatch[1].replace(/\/+$/, 
 		<button class="toggle-right-sidebar-btn sidebar-toggle-btn" id="toggleSidebarBtn" aria-label="切换侧边栏">
 			<span class="arrow-icon"></span>
 		</button>
-
-		<BoidsBackground/>
 
 		<!-- 移动端左侧栏覆盖层背景 -->
 		<div class="left-sidebar-overlay-backdrop"></div>

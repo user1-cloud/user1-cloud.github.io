@@ -40,7 +40,7 @@
     color: var(--foreground-dark);
     cursor: pointer;
     font-family: inherit;
-    transition: all 0.2s ease;
+    transition: border-color 0.2s ease, color 0.2s ease;
     box-sizing: border-box;
 
     &:hover {
@@ -71,7 +71,7 @@
     color: var(--foreground-dark);
     cursor: pointer;
     font-family: inherit;
-    transition: all 0.2s ease;
+    transition: border-color 0.2s ease, color 0.2s ease;
     box-sizing: border-box;
 
     &:hover {
@@ -242,7 +242,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      transition: all 0.15s;
+      transition: color 0.15s, background 0.15s;
 
       &:hover {
         color: var(--foreground);

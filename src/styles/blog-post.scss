@@ -152,6 +152,7 @@
   .toc-area .position-indicator {
     position: absolute;
     left: 0;
+    top: 0;
     width: 3px;
     height: 18px;
     border-radius: 0 4px 4px 0;
@@ -159,7 +160,7 @@
     opacity: 0;
     pointer-events: none;
     z-index: 10;
-    transition: top 0.35s cubic-bezier(0.4, 0, 0.2, 1), height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
 
     &.visible {
       opacity: 1;
@@ -186,7 +187,7 @@
     padding: 0.8rem;
     background: transparent;
     border-radius: 16px;
-    backdrop-filter: blur(8px);
+    contain: layout style paint;
 
     scrollbar-width: none;
     -ms-overflow-style: none;
@@ -196,7 +197,7 @@
 
     overscroll-behavior: contain;
     touch-action: pan-y;
-    
+
     h3 {
       margin-top: 0;
       margin-bottom: 0.75rem;
@@ -213,7 +214,7 @@
     padding: 0.8rem;
     background: transparent;
     border-radius: 16px;
-    backdrop-filter: blur(8px);
+    contain: layout style paint;
     font-size: 0.85em;
     line-height: 1.6;
     text-indent: 2em;
