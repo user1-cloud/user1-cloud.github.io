@@ -204,6 +204,22 @@
       margin: 0;
     }
   }
+  /* Mermaid 图表容器 */
+  .mermaid {
+    margin: 1.5rem auto;
+    text-align: center;
+    overflow-x: auto;
+    background: transparent;
+
+    &[data-processed] {
+      white-space: normal;
+    }
+
+    svg {
+      max-width: 100%;
+      height: auto;
+    }
+  }
 
   table {
     width: 100%;

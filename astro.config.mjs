@@ -14,6 +14,7 @@ import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import { remarkMark } from 'remark-mark-highlight';
 
 import compress from 'astro-compress';
+import { remarkMermaid } from './src/plugins/remark-mermaid';
 
 const USERNAME = 'user1-cloud';
 
@@ -35,8 +36,9 @@ export default defineConfig({
         remarkEmoji,
         remarkMath,
         remarkMark,
-    ],
-    rehypePlugins: [
+        remarkMermaid,
+      ],
+      rehypePlugins: [
       [rehypeKatex, { output: 'html' }],
       rehypeSlug,
       rehypeAutolinkHeadings,
