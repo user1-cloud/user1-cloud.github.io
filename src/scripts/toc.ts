@@ -113,7 +113,6 @@ function updateRightIndicator(headingRects?: DOMRect[]) {
   const indicator = document.querySelector('.toc-area .position-indicator');
   if (!container || !indicator) return;
 
-  // 若未传入缓存的 rect，则当场读取
   if (!headingRects) {
     headingRects = [];
     for (let i = 0; i < headingElements.length; i++) {
@@ -148,8 +147,9 @@ function updateRightIndicator(headingRects?: DOMRect[]) {
     const containerRect = container.getBoundingClientRect();
     const itemRect = item.getBoundingClientRect();
     const relTop = itemRect.top - containerRect.top + container.scrollTop;
-    indicator.style.transform = `translateY(${relTop}px)`;
-    indicator.style.height = item.offsetHeight + 'px';
+    const vPad = 4;
+    indicator.style.transform = `translateY(${relTop + vPad}px)`;
+    indicator.style.height = (item.offsetHeight - vPad * 2) + 'px';
     indicator.classList.add('visible');
     return;
   }
@@ -161,8 +161,9 @@ function updateRightIndicator(headingRects?: DOMRect[]) {
   const containerRect = container.getBoundingClientRect();
   const firstRect = firstItem.getBoundingClientRect();
   const lastRect = lastItem.getBoundingClientRect();
-  const topRel = firstRect.top - containerRect.top + container.scrollTop;
-  const bottomRel = lastRect.top - containerRect.top + container.scrollTop + lastItem.offsetHeight;
+  const vPad = 4;
+  const topRel = firstRect.top - containerRect.top + container.scrollTop + vPad;
+  const bottomRel = lastRect.top - containerRect.top + container.scrollTop + lastItem.offsetHeight - vPad;
 
   indicator.style.transform = `translateY(${topRel}px)`;
   indicator.style.height = (bottomRel - topRel) + 'px';
@@ -205,7 +206,7 @@ function updateActive() {
     }
   }
 
-  // Phase 4: 用缓存的 rect 更新指示器（内部仍有必要的容器读取，但不再重复读取标题）
+  // Phase 4: 用缓存的 rect 更新指示器
   updateRightIndicator(headingRects);
   ticking = false;
 }
