@@ -1,0 +1,72 @@
+---
+// 可折叠侧栏共用包装组件
+// 提供：aside 结构、折叠按钮、覆盖层背景、内联脚本（立即同步 localStorage 状态避免闪烁）
+interface Props {
+  position: 'left' | 'right';
+  sidebarId: string;
+  btnId: string;
+  storageKey: string;
+  collapsedClass: string;
+  hasOverlay?: boolean;
+  // 'simple' → 'true'/'false'; 'object' → JSON { collapsed: boolean }
+  parseCollapsed?: 'simple' | 'object';
+  btnLabel?: string;
+}
+
+const {
+  position,
+  sidebarId,
+  btnId,
+  storageKey,
+  collapsedClass,
+  hasOverlay = false,
+  parseCollapsed = 'simple',
+  btnLabel = '切换侧栏',
+} = Astro.props;
+---
+
+<!-- 移动端覆盖层背景 -->
+{hasOverlay && <div class={`${position}-sidebar-overlay-backdrop`}></div>}
+
+<aside class={`${position}-sidebar sidebar-panel`} id={sidebarId}>
+  <slot />
+</aside>
+
+<button class={`toggle-${position}-sidebar-btn sidebar-toggle-btn`} id={btnId} aria-label={btnLabel}>
+  <span class="arrow-icon"></span>
+</button>
+
+<script>
+  // 立即同步 localStorage 状态到 <html> class，避免页面闪烁（IIFE 避免多实例变量冲突）
+  (function () {
+    var storageKey = "{storageKey}";
+    var collapsedClass = "{collapsedClass}";
+    var parseCollapsed = "{parseCollapsed}";
+
+    function readCollapsed() {
+      try {
+        var raw = localStorage.getItem(storageKey);
+        if (!raw) return false;
+        if (parseCollapsed === 'object') {
+          return JSON.parse(raw).collapsed === true;
+        }
+        return raw === 'true';
+      } catch (_) {
+        return false;
+      }
+    }
+
+    function sync() {
+      if (readCollapsed()) {
+        document.documentElement.classList.add(collapsedClass);
+      } else {
+        document.documentElement.classList.remove(collapsedClass);
+      }
+    }
+
+    sync();
+
+    // Astro 视图过渡后重新同步
+    document.addEventListener('astro:page-load', sync);
+  })();
+</script>

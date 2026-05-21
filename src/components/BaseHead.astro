@@ -73,5 +73,19 @@ if (image) {
       var prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
       document.documentElement.setAttribute('data-theme', prefersLight ? 'light-blue' : 'dark-blue');
     }
+
+    // 恢复侧栏折叠状态。HTML 默认带 collapsed class，若用户曾打开侧栏则移除
+    try {
+      var leftRaw = localStorage.getItem('left-sidebar-state');
+      if (leftRaw && JSON.parse(leftRaw).collapsed === false) {
+        document.documentElement.classList.remove('left-sidebar-collapsed');
+      }
+    } catch (_) {}
+
+    try {
+      if (localStorage.getItem('blog-sidebar-collapsed') !== 'true') {
+        document.documentElement.classList.remove('sidebar-collapsed');
+      }
+    } catch (_) {}
   })();
 </script>

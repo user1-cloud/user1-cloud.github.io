@@ -8,6 +8,7 @@ import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 import LeftSidebar from '../components/LeftSidebar.astro';
+import RightSidebar from '../components/RightSidebar.astro';
 import { resolveDirs } from '../lib/utils';
 
 import SearchModal from '../components/SearchModal.astro';
@@ -93,82 +94,19 @@ const currentSlug = slugMatch ? decodeURIComponent(slugMatch[1].replace(/\/+$/, 
 					</div>
 
 					<!-- 右侧：可折叠侧边栏（目录 + 简介） -->
-					<aside class="right-sidebar sidebar-panel" id="rightSidebar">
-						<div class="sidebar-inner">
-							<!-- 上栏：目录区 -->
-							<div class="toc-area">
-								<div class="position-indicator"></div>
-								<h3>目录</h3>
-								<ul id="toc-list"></ul>
-							</div>
-							<hr/>
-							<!-- 下栏：简介区 -->
-							<div class="desc-area">
-								<p set:html={description}></p>
-							</div>
-						</div>
-					</aside>
+					<RightSidebar description={description} />
 				</div>
 			</article>
 		</main>
 		<Footer />
 
-		<!-- 左侧栏折叠按钮 -->
-		<button class="toggle-left-sidebar-btn sidebar-toggle-btn" id="toggleLeftSidebarBtn" aria-label="切换左侧栏">
-			<span class="arrow-icon"></span>
-		</button>
-
-		<!-- 右侧栏折叠按钮 -->
-		<button class="toggle-right-sidebar-btn sidebar-toggle-btn" id="toggleSidebarBtn" aria-label="切换侧边栏">
-			<span class="arrow-icon"></span>
-		</button>
-
-		<!-- 移动端左侧栏覆盖层背景 -->
-		<div class="left-sidebar-overlay-backdrop"></div>
-
 		<SearchModal />
 
-		<!-- 左侧栏脚本 -->
+		<!-- 左侧栏交互脚本 -->
 		<script src="../scripts/left-sidebar"></script>
 		<!-- 目录生成脚本 -->
 		<script src="../scripts/toc"></script>
 		<!-- 滚动渐现效果 -->
 		<script src="../scripts/fade-in-on-scroll"></script>
-
-		<script>
-			function initSidebar() {
-				const storageKey = 'blog-sidebar-collapsed';
-				const btn = document.getElementById('toggleSidebarBtn');
-				if (!btn) return;
-
-				// 1. 每次都重新读取 localStorage 状态
-				const savedState = localStorage.getItem(storageKey);
-				const isCollapsed = savedState === 'true';
-
-				// 2. 强制同步状态到页面
-				if (isCollapsed) {
-					document.documentElement.classList.add('sidebar-collapsed');
-				} else {
-					document.documentElement.classList.remove('sidebar-collapsed');
-				}
-
-				// 3. 点击切换
-				function toggleSidebar() {
-					document.documentElement.classList.toggle('sidebar-collapsed');
-					const nowCollapsed = document.documentElement.classList.contains('sidebar-collapsed');
-					localStorage.setItem(storageKey, nowCollapsed);
-				}
-
-				// 安全绑定
-				btn.removeEventListener('click', toggleSidebar);
-				btn.addEventListener('click', toggleSidebar);
-			}
-
-			// 初始化
-			initSidebar();
-
-			// 路由切换后重新初始化
-			document.addEventListener('astro:after-swap', initSidebar);
-		</script>
 	</body>
 </html>

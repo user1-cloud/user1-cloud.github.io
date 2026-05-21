@@ -143,19 +143,6 @@ function applyExpandedState(): void {
   });
 }
 
-function applyCollapsedState(): void {
-  // 移动端不使用 left-sidebar-collapsed 类（走覆盖层模式）
-  if (window.innerWidth < 900) {
-    document.documentElement.classList.remove('left-sidebar-collapsed');
-    return;
-  }
-  if (state.collapsed) {
-    document.documentElement.classList.add('left-sidebar-collapsed');
-  } else {
-    document.documentElement.classList.remove('left-sidebar-collapsed');
-  }
-}
-
 function closeMobileOverlay(): void {
   if (window.innerWidth >= 900) return;
   const sidebar = document.getElementById('leftSidebar');
@@ -224,13 +211,29 @@ document.addEventListener('click', (e: Event) => {
 });
 
 function init(): void {
-  applyCollapsedState();
+  // 视图过渡后重新读取，确保状态正确
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const saved = JSON.parse(raw);
+      state.collapsed = saved.collapsed;
+      state.mode = saved.mode || 'directory';
+    }
+  } catch {}
 
   if (state.mode === 'tag') {
     switchMode('tag');
   }
 
   applyExpandedState();
+
+  // 恢复左侧栏折叠状态（视图过渡可能导致 class 被重置）
+  if (state.collapsed) {
+    document.documentElement.classList.add('left-sidebar-collapsed');
+  } else {
+    document.documentElement.classList.remove('left-sidebar-collapsed');
+  }
+
   updateIndicator();
 }
 
@@ -241,10 +244,20 @@ document.addEventListener('astro:page-load', () => {
 });
 
 document.addEventListener('astro:after-swap', () => {
+  // 同步恢复折叠状态，避免视图过渡闪烁
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const saved = JSON.parse(raw);
+      if (saved.collapsed === true) {
+        document.documentElement.classList.add('left-sidebar-collapsed');
+      } else {
+        document.documentElement.classList.remove('left-sidebar-collapsed');
+      }
+    }
+  } catch {}
+
   requestAnimationFrame(() => updateIndicator());
 });
 
 document.addEventListener('DOMContentLoaded', init);
-
-// 初始应用折叠状态
-applyCollapsedState();

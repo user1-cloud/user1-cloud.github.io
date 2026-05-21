@@ -1,0 +1,59 @@
+# 依赖文件夹
+node_modules
+pnpm-lock.yaml
+yarn.lock
+package-lock.json
+vendor
+
+# 编译打包产物
+dist
+build
+out
+output
+release
+target
+coverage
+
+# 版本控制
+.git
+.github
+.gitignore
+
+# 编辑器配置
+.vscode
+.idea
+.sublime-project
+*.swp
+.DS_Store
+
+# 环境配置
+.env
+.env.*
+.local.env
+
+# 日志缓存
+logs
+*.log
+tmp
+temp
+.cache
+
+# 大体积无用文件
+*.zip
+*.rar
+*.tar
+*.mp4
+*.png
+*.jpg
+*.pdf
+
+# 框架专属
+.next
+.nuxt
+.umi
+dumi-theme
+esm
+lib
+
+# 博客（除了基本格式）
+src/content/blog/
