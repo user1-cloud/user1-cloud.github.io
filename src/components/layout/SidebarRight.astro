@@ -1,0 +1,28 @@
+---
+import SidebarPanel from './SidebarPanel.astro';
+
+const { description } = Astro.props as { description: string };
+---
+
+<SidebarPanel
+  position="right"
+  sidebarId="rightSidebar"
+  btnId="toggleSidebarBtn"
+  btnLabel="切换侧边栏"
+>
+  <div class="sidebar-inner">
+    <!-- 上栏：目录区 -->
+    <div class="toc-area">
+      <div class="position-indicator"></div>
+      <h3>目录</h3>
+      <ul id="toc-list"></ul>
+    </div>
+    <hr/>
+    <!-- 下栏：简介区 -->
+    <div class="desc-area">
+      <p set:html={description}></p>
+    </div>
+  </div>
+</SidebarPanel>
+
+<script src="../../scripts/sidebar-collapse"></script>

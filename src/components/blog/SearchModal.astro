@@ -1,20 +1,8 @@
 ---
-import { getCollection } from 'astro:content';
-import { resolveDirs } from '../lib/utils';
-import Icon from './Icon.astro';
+import { getSearchData } from '../../lib/blogData';
+import Icon from '../ui/Icon.astro';
 
-const posts = await getCollection('blog');
-const searchData = posts.map((post) => {
-  const { dir1, dir2 } = resolveDirs(post);
-  return {
-    title: post.data.title,
-    description: post.data.description.replace(/<[^>]+>/g, ''),
-    dir1,
-    dir2,
-    tags: (post.data.tags || []).join(', '),
-    slug: post.id,
-  };
-});
+const searchData = await getSearchData();
 ---
 
 <script define:vars={{ searchData }}>
@@ -42,7 +30,7 @@ const searchData = posts.map((post) => {
   </div>
 </dialog>
 
-<script src="../scripts/search"></script>
+<script src="../../scripts/search"></script>
 
 <style>
   .search-modal {

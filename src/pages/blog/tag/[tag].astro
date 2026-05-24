@@ -1,8 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
 import Layout from '../../../layouts/BlogPost.astro';
-import BlogList from '../../../components/BlogList.astro';
-import JsonLd from '../../../components/JsonLd.astro';
+import BlogList from '../../../components/blog/BlogList.astro';
+import JsonLd from '../../../components/blog/JsonLd.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');

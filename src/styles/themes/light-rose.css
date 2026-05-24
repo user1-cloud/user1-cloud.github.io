@@ -49,10 +49,6 @@ html[data-theme="light-rose"] {
   --browser-accent-hover: #b83558;
   --browser-accent-rgb: 209, 71, 110;
 
-  --blob-1: rgba(240, 180, 200, 0.45);
-  --blob-2: rgba(235, 160, 185, 0.40);
-  --blob-3: rgba(245, 190, 210, 0.38);
-
   --plot-bg: #faf6f7;
   --plot-axis-color: #2d1a22;
   --plot-border: #e0c8d0;

@@ -34,9 +34,5 @@ html[data-theme="dark-purple"] {
   --browser-accent-hover: #8b5cf6;
   --browser-accent-rgb: 167, 139, 250;
 
-  --blob-1: rgba(86, 31, 76, 0.85);
-  --blob-2: rgba(79, 20, 60, 0.8);
-  --blob-3: rgba(40, 20, 55, 0.75);
-
   --plot-default-color: #a78bfa;
 }

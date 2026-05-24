@@ -1,4 +1,4 @@
-/* ===== 暗蓝主题 (默认) — 同时定义所有暗色主题的共享变量 ===== */
+/* ===== 暗蓝主题 (默认) ===== */
 
 :root {
   /* —— 背景系 —— */
@@ -11,7 +11,7 @@
   --accent-dark: #4a65e8;
   --accent-light: #8398ff;
 
-  /* —— 文字前景（暗色主题共享） —— */
+  /* —— 文字前景 —— */
   --foreground: #eaedf3;
   --foreground-dark: #c9cfdd;
   --foreground-light: #f2f4f8;
@@ -43,7 +43,7 @@
   --border-dark-rgb: 34, 46, 107;
   --border-light-rgb: 69, 86, 179;
 
-  /* —— 阴影（暗色主题共享） —— */
+  /* —— 阴影 —— */
   --box-shadow: 0 2px 6px rgba(var(--foreground-dark-rgb), 0.25),
                 0 8px 24px rgba(var(--foreground-dark-rgb), 0.33),
                 0 16px 32px rgba(var(--foreground-dark-rgb), 0.33);
@@ -53,20 +53,20 @@
   --scrollbar-track: #121417;
   --scrollbar-thumb: #5e6b80;
 
-  /* —— 链接下划线（暗色主题共享） —— */
+  /* —— 链接下划线 —— */
   --link-underline-color: #ffffff;
 
-  /* —— 搜索弹窗（暗色主题共享） —— */
+  /* —— 搜索弹窗 —— */
   --backdrop-rgb: 0, 0, 10;
 
-  /* —— 标签计数（暗色主题共享） —— */
+  /* —— 标签计数 —— */
   --tag-count-bg: rgba(255, 255, 255, 0.08);
 
-  /* —— 导航链接（暗色主题共享） —— */
+  /* —— 导航链接 —— */
   --header-link-text: #e0e0e0;
   --header-link-hover: #ffffff;
 
-  /* —— MiniBrowser 组件（暗色主题共享） —— */
+  /* —— MiniBrowser 组件 —— */
   --browser-bg: #1e1e1e;
   --browser-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
   --browser-border: #333;
@@ -81,13 +81,7 @@
   --browser-accent-hover: #535bf2;
   --browser-accent-rgb: 100, 108, 255;
 
-  /* —— Boids 背景光斑 —— */
-  --blob-1: rgba(31, 52, 86, 0.85);
-  --blob-2: rgba(49, 30, 79, 0.8);
-  --blob-3: rgba(21, 59, 55, 0.75);
-  --vignette-color: rgba(0, 0, 0, 0.25);
-
-  /* —— Plot3D 图表（暗色主题共享） —— */
+  /* —— Plot3D 图表 —— */
   --plot-bg: #121417;
   --plot-axis-color: #ffffff;
   --plot-border: #ddd;

@@ -49,10 +49,6 @@ html[data-theme="light-green"] {
   --browser-accent-hover: #1d7d52;
   --browser-accent-rgb: 46, 154, 106;
 
-  --blob-1: rgba(150, 220, 180, 0.45);
-  --blob-2: rgba(130, 210, 165, 0.40);
-  --blob-3: rgba(160, 225, 190, 0.38);
-
   --plot-bg: #f3f8f4;
   --plot-axis-color: #1a2a20;
   --plot-border: #bcd5c6;

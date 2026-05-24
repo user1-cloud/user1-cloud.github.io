@@ -15,11 +15,10 @@ import { remarkMark } from 'remark-mark-highlight';
 
 import compress from 'astro-compress';
 import { remarkMermaid } from './src/plugins/remark-mermaid';
-
-const USERNAME = 'user1-cloud';
+import { GITHUB_USERNAME } from './src/consts';
 
 export default defineConfig({
-  site: `https://${USERNAME}.github.io`,
+  site: `https://${GITHUB_USERNAME}.github.io`,
   base: '/',
   outDir: './dist',
 

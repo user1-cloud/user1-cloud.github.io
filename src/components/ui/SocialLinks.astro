@@ -1,17 +1,18 @@
 ---
+import { BILIBILI_URL, QQ_SPACE_URL, GITHUB_URL } from '../../consts';
 import HeaderLink from "./HeaderLink.astro";
 import Icon from "./Icon.astro";
 ---
 <div class="social-links">
-    <HeaderLink href="https://space.bilibili.com/1454195719" target="_blank">
+    <HeaderLink href={BILIBILI_URL} target="_blank">
         <span class="sr-only">我的bilibili账号</span>
         <Icon name='bilibili'>
     </HeaderLink>
-    <HeaderLink href="https://user.qzone.qq.com/2931139019" target="_blank">
+    <HeaderLink href={QQ_SPACE_URL} target="_blank">
         <span class="sr-only">我的qq空间</span>
         <Icon name='qq'>
     </HeaderLink>
-    <HeaderLink href="https://github.com/user1-cloud" target="_blank">
+    <HeaderLink href={GITHUB_URL} target="_blank">
         <span class="sr-only">我的GitHub</span>
         <Icon name='github'>
     </HeaderLink>

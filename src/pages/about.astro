@@ -1,7 +1,7 @@
 ---
-const AboutHeroImage = 'https://avatars.githubusercontent.com/u/177993181?v=4';
+import { AVATAR_URL, EMAIL_QQ, EMAIL_OUTLOOK, GITHUB_USERNAME } from '../consts';
 import Layout from '../layouts/BlogPost.astro';
-import JsonLd from '../components/JsonLd.astro';
+import JsonLd from '../components/blog/JsonLd.astro';
 import ReadmeContent from '../../README.md';
 
 const aboutUrl = new URL('/about/', Astro.site).href;
@@ -11,10 +11,10 @@ const profilePageLd = {
 	'@type': 'ProfilePage',
 	mainEntity: {
 		'@type': 'Person',
-		name: 'user1-cloud',
-		image: AboutHeroImage,
+		name: GITHUB_USERNAME,
+		image: AVATAR_URL,
 		url: aboutUrl,
-		email: ['2931139019@qq.com', 'easbeasbeasb@outlook.com'],
+		email: [EMAIL_QQ, EMAIL_OUTLOOK],
 	},
 };
 ---
@@ -23,7 +23,7 @@ const profilePageLd = {
 	title="关于"
 	description="关于此项目"
 	pubDate={new Date('April 23 2026')}
-	heroImage={AboutHeroImage}
+	heroImage={AVATAR_URL}
 >
 	<JsonLd slot="head" data={profilePageLd} />
 	<h2>
@@ -35,7 +35,7 @@ const profilePageLd = {
 	</h3>
 
 	<p>
-		我是user1-cloud
+		我是{GITHUB_USERNAME}
 	</p>
 
 	<h3>
@@ -48,10 +48,10 @@ const profilePageLd = {
 
 	<p>
 		QQ邮箱：
-	<a href="mailto:2931139019@qq.com" target="_blank">2931139019@qq.com</a>	
+	<a href={`mailto:${EMAIL_QQ}`} target="_blank">{EMAIL_QQ}</a>
 	<br>
 		Outlook：
-	<a href="mailto:easbeasbeasb@outlook.com" target="_blank">easbeasbeasb@outlook.com</a>	
+	<a href={`mailto:${EMAIL_OUTLOOK}`} target="_blank">{EMAIL_OUTLOOK}</a>
 	</p>
 
 	<h2>

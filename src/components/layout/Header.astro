@@ -1,7 +1,7 @@
 ---
-import { SITE_TITLE } from '../consts';
-import HeaderLink from './HeaderLink.astro';
-import HeaderSocialLinks from './HeaderSocialLinks.astro'
+import { SITE_TITLE } from '../../consts';
+import HeaderLink from '../ui/HeaderLink.astro';
+import SocialLinks from '../ui/SocialLinks.astro';
 ---
 
 <header>
@@ -15,7 +15,7 @@ import HeaderSocialLinks from './HeaderSocialLinks.astro'
 
 		<div id="header-actions">
 			<div id="header-social">
-				<HeaderSocialLinks/>
+				<SocialLinks/>
 			</div>
 		</div>
 	</nav>

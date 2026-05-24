@@ -150,11 +150,12 @@ function watchTheme() {
   });
 }
 
-// 初始化
-render();
-watchTheme();
-
-// 视图过渡后重渲染
-document.addEventListener('astro:page-load', () => {
+// 仅在页面存在 Mermaid 图表时初始化，避免无意义的 Observer 和监听器
+if (hasDiagrams()) {
   render();
-});
+  watchTheme();
+
+  document.addEventListener('astro:page-load', () => {
+    render();
+  });
+}

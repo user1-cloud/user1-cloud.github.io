@@ -34,9 +34,5 @@ html[data-theme="dark-green"] {
   --browser-accent-hover: #10b981;
   --browser-accent-rgb: 52, 211, 153;
 
-  --blob-1: rgba(31, 86, 70, 0.85);
-  --blob-2: rgba(30, 75, 45, 0.8);
-  --blob-3: rgba(21, 55, 52, 0.75);
-
   --plot-default-color: #34d399;
 }

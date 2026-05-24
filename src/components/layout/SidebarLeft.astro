@@ -1,5 +1,6 @@
 ---
-import CollapsibleSidebar from './CollapsibleSidebar.astro';
+import { DIR1_ORDER, DIR2_ORDER } from '../../consts';
+import SidebarPanel from './SidebarPanel.astro';
 
 interface SidebarPost {
   title: string;
@@ -18,13 +19,7 @@ const { posts, currentSlug } = Astro.props as { posts: SidebarPost[]; currentSlu
 // 全部文章按 pubDate 降序
 const sorted = [...posts].sort((a, b) => b.pubDate.getTime() - a.pubDate.getTime());
 
-// dir1 显示顺序（与 /blog 页面一致）
-const DIR1_ORDER = ['近期', '程序', '数学', '小说'];
-const DIR2_ORDER: Record<string, string[]> = {
-  '程序': ['前端', 'markdown'],
-  '数学': ['解析几何'],
-  '小说': ['铁锈终章'],
-};
+// dir1/dir2 显示顺序使用共享常量 DIR1_ORDER / DIR2_ORDER（来自 ../consts）
 
 // --- 目录树 ---
 // 按 dir1 分组，每组内按 dir2 分组，组内按日期降序
@@ -55,13 +50,10 @@ for (const post of sorted) {
 const orderedTags = [...tagTree.entries()].sort((a, b) => b[1].length - a[1].length);
 ---
 
-<CollapsibleSidebar
+<SidebarPanel
   position="left"
   sidebarId="leftSidebar"
   btnId="toggleLeftSidebarBtn"
-  storageKey="left-sidebar-state"
-  collapsedClass="left-sidebar-collapsed"
-  parseCollapsed="object"
   hasOverlay={true}
   btnLabel="切换左侧栏"
 >
@@ -192,91 +184,6 @@ const orderedTags = [...tagTree.entries()].sort((a, b) => b[1].length - a[1].len
       ))}
     </ul>
   </div>
-</CollapsibleSidebar>
+</SidebarPanel>
 
-<script>
-  (function() {
-    if (window.__themeScriptLoaded) return;
-    window.__themeScriptLoaded = true;
-
-    const THEMES = ['dark-blue', 'dark-green', 'dark-purple', 'light-blue', 'light-green', 'light-rose'];
-    const STORAGE_KEY = 'blog-theme';
-
-    function getSavedTheme() {
-      try {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved && THEMES.includes(saved)) return saved;
-      } catch (e) {}
-      return null;
-    }
-
-    function getSystemPreference() {
-      return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light-blue' : 'dark-blue';
-    }
-
-    function getEffectiveTheme() {
-      return getSavedTheme() || getSystemPreference();
-    }
-
-    function applyTheme(name) {
-      document.documentElement.setAttribute('data-theme', name);
-      markCurrent(name);
-    }
-
-    function markCurrent(name) {
-      const dropdown = document.getElementById('theme-dropdown');
-      if (!dropdown) return;
-      dropdown.querySelectorAll('div[data-theme]').forEach(el => {
-        el.classList.toggle('current', el.dataset.theme === name);
-      });
-    }
-
-    function showDropdown() {
-      const dropdown = document.getElementById('theme-dropdown');
-      if (dropdown) {
-        markCurrent(getEffectiveTheme());
-        dropdown.hidden = false;
-      }
-    }
-
-    function hideDropdown() {
-      const dropdown = document.getElementById('theme-dropdown');
-      if (dropdown) dropdown.hidden = true;
-    }
-
-    function selectTheme(name) {
-      try { localStorage.setItem(STORAGE_KEY, name); } catch (e) {}
-      applyTheme(name);
-    }
-
-    document.addEventListener('click', (e) => {
-      const btn = document.getElementById('theme-switcher-btn');
-      const dropdown = document.getElementById('theme-dropdown');
-      if (!btn || !dropdown) return;
-
-      if (btn.contains(e.target)) {
-        if (dropdown.hidden) showDropdown();
-        else hideDropdown();
-        return;
-      }
-
-      if (dropdown.hidden) return;
-
-      const option = e.target.closest('div[data-theme]');
-      if (option && dropdown.contains(option)) {
-        selectTheme(option.dataset.theme);
-        return;
-      }
-
-      if (!dropdown.contains(e.target)) {
-        hideDropdown();
-      }
-    });
-
-    applyTheme(getEffectiveTheme());
-
-    document.addEventListener('astro:page-load', () => {
-      applyTheme(getEffectiveTheme());
-    });
-  })();
-</script>
+<script src="../../scripts/theme"></script>

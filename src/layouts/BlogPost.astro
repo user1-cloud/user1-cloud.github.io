@@ -1,39 +1,28 @@
 ---
 // 博客文章布局组件 - 三栏可折叠双侧栏版本
 import { Image } from 'astro:assets';
-import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import FormattedDate from '../components/FormattedDate.astro';
-import Header from '../components/Header.astro';
-import LeftSidebar from '../components/LeftSidebar.astro';
-import RightSidebar from '../components/RightSidebar.astro';
-import { resolveDirs } from '../lib/utils';
+import BaseHead from '../components/layout/BaseHead.astro';
+import Footer from '../components/layout/Footer.astro';
+import FormattedDate from '../components/blog/FormattedDate.astro';
+import Header from '../components/layout/Header.astro';
+import SidebarLeft from '../components/layout/SidebarLeft.astro';
+import SidebarRight from '../components/layout/SidebarRight.astro';
+import { getSidebarData } from '../lib/blogData';
 
-import SearchModal from '../components/SearchModal.astro';
+import SearchModal from '../components/blog/SearchModal.astro';
 
 // 专用css
-import '../styles/_sidebar.scss';
+import '../styles/sidebar-collapse.scss';
+import '../styles/sidebar-toc.scss';
 import '../styles/blog-post.scss';
-import '../styles/left-sidebar.scss';
+import '../styles/sidebar-tree.scss';
 
 type Props = CollectionEntry<'blog'>['data'];
 const { title, description, pubDate, updatedDate, heroImage, dir1, dir2, tags = [] } = Astro.props;
 
 // 构建左侧栏数据
-const allPosts = await getCollection('blog');
-const sidebarData = allPosts.map(post => {
-  const dirs = resolveDirs(post);
-  return {
-    title: post.data.title,
-    slug: post.id,
-    pubDate: post.data.pubDate,
-    dir1: dirs.dir1,
-    dir2: dirs.dir2,
-    tags: post.data.tags || [],
-  };
-});
+const sidebarData = await getSidebarData();
 const slugMatch = Astro.url.pathname.match(/^\/blog\/(.+)/);
 const currentSlug = slugMatch ? decodeURIComponent(slugMatch[1].replace(/\/+$/, '')) : '';
 ---
@@ -55,7 +44,7 @@ const currentSlug = slugMatch ? decodeURIComponent(slugMatch[1].replace(/\/+$/, 
 				<!-- 三栏布局容器 -->
 				<div class="three-col-layout">
 					<!-- 左侧：可折叠侧边栏（目录树 / 标签树） -->
-					<LeftSidebar posts={sidebarData} currentSlug={currentSlug} />
+					<SidebarLeft posts={sidebarData} currentSlug={currentSlug} />
 
 					<!-- 中间：正文区域 -->
 					<div class="content-main fade-in">
@@ -94,7 +83,7 @@ const currentSlug = slugMatch ? decodeURIComponent(slugMatch[1].replace(/\/+$/, 
 					</div>
 
 					<!-- 右侧：可折叠侧边栏（目录 + 简介） -->
-					<RightSidebar description={description} />
+					<SidebarRight description={description} />
 				</div>
 			</article>
 		</main>
@@ -103,7 +92,7 @@ const currentSlug = slugMatch ? decodeURIComponent(slugMatch[1].replace(/\/+$/, 
 		<SearchModal />
 
 		<!-- 左侧栏交互脚本 -->
-		<script src="../scripts/left-sidebar"></script>
+		<script src="../scripts/sidebar-tree"></script>
 		<!-- 目录生成脚本 -->
 		<script src="../scripts/toc"></script>
 		<!-- 滚动渐现效果 -->

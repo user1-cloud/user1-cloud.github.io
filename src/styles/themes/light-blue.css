@@ -7,7 +7,6 @@ html[data-theme^="light"] {
                 0 16px 32px rgba(0, 0, 0, 0.10);
   --hero-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
   --background-dark: #ffffff;
-  --vignette-color: rgba(0, 0, 0, 0.04);
   --tag-count-bg: rgba(0, 0, 0, 0.06);
   --browser-bg: #ffffff;
   --browser-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
@@ -64,10 +63,6 @@ html[data-theme="light-blue"] {
   --browser-accent: #4565d8;
   --browser-accent-hover: #3451c0;
   --browser-accent-rgb: 69, 101, 216;
-
-  --blob-1: rgba(160, 190, 240, 0.45);
-  --blob-2: rgba(140, 170, 230, 0.40);
-  --blob-3: rgba(170, 200, 245, 0.38);
 
   --plot-bg: #f4f6fb;
   --plot-axis-color: #1a1f36;
