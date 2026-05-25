@@ -56,7 +56,11 @@
       "Read(//tmp/**)",
       "Bash(pkill -f \"astro dev\")",
       "Bash(E:/前后端/网页/1/project-blog)",
-      "Bash(git mv *)"
+      "Bash(git mv *)",
+      "Bash(pnpm search *)",
+      "Bash(pnpm remove *)",
+      "Bash(perl -0777 -ne 'print \"Size: \" . length\\($_\\) . \"\\\\n\"' dist/blog/程序/markdown/github-markdown-完全使用教程/index.html)",
+      "Bash(perl -0777 -ne ' *)"
     ]
   }
 }

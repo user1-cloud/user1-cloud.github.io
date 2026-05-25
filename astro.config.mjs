@@ -3,6 +3,7 @@ import sitemap from '@astrojs/sitemap';
 import { defineConfig } from 'astro/config';
 import remarkMath from 'remark-math';
 import remarkGfm from 'remark-gfm';
+import remarkDefinitionList, { defListHastHandlers } from 'remark-definition-list';
 import rehypeKatex from 'rehype-katex';
 import expressiveCode from 'astro-expressive-code';
 
@@ -15,6 +16,8 @@ import { remarkMark } from 'remark-mark-highlight';
 
 import compress from 'astro-compress';
 import { remarkMermaid } from './src/plugins/remark-mermaid';
+import { remarkGithubAlerts } from './src/plugins/remark-github-alerts';
+import { remarkSubSuper } from './src/plugins/remark-sub-super';
 import { GITHUB_USERNAME } from './src/consts';
 
 export default defineConfig({
@@ -31,10 +34,13 @@ export default defineConfig({
 
   markdown: {
     remarkPlugins: [
-        remarkGfm,
+        [remarkGfm, { singleTilde: false }],
+        remarkDefinitionList,
         remarkEmoji,
         remarkMath,
         remarkMark,
+        remarkSubSuper,
+        remarkGithubAlerts,
         remarkMermaid,
       ],
       rehypePlugins: [
@@ -43,6 +49,9 @@ export default defineConfig({
       rehypeAutolinkHeadings,
     ],
     syntaxHighlight: false,
+    remarkRehype: {
+      handlers: defListHastHandlers,
+    },
   },
 
   vite: {

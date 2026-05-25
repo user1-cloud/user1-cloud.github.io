@@ -57,3 +57,4 @@ lib
 
 # 博客（除了基本格式）
 src/content/blog/
+# !src/content/blog/程序/MarkDown/GitHub Markdown 完全使用教程.md

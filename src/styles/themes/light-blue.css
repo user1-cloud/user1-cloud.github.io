@@ -11,6 +11,23 @@ html[data-theme^="light"] {
   --browser-bg: #ffffff;
   --browser-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
   --browser-frame-bg: #ffffff;
+
+  /* GitHub 提示块颜色（亮色主题） */
+  --alert-note: #0969da;
+  --alert-note-bg: rgba(9, 105, 218, 0.06);
+  --alert-note-border: #0969da;
+  --alert-tip: #1a7f37;
+  --alert-tip-bg: rgba(26, 127, 55, 0.06);
+  --alert-tip-border: #1a7f37;
+  --alert-important: #8250df;
+  --alert-important-bg: rgba(130, 80, 223, 0.06);
+  --alert-important-border: #8250df;
+  --alert-warning: #9a6700;
+  --alert-warning-bg: rgba(154, 103, 0, 0.06);
+  --alert-warning-border: #9a6700;
+  --alert-caution: #cf222e;
+  --alert-caution-bg: rgba(207, 34, 46, 0.06);
+  --alert-caution-border: #cf222e;
 }
 
 /* 亮蓝主题特有变量 */
