@@ -174,19 +174,26 @@
     border-radius: 0 6px 6px 0;
     transition: background 0.15s;
     user-select: none;
+    position: relative;
+    z-index: 1;
 
     &:hover {
       background: rgba(var(--accent-rgb), 0.06);
     }
   }
 
+  /* 当前文章所在目录：箭头高亮 */
+  .tree-node.has-current > .node-header .node-arrow {
+    border-left-color: var(--accent);
+  }
+
   .node-arrow {
     display: inline-block;
     width: 0;
     height: 0;
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-top: 5px solid var(--foreground-dark);
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    border-left: 5px solid var(--foreground-dark);
     transition: transform 0.2s ease;
     flex-shrink: 0;
   }
@@ -291,48 +298,10 @@
       transform-origin: top;
       animation: connector-draw 0.5s ease forwards;
       border-radius: 1px;
+      pointer-events: none;
     }
   }
 
-  /* 路径上的 node-header：水平连接线 */
-  .tree-node.has-current > .node-header {
-    position: relative;
-
-    &::after {
-      content: '';
-      position: absolute;
-      left: 0.55rem;
-      top: 50%;
-      width: 0.55rem;
-      height: 1.5px;
-      background: var(--accent);
-      opacity: 0;
-      transform: translateY(-50%);
-      animation: connector-fade 0.35s ease forwards;
-      animation-delay: 0.2s;
-      border-radius: 1px;
-    }
-  }
-
-  /* 当前文章的连接线 */
-  .article-item a.current {
-    position: relative;
-
-    &::before {
-      content: '';
-      position: absolute;
-      left: -0.45rem;
-      top: 50%;
-      width: 0.55rem;
-      height: 1.5px;
-      background: var(--accent-light);
-      opacity: 0;
-      transform: translateY(-50%);
-      animation: connector-fade 0.35s ease forwards;
-      animation-delay: 0.45s;
-      border-radius: 1px;
-    }
-  }
 
   /* 左侧折叠按钮定位与箭头方向 */
   .toggle-left-sidebar-btn {

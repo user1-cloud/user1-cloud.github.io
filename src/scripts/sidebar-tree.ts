@@ -161,8 +161,6 @@ function toggleNode(header: HTMLElement): void {
     }
     saveState(state);
   }
-
-  requestAnimationFrame(() => updateIndicator());
 }
 
 function applyExpandedState(): void {

@@ -167,7 +167,7 @@ const orderedTags = [...tagTree.entries()].sort((a, b) => b[1].length - a[1].len
       {orderedTags.map(([tag, articles]) => {
         const isCurrentTag = currentTags.includes(tag);
         return (
-        <li class="tree-node">
+        <li class:list={["tree-node", isCurrentTag && "has-current"]}>
           <div class:list={["node-header", { expanded: isCurrentTag }]}>
             <span class="node-arrow"></span>
             <span class="node-label">{tag}</span>
