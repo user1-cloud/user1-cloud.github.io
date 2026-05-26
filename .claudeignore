@@ -57,4 +57,4 @@ lib
 
 # 博客（除了基本格式）
 src/content/blog/
-# !src/content/blog/程序/MarkDown/GitHub Markdown 完全使用教程.md
+!src\content\blog\英语\单词\六级常见重难点词汇.mdx

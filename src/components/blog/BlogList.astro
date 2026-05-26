@@ -55,6 +55,13 @@ if (sort === 'dir') {
       dir2List.push(["", sortedPosts]);
     }
 
+    // 3. 渲染未在配置中的其他二级目录
+    for (const d2 of Object.keys(dir2Map)) {
+      if (d2 === "" || expectedDir2.includes(d2)) continue;
+      const sortedPosts = dir2Map[d2].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+      dir2List.push([d2, sortedPosts]);
+    }
+
     finalOrder.push([d1, dir2List]);
   }
 

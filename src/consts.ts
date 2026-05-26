@@ -13,11 +13,12 @@ export const EMAIL_QQ = '2931139019@qq.com';
 export const EMAIL_OUTLOOK = 'easbeasbeasb@outlook.com';
 
 // 目录排序（SidebarLeft 和 /blog 页面共享）
-export const DIR1_ORDER = ['近期', '程序', '数学', '小说'];
+export const DIR1_ORDER = ['近期', '程序', '数学', '小说', '英语'];
 export const DIR2_ORDER: Record<string, string[]> = {
   '程序': ['前端', 'markdown'],
   '数学': ['解析几何'],
   '小说': ['铁锈终章'],
+  '英语': ['词汇', '单词']
 };
 
 // 主题常量（BaseHead 和 LeftSidebar 共享）
