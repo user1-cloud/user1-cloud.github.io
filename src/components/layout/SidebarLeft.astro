@@ -15,6 +15,7 @@ const { posts, currentSlug } = Astro.props as { posts: SidebarPost[]; currentSlu
   const currentPost = posts.find(p => p.slug === currentSlug);
   const currentDir1 = currentPost?.dir1 || '';
   const currentDir2 = currentPost?.dir2 || '';
+  const currentTags: string[] = currentPost?.tags || [];
 
 // 全部文章按 pubDate 降序
 const sorted = [...posts].sort((a, b) => b.pubDate.getTime() - a.pubDate.getTime());
@@ -124,25 +125,25 @@ const orderedTags = [...tagTree.entries()].sort((a, b) => b[1].length - a[1].len
         const isCurrentDir1 = d1 === currentDir1;
         return (
           <li class:list={["tree-node", isCurrentDir1 && "has-current"]}>
-            <div class="node-header expanded">
+            <div class:list={["node-header", { expanded: isCurrentDir1 }]}>
               <span class="node-arrow"></span>
               <span class="node-label">{d1}</span>
               <span class="node-count">{totalCount}</span>
             </div>
-            <ul class:list={["node-children", isCurrentDir1 && "active-path"]}>
+            <ul class:list={["node-children", { collapsed: !isCurrentDir1 }, isCurrentDir1 && "active-path"]}>
               {orderedD2.map(d2 => {
                 const articles = d2Map.get(d2)!;
                 const isCurrentDir2 = isCurrentDir1 && d2 === currentDir2;
                 return (
                   <li class:list={["tree-node", isCurrentDir2 && "has-current"]}>
                     {d2 && (
-                      <div class="node-header expanded">
+                      <div class:list={["node-header", { expanded: isCurrentDir2 }]}>
                         <span class="node-arrow"></span>
                         <span class="node-label">{d2}</span>
                         <span class="node-count">{articles.length}</span>
                       </div>
                     )}
-                    <ul class:list={["node-children", isCurrentDir2 && "active-path"]}>
+                    <ul class:list={["node-children", { collapsed: !!d2 && !isCurrentDir2 }, isCurrentDir2 && "active-path"]}>
                       {articles.map(article => (
                         <li class="article-item">
                           <a href={`/blog/${article.slug}/`} data-slug={article.slug}
@@ -163,14 +164,16 @@ const orderedTags = [...tagTree.entries()].sort((a, b) => b[1].length - a[1].len
 
     <!-- 标签树 -->
     <ul class="ls-tree" id="ls-tree-tag" data-mode="tag" hidden>
-      {orderedTags.map(([tag, articles]) => (
+      {orderedTags.map(([tag, articles]) => {
+        const isCurrentTag = currentTags.includes(tag);
+        return (
         <li class="tree-node">
-          <div class="node-header expanded">
+          <div class:list={["node-header", { expanded: isCurrentTag }]}>
             <span class="node-arrow"></span>
             <span class="node-label">{tag}</span>
             <span class="node-count">{articles.length}</span>
           </div>
-          <ul class="node-children">
+          <ul class:list={["node-children", { collapsed: !isCurrentTag }]}>
             {articles.map(article => (
               <li class="article-item">
                 <a href={`/blog/${article.slug}/`} data-slug={article.slug}
@@ -181,7 +184,8 @@ const orderedTags = [...tagTree.entries()].sort((a, b) => b[1].length - a[1].len
             ))}
           </ul>
         </li>
-      ))}
+        );
+      })}
     </ul>
   </div>
 </SidebarPanel>

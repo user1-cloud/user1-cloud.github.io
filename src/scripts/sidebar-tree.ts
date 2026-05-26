@@ -4,6 +4,7 @@ interface State {
   mode: 'directory' | 'tag';
   expandedPaths: string[];
   collapsed: boolean;
+  scrollTop: number;
 }
 
 function loadState(): State {
@@ -11,14 +12,48 @@ function loadState(): State {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) return JSON.parse(raw);
   } catch {}
-  return { mode: 'directory', expandedPaths: [], collapsed: false };
+  return { mode: 'directory', expandedPaths: [], collapsed: false, scrollTop: 0 };
+}
+
+const state = loadState();
+
+/* ===== 滚动位置记忆 ===== */
+let scrollTimer: ReturnType<typeof setTimeout> | null = null;
+
+function saveScrollPosition(): void {
+  const container = document.querySelector('.left-sidebar .sidebar-inner');
+  if (!container) return;
+  state.scrollTop = container.scrollTop;
+  saveState(state);
+}
+
+function restoreScrollPosition(): void {
+  const container = document.querySelector('.left-sidebar .sidebar-inner');
+  if (!container || state.scrollTop <= 0) return;
+  container.scrollTop = state.scrollTop;
+}
+
+function bindScrollListener(): void {
+  const container = document.querySelector('.left-sidebar .sidebar-inner');
+  if (!container) return;
+  container.removeEventListener('scroll', onSidebarScroll);
+  container.addEventListener('scroll', onSidebarScroll, { passive: true });
+}
+
+function onSidebarScroll(): void {
+  if (scrollTimer) clearTimeout(scrollTimer);
+  scrollTimer = setTimeout(saveScrollPosition, 200);
+}
+
+function isInViewport(container: HTMLElement, el: HTMLElement): boolean {
+  const cRect = container.getBoundingClientRect();
+  const eRect = el.getBoundingClientRect();
+  return eRect.top >= cRect.top && eRect.bottom <= cRect.bottom;
 }
 
 function saveState(state: State): void {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch {}
 }
-
-const state = loadState();
 
 function getSlugFromPath(path: string): string | null {
   const m = path.match(/^\/blog\/(.+)/);
@@ -53,7 +88,7 @@ function updateIndicator(): void {
     const target = findArticleBySlug(slug);
     if (target) {
       expandAncestors(target);
-      if (!isMobile()) {
+      if (!isMobile() && !isInViewport(container, target)) {
         target.scrollIntoView({ block: 'center', behavior: 'smooth' });
       }
     }
@@ -226,6 +261,7 @@ function init(): void {
   }
 
   applyExpandedState();
+  bindScrollListener();
 
   // 恢复左侧栏折叠状态（视图过渡可能导致 class 被重置）
   if (state.collapsed) {
@@ -234,7 +270,10 @@ function init(): void {
     document.documentElement.classList.remove('left-sidebar-collapsed');
   }
 
-  updateIndicator();
+  requestAnimationFrame(() => {
+    restoreScrollPosition();
+    updateIndicator();
+  });
 }
 
 // 生命周期
@@ -257,7 +296,10 @@ document.addEventListener('astro:after-swap', () => {
     }
   } catch {}
 
-  requestAnimationFrame(() => updateIndicator());
+  requestAnimationFrame(() => {
+    restoreScrollPosition();
+    updateIndicator();
+  });
 });
 
 document.addEventListener('DOMContentLoaded', init);
