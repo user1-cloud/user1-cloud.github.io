@@ -51,22 +51,24 @@
     position: relative;
   }
 
-  /* 折叠按钮 — fixed 垂直居中，水平由 JS 同步到间隙中心 */
+  /* 折叠按钮 — fixed 垂直居中，始终吸附屏幕边缘 */
   .sidebar-toggle-btn {
     position: fixed;
     top: 50%;
     transform: translateY(-50%);
     z-index: 1000;
-    background: transparent;
+    background: rgba(var(--background-rgb), 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border: 1px solid var(--border-light);
     border-radius: 20px;
-    padding: 32px 6px;
+    padding: 20px 6px;
     cursor: pointer;
     box-shadow: none;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: border-color 0.2s ease, left 0.2s ease, right 0.2s ease;
+    transition: border-color 0.2s ease;
   }
 
   .sidebar-toggle-btn:hover {
@@ -82,5 +84,19 @@
     display: block;
     color: var(--foreground);
     transition: transform 0.25s ease;
+  }
+
+  /* 左按钮：吸附屏幕左边缘 */
+  #toggleLeftSidebarBtn {
+    left: 0;
+    border-radius: 0 12px 12px 0;
+    border-left: none;
+  }
+
+  /* 右按钮：吸附屏幕右边缘 */
+  #toggleSidebarBtn {
+    right: 0;
+    border-radius: 12px 0 0 12px;
+    border-right: none;
   }
 }

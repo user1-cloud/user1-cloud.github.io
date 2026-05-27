@@ -90,7 +90,9 @@ import SocialLinks from '../ui/SocialLinks.astro';
     left: 50%;
     transform: translateX(-50%);
     z-index: 1001;
-    background: var(--background);
+    background: rgba(var(--background-rgb), 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border: 1px solid var(--border-light);
     border-top: none;
     border-radius: 0 0 12px 12px;
@@ -125,6 +127,29 @@ import SocialLinks from '../ui/SocialLinks.astro';
   @media (max-width: 768px) {
     #header-social {
       display: none;
+    }
+
+    .header-toggle-btn {
+      left: auto;
+      right: 4px;
+      transform: none;
+      padding: 6px 12px;
+      min-width: 36px;
+      min-height: 32px;
+      border-radius: 0 0 8px 12px;
+    }
+
+    .nav-center {
+      gap: 0.25rem;
+      font-size: 0.85em;
+    }
+
+    nav {
+      gap: 0.25rem;
+    }
+
+    h2 {
+      font-size: 0.85em;
     }
   }
 </style>
