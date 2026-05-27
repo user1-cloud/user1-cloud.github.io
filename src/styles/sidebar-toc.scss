@@ -1,9 +1,6 @@
 @layer components {
   /* 右侧栏主体 */
   .right-sidebar {
-    margin-left: 1rem;
-    overflow-x: hidden;
-    overflow: hidden !important;
     z-index: 999;
 
     scrollbar-width: thin;
@@ -48,11 +45,13 @@
     }
   }
 
-  /* 右侧栏折叠时箭头转向 */
-  html.sidebar-collapsed {
-    .toggle-right-sidebar-btn .arrow-icon {
-      transform: rotate(-135deg) translateX(-17.678%) translateY(17.678%);
-    }
+  /* 右侧间隙按钮箭头：展开时指向右，折叠后指向左 */
+  .gutter-arrow-right {
+    transform: rotate(-90deg);
+  }
+
+  html.sidebar-collapsed .gutter-arrow-right {
+    transform: rotate(90deg);
   }
 
   .toc-area {
@@ -163,15 +162,6 @@
     }
   }
 
-  /* 右侧折叠按钮定位与箭头方向 */
-  .toggle-right-sidebar-btn {
-    right: 20px;
-
-    .arrow-icon {
-      transform: rotate(45deg) translateX(-17.678%) translateY(17.678%);
-    }
-  }
-
   /* 760-899px */
   @media (max-width: 899px) and (min-width: 760px) {
     .right-sidebar { width: 220px; .sidebar-inner { width: 220px; } }
@@ -202,6 +192,21 @@
       height: 100%;
       overflow-y: auto;
       padding-bottom: 2rem;
+    }
+
+    /* 移动端：右侧间隙缩为0，按钮固定定位破出 */
+    #right-gutter {
+      width: 0;
+      overflow: visible;
+    }
+
+    #toggleSidebarBtn {
+      position: fixed !important;
+      right: 8px !important;
+      top: 50% !important;
+      transform: translateY(-50%) !important;
+      z-index: 2001;
+      margin: 0 !important;
     }
   }
 }

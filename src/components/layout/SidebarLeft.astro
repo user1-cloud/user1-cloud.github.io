@@ -1,6 +1,6 @@
 ---
 import { DIR1_ORDER, DIR2_ORDER } from '../../consts';
-import SidebarPanel from './SidebarPanel.astro';
+import SidebarShell from './SidebarShell.astro';
 
 interface SidebarPost {
   title: string;
@@ -51,16 +51,14 @@ for (const post of sorted) {
 const orderedTags = [...tagTree.entries()].sort((a, b) => b[1].length - a[1].length);
 ---
 
-<SidebarPanel
+<SidebarShell
   position="left"
   sidebarId="leftSidebar"
-  btnId="toggleLeftSidebarBtn"
   hasOverlay={true}
-  btnLabel="切换左侧栏"
 >
   <!-- 工具栏：搜索 + 主题（横向布局） -->
   <div class="ls-toolbar">
-    <button id="search-trigger-btn" class="ls-search-btn"
+    <button id="search-trigger-btn" class="ls-tool-btn"
       aria-label="搜索文章 (Ctrl+K)" title="搜索 (Ctrl+K)" type="button">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -71,8 +69,8 @@ const orderedTags = [...tagTree.entries()].sort((a, b) => b[1].length - a[1].len
       <span class="search-kbd-hint">Ctrl+K</span>
     </button>
 
-    <div class="ls-theme-selector">
-      <button id="theme-switcher-btn" class="ls-theme-btn"
+    <div class="ls-tool-btn-wrap">
+      <button id="theme-switcher-btn" class="ls-tool-btn"
         aria-label="切换主题" title="切换配色方案" type="button">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -188,6 +186,6 @@ const orderedTags = [...tagTree.entries()].sort((a, b) => b[1].length - a[1].len
       })}
     </ul>
   </div>
-</SidebarPanel>
+</SidebarShell>
 
 <script src="../../scripts/theme"></script>

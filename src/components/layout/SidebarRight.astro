@@ -1,14 +1,12 @@
 ---
-import SidebarPanel from './SidebarPanel.astro';
+import SidebarShell from './SidebarShell.astro';
 
 const { description } = Astro.props as { description: string };
 ---
 
-<SidebarPanel
+<SidebarShell
   position="right"
   sidebarId="rightSidebar"
-  btnId="toggleSidebarBtn"
-  btnLabel="切换侧边栏"
 >
   <div class="sidebar-inner">
     <!-- 上栏：目录区 -->
@@ -23,6 +21,6 @@ const { description } = Astro.props as { description: string };
       <p set:html={description}></p>
     </div>
   </div>
-</SidebarPanel>
+</SidebarShell>
 
 <script src="../../scripts/sidebar-collapse"></script>

@@ -25,13 +25,11 @@
     padding: 0.5rem 0.5rem 0 0.8rem;
   }
 
-  /* 搜索按钮 */
-  .ls-search-btn {
+  /* 工具栏按钮 */
+  .ls-tool-btn {
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    flex: 1;
-    min-width: 0;
     padding: 0.4rem 0.5rem;
     font-size: 0.82rem;
     background: transparent;
@@ -53,31 +51,21 @@
     }
   }
 
-  /* 主题切换按钮 — 位于左侧栏 */
-  .ls-theme-selector {
-    position: relative;
-    flex-shrink: 0;
+  #search-trigger-btn {
+    flex: 1;
+    min-width: 0;
   }
 
-  .ls-theme-btn {
+  /* 主题按钮包装器 — 提供下拉菜单定位上下文，与搜索按钮等宽 */
+  .ls-tool-btn-wrap {
+    flex: 1;
+    min-width: 0;
+    position: relative;
     display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.4rem 0.5rem;
-    font-size: 0.82rem;
-    background: transparent;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--foreground-dark);
-    cursor: pointer;
-    font-family: inherit;
-    transition: border-color 0.2s ease, color 0.2s ease;
-    box-sizing: border-box;
+  }
 
-    &:hover {
-      border-color: var(--accent);
-      color: var(--foreground);
-    }
+  .ls-tool-btn-wrap .ls-tool-btn {
+    width: 100%;
   }
 
   .ls-theme-dropdown {
@@ -203,7 +191,6 @@
   }
 
   .node-label {
-    flex: 1;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -303,19 +290,14 @@
   }
 
 
-  /* 左侧折叠按钮定位与箭头方向 */
-  .toggle-left-sidebar-btn {
-    left: 20px;
-
-    .arrow-icon {
-      transform: rotate(-135deg) translateX(-17.678%) translateY(17.678%);
-    }
+  /* 左侧间隙按钮箭头：展开时指向左，折叠后指向右 */
+  .gutter-arrow-left {
+    transform: rotate(90deg);
   }
 
-  /* 左侧栏折叠时箭头转向 */
   @media (min-width: 900px) {
-    html.left-sidebar-collapsed .toggle-left-sidebar-btn .arrow-icon {
-      transform: rotate(45deg) translateX(-17.678%) translateY(17.678%);
+    html.left-sidebar-collapsed .gutter-arrow-left {
+      transform: rotate(-90deg);
     }
   }
 
@@ -340,13 +322,11 @@
       gap: 0.25rem;
     }
 
-    .ls-search-btn span,
-    .ls-theme-btn span {
+    .ls-tool-btn span {
       display: none;
     }
 
-    .ls-search-btn,
-    .ls-theme-btn {
+    .ls-tool-btn {
       padding: 0.35rem;
       justify-content: center;
     }
@@ -356,15 +336,14 @@
   @media (max-width: 899px) {
     .left-sidebar {
       position: fixed;
-      left: 0;
+      left: -280px;
       top: 0;
       height: 100vh;
       width: 280px;
       z-index: 2000;
       border-radius: 0 16px 16px 0;
-      transform: translateX(-100%);
       visibility: hidden;
-      transition: transform 0.3s ease, visibility 0s 0.3s;
+      transition: left 0.3s ease, visibility 0s 0.3s;
       display: flex;
       flex-direction: column;
       background: rgba(var(--background-rgb), 0.75);
@@ -372,10 +351,10 @@
       -webkit-backdrop-filter: blur(16px);
 
       &.overlay-open {
-        transform: translateX(0);
+        left: 0;
         visibility: visible;
         box-shadow: 4px 0 24px rgba(0, 0, 0, 0.3);
-        transition: transform 0.3s ease, visibility 0s;
+        transition: left 0.3s ease, visibility 0s;
       }
 
       .sidebar-inner {
@@ -389,19 +368,27 @@
       flex-shrink: 0;
     }
 
-    .toggle-left-sidebar-btn {
-      left: 8px;
-      top: 50%;
-      transform: translateY(-50%);
+    /* 移动端：左侧间隙缩为0，按钮固定定位破出 */
+    #left-gutter {
+      width: 0;
+      overflow: visible;
+    }
+
+    #toggleLeftSidebarBtn {
+      position: fixed !important;
+      left: 8px !important;
+      top: 50% !important;
+      transform: translateY(-50%) !important;
       z-index: 2001;
+      margin: 0 !important;
+    }
 
-      .arrow-icon {
-        transform: rotate(45deg) translateX(-17.678%) translateY(17.678%);
-      }
+    #toggleLeftSidebarBtn .gutter-arrow-left {
+      transform: rotate(-90deg);
+    }
 
-      &.overlay-open .arrow-icon {
-        transform: rotate(-135deg) translateX(-17.678%) translateY(17.678%);
-      }
+    #toggleLeftSidebarBtn.overlay-open .gutter-arrow-left {
+      transform: rotate(90deg);
     }
 
     /* 桌面端折叠类在移动端应被忽略 — overlay-open 时恢复可见 */

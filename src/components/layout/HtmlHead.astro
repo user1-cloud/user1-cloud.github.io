@@ -87,5 +87,11 @@ if (image) {
         document.documentElement.classList.remove('sidebar-collapsed');
       }
     } catch (_) {}
+
+    try {
+      if (localStorage.getItem('header-collapsed') === 'true') {
+        document.documentElement.classList.add('header-collapsed');
+      }
+    } catch (_) {}
   })();
 </script>

@@ -2,7 +2,7 @@
 // 博客文章布局组件 - 三栏可折叠双侧栏版本
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
-import BaseHead from '../components/layout/BaseHead.astro';
+import HtmlHead from '../components/layout/HtmlHead.astro';
 import Footer from '../components/layout/Footer.astro';
 import FormattedDate from '../components/blog/FormattedDate.astro';
 import Header from '../components/layout/Header.astro';
@@ -13,7 +13,7 @@ import { getSidebarData } from '../lib/blogData';
 import SearchModal from '../components/blog/SearchModal.astro';
 
 // 专用css
-import '../styles/sidebar-collapse.scss';
+import '../styles/sidebar-shared.scss';
 import '../styles/sidebar-toc.scss';
 import '../styles/blog-post.scss';
 import '../styles/sidebar-tree.scss';
@@ -29,7 +29,7 @@ const currentSlug = slugMatch ? decodeURIComponent(slugMatch[1].replace(/\/+$/, 
 
 <html lang="zh-cn" class="sidebar-collapsed left-sidebar-collapsed">
 	<head>
-		<BaseHead title={title} description={description} />
+		<HtmlHead title={title} description={description} />
 		<slot name="head" />
 	</head>
 
@@ -45,6 +45,15 @@ const currentSlug = slugMatch ? decodeURIComponent(slugMatch[1].replace(/\/+$/, 
 				<div class="three-col-layout">
 					<!-- 左侧：可折叠侧边栏（目录树 / 标签树） -->
 					<SidebarLeft posts={sidebarData} currentSlug={currentSlug} />
+
+					<!-- 左侧间隙按钮：位于侧栏与正文之间 -->
+					<div class="sidebar-gutter" id="left-gutter">
+						<button class="sidebar-toggle-btn" id="toggleLeftSidebarBtn" aria-label="切换左侧栏" type="button">
+							<svg class="gutter-arrow gutter-arrow-left" width="18" height="18" viewBox="0 0 12 12" aria-hidden="true">
+								<path d="M2 5 L6 8 L10 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+							</svg>
+						</button>
+					</div>
 
 					<!-- 中间：正文区域 -->
 					<div class="content-main fade-in">
@@ -82,6 +91,15 @@ const currentSlug = slugMatch ? decodeURIComponent(slugMatch[1].replace(/\/+$/, 
 						</div>
 					</div>
 
+					<!-- 右侧间隙按钮：位于正文与侧栏之间 -->
+					<div class="sidebar-gutter" id="right-gutter">
+						<button class="sidebar-toggle-btn" id="toggleSidebarBtn" aria-label="切换侧边栏" type="button">
+							<svg class="gutter-arrow gutter-arrow-right" width="18" height="18" viewBox="0 0 12 12" aria-hidden="true">
+								<path d="M2 5 L6 8 L10 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+							</svg>
+						</button>
+					</div>
+
 					<!-- 右侧：可折叠侧边栏（目录 + 简介） -->
 					<SidebarRight description={description} />
 				</div>
@@ -99,5 +117,7 @@ const currentSlug = slugMatch ? decodeURIComponent(slugMatch[1].replace(/\/+$/, 
 		<script src="../scripts/fade-in-on-scroll"></script>
 		<!-- Mermaid 图表渲染 -->
 		<script src="../scripts/mermaid"></script>
+		<!-- 侧栏按钮水平定位 -->
+		<script src="../scripts/gutter-buttons"></script>
 	</body>
 </html>

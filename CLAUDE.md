@@ -32,18 +32,18 @@ Blog posts live in `src/content/blog/` as `.md`/`.mdx` files, organized in subdi
 
 ### Layout pattern
 
-All pages share a single layout: `src/layouts/BlogPost.astro`. It provides the HTML shell (`<BaseHead>`, `<Header>`, `<Footer>`), a **three-column layout** with two collapsible sidebars:
+All pages share a single layout: `src/layouts/BlogPost.astro`. It provides the HTML shell (`<HtmlHead>`, `<Header>`, `<Footer>`), a **three-column layout** with two collapsible sidebars:
 
-- **Left sidebar** (`SidebarPanel` + `SidebarLeft`) — Directory tree / tag tree + search button + theme switcher. Persists collapsed state via `localStorage` (key: `left-sidebar-state`, defaults to collapsed). On mobile, renders as an overlay with backdrop.
-- **Right sidebar** (`SidebarPanel` + `SidebarRight`) — Table of contents + post description. Persists collapsed state via `localStorage` (key: `blog-sidebar-collapsed`, defaults to collapsed).
+- **Left sidebar** (`SidebarShell` + `SidebarLeft`) — Directory tree / tag tree + search button + theme switcher. Persists collapsed state via `localStorage` (key: `left-sidebar-state`, defaults to collapsed). On mobile, renders as an overlay with backdrop.
+- **Right sidebar** (`SidebarShell` + `SidebarRight`) — Table of contents + post description. Persists collapsed state via `localStorage` (key: `blog-sidebar-collapsed`, defaults to collapsed).
 
-Both sidebars share `SidebarPanel.astro` for the collapsible panel chrome and initial localStorage sync.
+Both sidebars share `SidebarShell.astro` for the collapsible panel chrome and initial localStorage sync.
 
 ### Component directory structure
 
 ```
 src/components/
-├── layout/     # BaseHead, SidebarPanel, Footer, Header, SidebarLeft, SidebarRight
+├── layout/     # HtmlHead, SidebarShell, Footer, Header, SidebarLeft, SidebarRight
 ├── blog/       # BlogCard, BlogList, FormattedDate, JsonLd, SearchModal
 ├── ui/         # HeaderLink, Icon, SocialLinks
 ├── widgets/    # Bilibili, MiniBrowser, Plot3D
@@ -84,7 +84,7 @@ Centralized site configuration: `SITE_TITLE`, `SITE_DESCRIPTION`, social URLs, `
 
 - `src/styles/global.scss` — Global styles (CSS custom variables, Tailwind directives, typography, link-underline mixin, scroll animations).
 - `src/styles/blog-post.scss` — Three-column layout styles for the blog post layout.
-- `src/styles/sidebar-collapse.scss` — Shared sidebar panel structure, collapse button, and collapsed state styles.
+- `src/styles/sidebar-shared.scss` — Shared sidebar panel structure, collapse button, and collapsed state styles.
 - `src/styles/sidebar-tree.scss` — Left sidebar: tree view, toolbar, theme dropdown, mobile overlay.
 - `src/styles/sidebar-toc.scss` — Right sidebar: TOC area, description area, position indicator, right button positioning.
 - `src/styles/themes/` — 6 theme files (3 dark, 3 light). Theme is applied via `data-theme` attribute on `<html>`, persisted to `localStorage` (key: `blog-theme`).

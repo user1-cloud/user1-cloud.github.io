@@ -31,9 +31,8 @@
 ├── src/
 │   ├── assets/icons/         # SVG 图标文件
 │   ├── components/           # Astro 组件
-│   │   ├── layout/           # 布局组件 (Header, Footer, BaseHead, Sidebar 等)
+│   │   ├── layout/           # 布局组件 (Header, Footer, HtmlHead, SidebarShell, SidebarLeft, SidebarRight 等)
 │   │   ├── blog/             # 博客组件 (BlogCard, BlogList, SearchModal 等)
-│   │   ├── layout/           # 布局组件 (Header, Footer, SidebarPanel, SidebarLeft, SidebarRight 等)
 │   │   ├── ui/               # 通用 UI 组件 (Icon, SocialLinks, HeaderLink)
 │   │   ├── widgets/          # 内容组件 (Bilibili, MiniBrowser, Plot3D)
 │   │   └── github/           # GitHub 统计组件

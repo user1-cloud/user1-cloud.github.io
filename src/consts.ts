@@ -21,7 +21,7 @@ export const DIR2_ORDER: Record<string, string[]> = {
   '英语': ['词汇', '单词']
 };
 
-// 主题常量（BaseHead 和 LeftSidebar 共享）
+// 主题常量（HtmlHead 和 LeftSidebar 共享）
 export const VALID_THEMES = [
   'dark-blue', 'dark-green', 'dark-purple',
   'light-blue', 'light-green', 'light-rose',

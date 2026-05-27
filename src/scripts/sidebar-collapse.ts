@@ -1,5 +1,5 @@
 // 右侧栏：折叠按钮绑定 + 状态同步
-// BaseHead.astro 负责初始同步（<head> 中同步执行，避免 FOUC）
+// HtmlHead.astro 负责初始同步（<head> 中同步执行，避免 FOUC）
 // 此脚本负责按钮点击后的状态切换和视图过渡后的重新同步
 
 const STORAGE = 'blog-sidebar-collapsed';
