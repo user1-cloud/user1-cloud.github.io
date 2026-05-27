@@ -1,4 +1,5 @@
 // 侧栏间隙按钮水平定位 — 将 fixed 按钮居中于 gutter
+// 按钮本身有 CSS transition: left/right 0.2s ease，JS 只负责设置目标位置
 const LEFT_BTN = 'toggleLeftSidebarBtn';
 const LEFT_GUTTER = 'left-gutter';
 const RIGHT_BTN = 'toggleSidebarBtn';
@@ -18,7 +19,6 @@ function centerBtnInGutter(btnId: string, gutterId: string): void {
     : html.classList.contains('sidebar-collapsed');
 
   if (collapsed) {
-    // 折叠时按钮靠外侧（远离正文），用 gutter 全宽做缓冲
     if (isLeft) {
       btn.style.left = gr.left + 'px';
       btn.style.right = 'auto';
@@ -27,7 +27,6 @@ function centerBtnInGutter(btnId: string, gutterId: string): void {
       btn.style.right = (window.innerWidth - gr.right) + 'px';
     }
   } else {
-    // 展开时按钮居中于间隙
     const center = gr.left + gr.width / 2;
     if (isLeft) {
       btn.style.left = (center - bw / 2) + 'px';
@@ -44,46 +43,22 @@ function syncAll(): void {
   centerBtnInGutter(RIGHT_BTN, RIGHT_GUTTER);
 }
 
-// 过渡跟踪：持续同步直到 gutter 位置稳定
-let trackingId: number | null = null;
+// 侧栏过渡期间定期更新按钮目标位置（CSS transition 负责平滑移动）
+let trackTimer: ReturnType<typeof setInterval> | null = null;
 
 function startTracking(): void {
-  if (trackingId !== null) cancelAnimationFrame(trackingId);
-
-  let lastLeftX = -1;
-  let lastRightX = -1;
-  let stable = 0;
-  let total = 0;
-  const MAX_FRAMES = 30; // ~0.5s，0.2s 过渡绰绰有余
-
-  function loop(): void {
+  if (trackTimer !== null) clearInterval(trackTimer);
+  syncAll(); // 立即设置起始目标
+  // 过渡期间每 50ms 更新一次目标，CSS 负责插值
+  trackTimer = setInterval(() => syncAll(), 50);
+  // 0.2s 过渡 + 余量后停止
+  setTimeout(() => {
+    if (trackTimer !== null) { clearInterval(trackTimer); trackTimer = null; }
     syncAll();
-
-    const lg = document.getElementById(LEFT_GUTTER);
-    const rg = document.getElementById(RIGHT_GUTTER);
-    const lx = lg ? lg.getBoundingClientRect().left : -1;
-    const rx = rg ? rg.getBoundingClientRect().left : -1;
-
-    if (lx === lastLeftX && rx === lastRightX) {
-      stable++;
-    } else {
-      stable = 0;
-    }
-    lastLeftX = lx;
-    lastRightX = rx;
-    total++;
-
-    if (stable < 2 && total < MAX_FRAMES) {
-      trackingId = requestAnimationFrame(loop);
-    } else {
-      trackingId = null;
-    }
-  }
-
-  trackingId = requestAnimationFrame(loop);
+  }, 250);
 }
 
-// transitionend 兜底：确保过渡结束后按钮在正确位置
+// transitionend 兜底
 function onTransitionEnd(e: TransitionEvent): void {
   const target = e.target as HTMLElement;
   if (target.classList.contains('sidebar-panel') && e.propertyName === 'width') {
@@ -96,10 +71,7 @@ let observer: MutationObserver | null = null;
 
 function setupObserver(): void {
   if (observer) observer.disconnect();
-
-  observer = new MutationObserver(() => {
-    startTracking();
-  });
+  observer = new MutationObserver(() => startTracking());
   observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 }
 
@@ -108,9 +80,7 @@ function init(): void {
   setupObserver();
 }
 
-// 初始运行
 init();
-
 window.addEventListener('resize', syncAll);
 document.addEventListener('transitionend', onTransitionEnd, true);
 
