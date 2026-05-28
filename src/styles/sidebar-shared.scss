@@ -23,25 +23,39 @@
     display: flex;
     flex-direction: column;
     background: transparent;
-    will-change: width;
     contain: layout style;
-    transition: width 0.2s ease;
+    overflow: hidden;
   }
 
-  /* 左侧栏折叠（仅桌面端） */
+  /* 侧栏内容 transform 滑动（GPU 合成，不触发重排） */
+  .left-sidebar > *,
+  .right-sidebar > * {
+    transform: translateX(0);
+    transition: transform 0.25s ease;
+  }
+
+  /* 左侧栏折叠 — width 延迟收窄，transform 先滑出 */
   @media (min-width: 900px) {
     html.left-sidebar-collapsed .left-sidebar {
       width: 0 !important;
       visibility: hidden;
-      transition: width 0.2s ease, visibility 0s 0.2s;
+      transition: width 0s 0.25s, visibility 0s 0.25s;
+    }
+
+    html.left-sidebar-collapsed .left-sidebar > * {
+      transform: translateX(calc(var(--sidebar-width) * -1 - 8px));
     }
   }
 
-  /* 右侧栏折叠 */
+  /* 右侧栏折叠 — width 延迟收窄，transform 先滑出 */
   html.sidebar-collapsed .right-sidebar {
     width: 0 !important;
     visibility: hidden;
-    transition: width 0.2s ease, visibility 0s 0.2s;
+    transition: width 0s 0.25s, visibility 0s 0.25s;
+  }
+
+  html.sidebar-collapsed .right-sidebar > * {
+    transform: translateX(calc(var(--sidebar-width) + 8px));
   }
 
   /* 间隙 — 位于侧栏和正文之间，容纳折叠按钮 */
