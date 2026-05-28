@@ -29,7 +29,13 @@ export default defineConfig({
     expressiveCode(),
     mdx(),
     sitemap(),
-    compress(),
+    compress({
+      HTML: {
+        'html-minifier-terser': {
+          conservativeCollapse: true,
+        },
+      },
+    }),
   ],
 
   markdown: {
