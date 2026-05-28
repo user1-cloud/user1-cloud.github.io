@@ -679,19 +679,21 @@
     position: absolute;
     left: 20%;
     bottom: 0;
-    width: 0;
+    width: 60%;
     height: 2px;
     background: var(--link-underline-color);
     border-radius: 999px;
-    transition: width 0.28s ease;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   &:hover::after {
-    width: 60%;
+    transform: scaleX(1);
   }
 
   // 激活态：下划线保持展开
   &.active::after {
-    width: 60%;
+    transform: scaleX(1);
   }
 }

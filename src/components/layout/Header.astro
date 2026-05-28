@@ -13,6 +13,7 @@ import SocialLinks from '../ui/SocialLinks.astro';
       <HeaderLink href="/">主页</HeaderLink>
       <HeaderLink href="/blog">博客</HeaderLink>
       <HeaderLink href="/about">关于</HeaderLink>
+      <span class="nav-underline"></span>
     </div>
     <div class="nav-right">
       <div id="header-social">
@@ -78,6 +79,26 @@ import SocialLinks from '../ui/SocialLinks.astro';
     display: flex;
     gap: 0.5rem;
     white-space: nowrap;
+    --ul-left: 0px;
+    --ul-width: 0px;
+  }
+
+  /* 滑动下划线指示器 */
+  .nav-underline {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: var(--ul-width);
+    height: 4px;
+    background: var(--link-underline-color, var(--accent));
+    border-radius: 999px;
+    transform: translateX(var(--ul-left));
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .nav-center.underline-visible .nav-underline {
+    opacity: 1;
   }
 
   /* 吸顶按钮 — 紧贴视口顶部 */
@@ -183,4 +204,54 @@ import SocialLinks from '../ui/SocialLinks.astro';
   document.addEventListener('DOMContentLoaded', initHeader);
   document.addEventListener('astro:page-load', initHeader);
   document.addEventListener('astro:after-swap', initHeader);
+</script>
+
+<script>
+  // 顶栏中间导航 — 滑动下划线（从旧位置滑到新 active 链接）
+  function initNavUnderline(): void {
+    const center = document.querySelector('.nav-center');
+    if (!center) return;
+    const active = center.querySelector('a.active') as HTMLElement | null;
+    if (!active) {
+      center.classList.remove('underline-visible');
+      return;
+    }
+
+    const linkRect = active.getBoundingClientRect();
+    const centerRect = center.getBoundingClientRect();
+    const newLeft = linkRect.left - centerRect.left;
+    const newWidth = linkRect.width;
+
+    const prevLeft = sessionStorage.getItem('nav-ul-left');
+    const prevWidth = sessionStorage.getItem('nav-ul-width');
+
+    if (prevLeft !== null && prevWidth !== null) {
+      // 从旧位置瞬间起步（无动画）
+      center.style.setProperty('--ul-left', `${prevLeft}px`);
+      center.style.setProperty('--ul-width', `${prevWidth}px`);
+      center.classList.add('underline-visible');
+
+      // 强排，确保起步位置已生效
+      void (center.querySelector('.nav-underline') as HTMLElement)?.offsetWidth;
+
+      // 添加过渡，滑到新位置
+      const ul = center.querySelector('.nav-underline') as HTMLElement;
+      if (ul) {
+        ul.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), width 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+      }
+    } else {
+      center.classList.add('underline-visible');
+    }
+
+    requestAnimationFrame(() => {
+      center.style.setProperty('--ul-left', `${newLeft}px`);
+      center.style.setProperty('--ul-width', `${newWidth}px`);
+    });
+
+    sessionStorage.setItem('nav-ul-left', String(newLeft));
+    sessionStorage.setItem('nav-ul-width', String(newWidth));
+  }
+
+  document.addEventListener('DOMContentLoaded', initNavUnderline);
+  document.addEventListener('astro:page-load', initNavUnderline);
 </script>

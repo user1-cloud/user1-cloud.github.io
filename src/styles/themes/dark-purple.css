@@ -27,6 +27,8 @@ html[data-theme="dark-purple"] {
   --border-dark-rgb: 67, 32, 112;
   --border-light-rgb: 124, 63, 199;
 
+  --link-underline-color: #a78bfa;
+
   --scrollbar-track: #17121e;
   --scrollbar-thumb: #7a5e96;
 

@@ -13,30 +13,20 @@ const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
 	<slot />
 </a>
 <style lang="scss">
-@use '../../styles/global.scss' as *; 
 a {
-	/* 基础样式 */
 	color: var(--header-link-text);
 	text-decoration: none;
 	padding: 8px 14px;
-	position: relative;
 	font-size: 15px;
 	letter-spacing: 0.3px;
-	
-	/* 扁平化 + 动画 */
-	background: transparent;
-	transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
-	overflow: hidden;
+	transition: color 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 
-	@include link-underline;
-
-	/* 悬停 */
 	&:hover {
-		color: var(--header-link-hover);
+		color: var(--accent-light);
 	}
-	
-	/* 激活 */
+
 	&.active {
+		color: var(--accent-light);
 		font-weight: 600;
 	}
 }

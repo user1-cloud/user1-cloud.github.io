@@ -5,7 +5,7 @@
     .sidebar-inner {
       flex: 1;
       min-height: 0;
-      padding: 0.5rem 0.5rem 0.5rem 2rem;
+      padding: 0 0.5rem 0.5rem 2rem;
       overflow-y: auto;
       overflow-x: hidden;
       position: relative;
@@ -18,11 +18,13 @@
     }
   }
 
-  /* 工具栏：搜索 + 主题横向布局 */
+  /* 工具栏：搜索 + 主题横向布局（grid 确保等宽） */
   .ls-toolbar {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 0.4rem;
-    padding: 0 0 0.5rem 0;
+    padding: 0.5rem 0.5rem 0.5rem 2rem;
+    flex-shrink: 0;
   }
 
   /* 工具栏按钮 */
@@ -51,15 +53,8 @@
     }
   }
 
-  #search-trigger-btn {
-    flex: 1;
-    min-width: 0;
-  }
-
-  /* 主题按钮包装器 — 提供下拉菜单定位上下文，与搜索按钮等宽 */
+  /* 主题按钮包装器 — 提供下拉菜单定位上下文 */
   .ls-tool-btn-wrap {
-    flex: 1;
-    min-width: 0;
     position: relative;
     display: flex;
   }
@@ -73,11 +68,13 @@
     top: calc(100% + 4px);
     left: 0;
     z-index: 9999;
-    background: var(--background-dark);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    box-shadow: var(--box-shadow);
-    padding: 4px;
+    background: rgba(var(--background-rgb), 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+    padding: 6px;
     min-width: 130px;
   }
 
@@ -115,8 +112,27 @@
   .ls-mode-toggle {
     display: flex;
     gap: 0;
+    position: relative;
     border-bottom: 1px solid var(--border);
     margin-bottom: 0.5rem;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 50%;
+      height: 2px;
+      background: var(--accent);
+      border-radius: 999px;
+      transform: translateX(0);
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: none;
+    }
+
+    &.tag-mode::after {
+      transform: translateX(100%);
+    }
 
     button {
       flex: 1;
@@ -124,16 +140,14 @@
       padding: 0.4rem 0.25rem;
       background: transparent;
       border: none;
-      border-bottom: 2px solid transparent;
       color: var(--foreground-dark);
       cursor: pointer;
       font-family: inherit;
       font-size: 0.82rem;
-      transition: color 0.2s, border-color 0.2s;
+      transition: color 0.2s;
 
       &.active {
         color: var(--accent);
-        border-bottom-color: var(--accent);
       }
 
       &:hover {
@@ -319,10 +333,12 @@
 
   /* ===== 响应式 ===== */
 
-  /* 900-1099px: 紧凑模式 */
+  /* 900-1099px: 紧凑模式 — 隐藏按钮文字 */
   @media (max-width: 1099px) and (min-width: 900px) {
     .ls-toolbar {
       gap: 0.25rem;
+      padding-left: 1rem;
+      padding-right: 0.25rem;
     }
 
     .ls-tool-btn span {
@@ -361,17 +377,19 @@
         transition: left 0.3s ease, visibility 0s;
       }
 
+      .ls-toolbar {
+        flex-shrink: 0;
+        padding: 0.5rem 0.5rem 0.5rem 2.5rem;
+      }
+
       .sidebar-inner {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
+        flex: 1;
+        min-height: 0;
         max-width: 280px;
         overflow: hidden;
         overflow-y: auto;
         box-sizing: border-box;
-        padding: 0.5rem 0.5rem 0.5rem 2.5rem;
+        padding: 0 0.5rem 0.5rem 2.5rem;
       }
     }
 

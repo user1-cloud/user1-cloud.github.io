@@ -123,17 +123,20 @@ function switchMode(mode: 'directory' | 'tag'): void {
   const tagTree = document.getElementById('ls-tree-tag');
   const dirBtn = document.getElementById('ls-mode-dir');
   const tagBtn = document.getElementById('ls-mode-tag');
+  const toggleBar = document.querySelector('.ls-mode-toggle');
 
   if (mode === 'directory') {
     dirTree?.removeAttribute('hidden');
     tagTree?.setAttribute('hidden', '');
     dirBtn?.classList.add('active');
     tagBtn?.classList.remove('active');
+    toggleBar?.classList.remove('tag-mode');
   } else {
     dirTree?.setAttribute('hidden', '');
     tagTree?.removeAttribute('hidden');
     dirBtn?.classList.remove('active');
     tagBtn?.classList.add('active');
+    toggleBar?.classList.add('tag-mode');
   }
 
   requestAnimationFrame(() => updateIndicator());
