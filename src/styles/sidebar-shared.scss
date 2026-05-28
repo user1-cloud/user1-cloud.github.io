@@ -24,11 +24,10 @@
     flex-direction: column;
     background: transparent;
     contain: layout style;
-    overflow: hidden;
   }
 
   /* 侧栏内容 transform 滑动（GPU 合成，不触发重排） */
-  .left-sidebar > *,
+  .left-sidebar > .sidebar-inner,
   .right-sidebar > * {
     transform: translateX(0);
     transition: transform 0.25s ease;
@@ -42,8 +41,13 @@
       transition: width 0s 0.25s, visibility 0s 0.25s;
     }
 
-    html.left-sidebar-collapsed .left-sidebar > * {
+    html.left-sidebar-collapsed .left-sidebar > .sidebar-inner {
       transform: translateX(calc(var(--sidebar-width) * -1 - 8px));
+    }
+
+    /* 工具栏跟随侧栏收起（避免 transform 破坏 backdrop-filter） */
+    html.left-sidebar-collapsed .left-sidebar > .ls-toolbar {
+      opacity: 0;
     }
   }
 
