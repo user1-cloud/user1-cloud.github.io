@@ -1,7 +1,7 @@
 @layer components {
   /* 右侧栏主体 */
   .right-sidebar {
-    z-index: 999;
+    z-index: var(--z-right-sidebar);
 
     scrollbar-width: thin;
 
@@ -11,7 +11,7 @@
     }
     &::-webkit-scrollbar-thumb {
       background: var(--border);
-      border-radius: 4px;
+      border-radius: var(--radius-sm);
     }
 
     .sidebar-inner {
@@ -33,11 +33,11 @@
     top: 0;
     width: 4px;
     height: 18px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--accent);
     opacity: 0;
     pointer-events: none;
-    z-index: 10;
+    z-index: var(--z-toc-indicator);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
 
     &.visible {
@@ -62,7 +62,7 @@
     margin-bottom: 1rem;
     padding: 0.8rem;
     background: transparent;
-    border-radius: 16px;
+    border-radius: var(--radius-2xl);
     contain: layout style paint;
 
     scrollbar-width: none;
@@ -77,7 +77,7 @@
     h3 {
       margin-top: 0;
       margin-bottom: 0.75rem;
-      font-size: 0.85rem;
+      font-size: var(--font-size-base);
       font-weight: bold;
       padding-left: 0.5rem;
       color: var(--foreground-light);
@@ -89,7 +89,7 @@
     flex-shrink: 0;
     padding: 0.8rem;
     background: transparent;
-    border-radius: 16px;
+    border-radius: var(--radius-2xl);
     contain: layout style paint;
     font-size: 0.85em;
     line-height: 1.6;
@@ -136,12 +136,12 @@
         text-decoration: none;
         cursor: pointer;
         box-sizing: border-box;
-        border-radius: 0 8px 8px 0;
-        transition: color 0.15s, background 0.15s;
+        border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+        transition: color var(--transition-fast), background var(--transition-fast);
 
         &:hover {
           color: var(--foreground);
-          background: rgba(var(--accent-rgb), 0.06);
+          background: rgba(var(--accent-rgb), var(--alpha-hover));
         }
       }
 
@@ -156,8 +156,8 @@
       &.active div {
         font-weight: 500;
         color: var(--accent-light);
-        background: rgba(var(--accent-rgb), 0.08);
-        border-radius: 0 6px 6px 0;
+        background: rgba(var(--accent-rgb), var(--alpha-active));
+        border-radius: 0 var(--radius-md) var(--radius-md) 0;
       }
     }
   }
@@ -178,12 +178,12 @@
       width: 220px;
       height: 80vh;
       max-height: 100vh;
-      z-index: 99;
+      z-index: var(--z-right-sidebar-mobile);
       transform: translateX(0);
-      background: rgba(var(--background-rgb), 0.6);
+      background: rgba(var(--background-rgb), var(--alpha-sidebar-glass));
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border-radius: 16px 0 0 16px;
+      border-radius: var(--radius-2xl) 0 0 var(--radius-2xl);
       box-shadow: -4px 0 24px rgba(0, 0, 0, 0.2);
     }
 
@@ -205,7 +205,7 @@
       right: 0 !important;
       top: 50% !important;
       transform: translateY(-50%) !important;
-      z-index: 2001;
+      z-index: var(--z-toggle-btn-mobile);
       margin: 0 !important;
     }
 

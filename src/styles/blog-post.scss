@@ -18,7 +18,7 @@
     img {
       display: block;
       margin: 0 auto;
-      border-radius: 12px;
+      border-radius: var(--radius-xl);
       box-shadow: var(--hero-shadow);
     }
   }
@@ -102,18 +102,18 @@
   .tag-pill {
     display: inline-block;
     padding: 2px 10px;
-    font-size: 0.75rem;
+    font-size: var(--font-size-xs);
     color: var(--accent-light);
-    background: rgba(var(--accent-rgb), 0.12);
-    border: 1px solid rgba(var(--accent-rgb), 0.25);
-    border-radius: 999px;
+    background: rgba(var(--accent-rgb), var(--alpha-subtle));
+    border: 1px solid rgba(var(--accent-rgb), var(--alpha-strong));
+    border-radius: var(--radius-full);
     text-decoration: none;
-    transition: background 0.2s ease, border-color 0.2s ease;
+    transition: background var(--transition-base), border-color var(--transition-base);
     white-space: nowrap;
   }
 
   .tag-pill:hover {
-    background: rgba(var(--accent-rgb), 0.22);
+    background: rgba(var(--accent-rgb), var(--alpha-medium));
     border-color: var(--accent);
   }
 

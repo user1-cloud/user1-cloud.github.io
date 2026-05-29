@@ -15,7 +15,7 @@
   /* 共享的侧栏结构 */
   .sidebar-panel {
     width: var(--sidebar-width);
-    font-size: 0.85rem;
+    font-size: var(--font-size-base);
     flex-shrink: 0;
     position: sticky;
     top: 4rem;
@@ -30,7 +30,7 @@
   .left-sidebar > .sidebar-inner,
   .right-sidebar > * {
     transform: translateX(0);
-    transition: transform 0.25s ease;
+    transition: transform var(--transition-medium);
   }
 
   /* 左侧栏折叠 — width 延迟收窄，transform 先滑出 */
@@ -74,19 +74,19 @@
     position: fixed;
     top: 50%;
     transform: translateY(-50%);
-    z-index: 1000;
-    background: rgba(var(--background-rgb), 0.6);
+    z-index: var(--z-toggle-btn);
+    background: rgba(var(--background-rgb), var(--alpha-sidebar-glass));
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     border: 1px solid var(--border-light);
-    border-radius: 20px;
+    border-radius: var(--radius-3xl);
     padding: 20px 6px;
     cursor: pointer;
     box-shadow: none;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: border-color 0.2s ease;
+    transition: border-color var(--transition-base);
   }
 
   .sidebar-toggle-btn:hover {
@@ -101,20 +101,20 @@
   .gutter-arrow {
     display: block;
     color: var(--foreground);
-    transition: transform 0.25s ease;
+    transition: transform var(--transition-medium);
   }
 
   /* 左按钮：吸附屏幕左边缘 */
   #toggleLeftSidebarBtn {
     left: 0;
-    border-radius: 0 12px 12px 0;
+    border-radius: 0 var(--radius-xl) var(--radius-xl) 0;
     border-left: none;
   }
 
   /* 右按钮：吸附屏幕右边缘 */
   #toggleSidebarBtn {
     right: 0;
-    border-radius: 12px 0 0 12px;
+    border-radius: var(--radius-xl) 0 0 var(--radius-xl);
     border-right: none;
   }
 }

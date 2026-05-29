@@ -36,6 +36,56 @@
   --alert-caution: #e5534b;
   --alert-caution-bg: rgba(229, 83, 75, 0.08);
   --alert-caution-border: #e5534b;
+
+  /* Z-index scale */
+  --z-node-header: 1;
+  --z-toc-indicator: 10;
+  --z-right-sidebar-mobile: 99;
+  --z-overlay-backdrop: 997;
+  --z-left-sidebar: 998;
+  --z-right-sidebar: 999;
+  --z-toggle-btn: 1000;
+  --z-left-sidebar-mobile: 2000;
+  --z-toggle-btn-mobile: 2001;
+  --z-dropdown: 9999;
+
+  /* Border radius */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-3xl: 20px;
+  --radius-full: 999px;
+  --radius-circle: 50%;
+
+  /* Transition presets */
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.2s ease;
+  --transition-medium: 0.25s ease;
+  --transition-slow: 0.3s ease;
+  --transition-spring: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fade: 0.5s ease;
+  --transition-fade-slow: 1s ease;
+
+  /* Alpha opacities */
+  --alpha-hover: 0.06;
+  --alpha-active: 0.08;
+  --alpha-bg: 0.1;
+  --alpha-subtle: 0.12;
+  --alpha-medium: 0.22;
+  --alpha-strong: 0.25;
+  --alpha-overlay-backdrop: 0.4;
+  --alpha-sidebar-glass: 0.6;
+  --alpha-dropdown-glass: 0.85;
+
+  /* Reusable font sizes */
+  --font-size-sm: 0.82rem;
+  --font-size-base: 0.85rem;
+  --font-size-md: 0.88rem;
+  --font-size-lg: 0.9rem;
+  --font-size-xs: 0.75rem;
 }
 
 @layer base {
@@ -145,18 +195,18 @@
   img {
     max-width: 100%;
     height: auto;
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
   }
 
   code {
     padding: 2px 5px;
     background-color: var(--muted);
-    border-radius: 2px;
+    border-radius: var(--radius-xs);
   }
 
   pre {
     padding: 1.5em;
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
     
     > code {
       all: unset;
@@ -169,7 +219,7 @@
     margin: 0.75rem 0;
     color: var(--foreground-dark);
     background: color-mix(in srgb, var(--muted) 30%, transparent);
-    border-radius: 0 4px 4px 0;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
 
     /* 嵌套引用：逐层用不同色调区分 */
     blockquote {
@@ -206,9 +256,9 @@
 
   /* 高亮标记（==text==） */
   mark {
-    background: rgba(var(--accent-rgb), 0.25);
+    background: rgba(var(--accent-rgb), var(--alpha-strong));
     color: var(--foreground);
-    border-radius: 2px;
+    border-radius: var(--radius-xs);
     padding: 0 2px;
   }
 
@@ -224,7 +274,7 @@
     padding: 0.75rem 1rem 0.75rem 1.5rem;
     border-left: 4px solid var(--accent);
     background: color-mix(in srgb, var(--muted) 25%, transparent);
-    border-radius: 0 6px 6px 0;
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
 
     dt {
       font-weight: 700;
@@ -247,7 +297,7 @@
   /* 折叠面板 */
   details {
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
     padding: 1rem;
     margin: 1rem 0;
     background: var(--background-dark);
@@ -378,7 +428,7 @@
   /* GitHub 风格提示块 */
   .github-alert {
     border-left: 4px solid var(--alert-note-border);
-    border-radius: 0 6px 6px 0;
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
     padding: 1rem 1.25rem;
     margin: 1.25rem 0;
     background: var(--alert-note-bg);
@@ -473,8 +523,8 @@
       scroll-margin-top: 4rem;
 
       &:target {
-        background: rgba(var(--accent-rgb), 0.1);
-        border-radius: 4px;
+        background: rgba(var(--accent-rgb), var(--alpha-bg));
+        border-radius: var(--radius-sm);
         padding: 0.25rem 0.5rem;
         margin-left: -0.5rem;
       }
@@ -556,13 +606,13 @@
     display: flex;
     align-items: center;
     gap: 0.35rem;
-    font-size: 0.82rem;
+    font-size: var(--font-size-sm);
   }
 
   .lang-legend-dot {
     width: 10px;
     height: 10px;
-    border-radius: 50%;
+    border-radius: var(--radius-circle);
     flex-shrink: 0;
   }
 
@@ -593,7 +643,7 @@
 @layer utilities {
   .fade-in {
     opacity: 0;
-    animation: fadeIn 1s ease forwards;
+    animation: fadeIn var(--transition-fade-slow) forwards;
   }
 
   .fade-down-on-scroll,
@@ -603,7 +653,7 @@
   .fade-scale-on-scroll,
   .fade-only-on-scroll {
     opacity: 0;
-    transition: opacity 0.5s ease, transform 0.5s ease;
+    transition: opacity var(--transition-fade), transform var(--transition-fade);
     height: auto;
 
     &.visible {
@@ -682,10 +732,10 @@
     width: 60%;
     height: 2px;
     background: var(--link-underline-color);
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     transform: scaleX(0);
     transform-origin: left;
-    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform var(--transition-spring);
   }
 
   &:hover::after {

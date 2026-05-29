@@ -1,6 +1,6 @@
 @layer components {
   .left-sidebar {
-    z-index: 998;
+    z-index: var(--z-left-sidebar);
 
     .sidebar-inner {
       flex: 1;
@@ -25,7 +25,7 @@
     gap: 0.4rem;
     padding: 0.5rem 0.5rem 0.5rem 2rem;
     flex-shrink: 0;
-    transition: opacity 0.2s ease;
+    transition: opacity var(--transition-base);
   }
 
   /* 工具栏按钮 */
@@ -34,14 +34,14 @@
     align-items: center;
     gap: 0.4rem;
     padding: 0.4rem 0.5rem;
-    font-size: 0.82rem;
+    font-size: var(--font-size-sm);
     background: transparent;
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
     color: var(--foreground-dark);
     cursor: pointer;
     font-family: inherit;
-    transition: border-color 0.2s ease, color 0.2s ease;
+    transition: border-color var(--transition-base), color var(--transition-base);
     box-sizing: border-box;
 
     &:hover {
@@ -68,12 +68,12 @@
     position: absolute;
     top: calc(100% + 4px);
     right: 0;
-    z-index: 9999;
-    background: rgba(var(--background-rgb), 0.85);
+    z-index: var(--z-dropdown);
+    background: rgba(var(--background-rgb), var(--alpha-dropdown-glass));
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--border-light);
-    border-radius: 12px;
+    border-radius: var(--radius-xl);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
     padding: 6px;
     min-width: 130px;
@@ -84,11 +84,11 @@
     align-items: center;
     gap: 8px;
     padding: 6px 10px;
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     cursor: pointer;
-    font-size: 0.88rem;
+    font-size: var(--font-size-md);
     color: var(--foreground);
-    transition: background 0.15s ease;
+    transition: background var(--transition-fast);
     white-space: nowrap;
 
     &:hover {
@@ -105,7 +105,7 @@
     display: inline-block;
     width: 10px;
     height: 10px;
-    border-radius: 50%;
+    border-radius: var(--radius-circle);
     flex-shrink: 0;
   }
 
@@ -125,9 +125,9 @@
       width: 50%;
       height: 2px;
       background: var(--accent);
-      border-radius: 999px;
+      border-radius: var(--radius-full);
       transform: translateX(0);
-      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: transform var(--transition-spring);
       pointer-events: none;
     }
 
@@ -144,8 +144,8 @@
       color: var(--foreground-dark);
       cursor: pointer;
       font-family: inherit;
-      font-size: 0.82rem;
-      transition: color 0.2s;
+      font-size: var(--font-size-sm);
+      transition: color var(--transition-base);
 
       &.active {
         color: var(--accent);
@@ -176,14 +176,14 @@
     padding: 0.32rem 0.4rem;
     cursor: pointer;
     border-radius: 0 6px 6px 0;
-    transition: background 0.15s;
+    transition: background var(--transition-fast);
     user-select: none;
     overflow: hidden;
     position: relative;
-    z-index: 1;
+    z-index: var(--z-node-header);
 
     &:hover {
-      background: rgba(var(--accent-rgb), 0.06);
+      background: rgba(var(--accent-rgb), var(--alpha-hover));
     }
   }
 
@@ -199,7 +199,7 @@
     border-top: 4px solid transparent;
     border-bottom: 4px solid transparent;
     border-left: 5px solid var(--foreground-dark);
-    transition: transform 0.2s ease;
+    transition: transform var(--transition-base);
     flex-shrink: 0;
   }
 
@@ -220,8 +220,8 @@
   .node-count {
     font-size: 0.7rem;
     color: var(--foreground-dark);
-    background: rgba(var(--accent-rgb), 0.1);
-    border-radius: 999px;
+    background: rgba(var(--accent-rgb), var(--alpha-bg));
+    border-radius: var(--radius-full);
     padding: 0 6px;
     flex-shrink: 0;
   }
@@ -232,7 +232,7 @@
     margin: 0;
     overflow: hidden;
     max-height: 2000px;
-    transition: max-height 0.3s ease;
+    transition: max-height var(--transition-slow);
 
     &.collapsed {
       max-height: 0 !important;
@@ -249,21 +249,21 @@
       padding: 0.28rem 0.4rem;
       color: var(--foreground-dark);
       text-decoration: none;
-      border-radius: 0 6px 6px 0;
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
       font-size: 0.85em;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      transition: color 0.15s, background 0.15s;
+      transition: color var(--transition-fast), background var(--transition-fast);
 
       &:hover {
         color: var(--foreground);
-        background: rgba(var(--accent-rgb), 0.06);
+        background: rgba(var(--accent-rgb), var(--alpha-hover));
       }
 
       &.current {
         color: var(--accent-light);
-        background: rgba(var(--accent-rgb), 0.08);
+        background: rgba(var(--accent-rgb), var(--alpha-active));
         font-weight: 500;
       }
     }
@@ -301,7 +301,7 @@
       opacity: 0;
       transform: scaleY(0);
       transform-origin: top;
-      animation: connector-draw 0.5s ease forwards;
+      animation: connector-draw var(--transition-fade) forwards;
       border-radius: 1px;
       pointer-events: none;
     }
@@ -324,8 +324,8 @@
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(var(--backdrop-rgb), 0.4);
-    z-index: 997;
+    background: rgba(var(--backdrop-rgb), var(--alpha-overlay-backdrop));
+    z-index: var(--z-overlay-backdrop);
 
     &.open {
       display: block;
@@ -360,13 +360,13 @@
       top: 0;
       height: 100vh;
       width: 280px;
-      z-index: 2000;
-      border-radius: 0 16px 16px 0;
+      z-index: var(--z-left-sidebar-mobile);
+      border-radius: 0 var(--radius-2xl) var(--radius-2xl) 0;
       visibility: hidden;
-      transition: left 0.3s ease, visibility 0s 0.3s;
+      transition: left var(--transition-slow), visibility 0s var(--transition-slow);
       display: flex;
       flex-direction: column;
-      background: rgba(var(--background-rgb), 0.6);
+      background: rgba(var(--background-rgb), var(--alpha-sidebar-glass));
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
 
@@ -374,7 +374,7 @@
         left: 0;
         visibility: visible;
         box-shadow: 4px 0 24px rgba(0, 0, 0, 0.3);
-        transition: left 0.3s ease, visibility 0s;
+        transition: left var(--transition-slow), visibility 0s;
       }
 
       .ls-toolbar {
@@ -404,7 +404,7 @@
       left: 0 !important;
       top: 50% !important;
       transform: translateY(-50%) !important;
-      z-index: 2001;
+      z-index: var(--z-toggle-btn-mobile);
       margin: 0 !important;
     }
 
