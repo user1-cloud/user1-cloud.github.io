@@ -8,17 +8,19 @@ const CELL_SIZE = 12;
 const GAP = 3;
 const COL_WIDTH = CELL_SIZE + GAP; // 15px
 
-// 生成日期范围：最近 53 周的周日到周六
+// 生成日期范围：最近 53 周的周日到本周六（含当前不完整的周）
 function pad(n: number) { return String(n).padStart(2, '0'); }
 function fmt(d: Date) { return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; }
 
 const today = new Date();
 const dayOfWeek = today.getDay(); // 0=Sun
-const lastSaturday = new Date(today);
-lastSaturday.setDate(today.getDate() - dayOfWeek - 1); // go back to last Saturday
+const thisSaturday = new Date(today);
+thisSaturday.setDate(today.getDate() - dayOfWeek + 6); // this week's Saturday
 
-const startDate = new Date(lastSaturday);
-startDate.setDate(lastSaturday.getDate() - WEEKS * 7 + 1); // go back 53*7 days
+const startDate = new Date(thisSaturday);
+startDate.setDate(thisSaturday.getDate() - WEEKS * 7 + 1); // go back 53*7 days
+
+const todayStr = fmt(today);
 
 // 生成每周的 dates 数组
 type WeekDates = { date: string; month: number }[];
@@ -57,10 +59,12 @@ for (let c = 0; c < allWeeks.length; c++) {
         return <span style={`width:${span * COL_WIDTH}px;flex-shrink:0;`}>{m.label}</span>;
       })}
     </div>
-    <!-- 网格 — 所有方块服务端渲染 -->
+    <!-- 网格 — 未来日期渲染为占位（不可见） -->
     <div class="gh-grid" id="gh-grid" style={`grid-template-columns:repeat(${WEEKS},${CELL_SIZE}px);`}>
-      {allWeeks.flat().map(day => (
-        <div class="gh-cell" data-date={day.date} title={day.date}></div>
+      {allWeeks.flat().map(day => day.date > todayStr ? (
+        <div class="gh-cell-placeholder"></div>
+      ) : (
+        <div class="gh-cell" data-date={day.date}></div>
       ))}
     </div>
     <!-- 图例 -->
@@ -163,6 +167,10 @@ for (let c = 0; c < allWeeks.length; c++) {
     border-color: var(--accent);
   }
 
+  .gh-cell-placeholder {
+    visibility: hidden;
+  }
+
   .gh-legend {
     display: flex;
     align-items: center;
@@ -229,6 +237,7 @@ for (let c = 0; c < allWeeks.length; c++) {
       border-radius: 2px;
     }
   }
+
 </style>
 
 <script>
@@ -280,7 +289,7 @@ for (let c = 0; c < allWeeks.length; c++) {
           var date = cell.getAttribute('data-date');
           var info = dataMap[date];
           if (info) {
-            cell.setAttribute('title', date + ': ' + info.count + ' 次贡献');
+            cell.dataset.count = info.count;
             if (info.level > 0) {
               cell.className = 'gh-cell level-' + info.level;
             }
@@ -292,7 +301,35 @@ for (let c = 0; c < allWeeks.length; c++) {
       }
     }
 
+    function setupTooltip() {
+      var grid = document.getElementById('gh-grid');
+      if (!grid) return;
+      var old = document.getElementById('gh-tooltip');
+      if (old) old.remove();
+      var tip = document.createElement('div');
+      tip.id = 'gh-tooltip';
+      tip.style.cssText = 'position:fixed;pointer-events:none;z-index:9999;padding:4px 10px;border-radius:6px;background:var(--muted);color:var(--foreground);border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,0.15);font-size:0.75rem;white-space:nowrap;opacity:0;transition:opacity 0.15s;';
+      document.body.appendChild(tip);
+
+      document.addEventListener('mousemove', function(e) {
+        var cell = e.target.closest('#gh-grid .gh-cell[data-date]');
+        if (!cell || cell.dataset.count === undefined) {
+          tip.style.opacity = '0';
+          return;
+        }
+        tip.textContent = cell.dataset.date + ': ' + cell.dataset.count + ' 次贡献';
+        tip.style.opacity = '1';
+        tip.style.left = (e.clientX + 10) + 'px';
+        tip.style.top = (e.clientY - 30) + 'px';
+      });
+    }
+
+    setupTooltip();
+
     colorize();
-    document.addEventListener('astro:page-load', colorize);
+    document.addEventListener('astro:page-load', function() {
+      setupTooltip();
+      colorize();
+    });
   })();
 </script>
