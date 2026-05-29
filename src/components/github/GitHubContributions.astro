@@ -145,6 +145,12 @@ for (let c = 0; c < allWeeks.length; c++) {
     border-radius: 3px;
     border: 1px solid var(--border);
     background: transparent;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .gh-cell:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(var(--accent-rgb), 0.4);
   }
 
   .gh-cell.level-1 {
@@ -319,8 +325,14 @@ for (let c = 0; c < allWeeks.length; c++) {
         }
         tip.textContent = cell.dataset.date + ': ' + cell.dataset.count + ' 次贡献';
         tip.style.opacity = '1';
-        tip.style.left = (e.clientX + 10) + 'px';
-        tip.style.top = (e.clientY - 30) + 'px';
+        var tx = e.clientX + 10;
+        var ty = e.clientY - 30;
+        var tw = tip.offsetWidth;
+        var th = tip.offsetHeight;
+        if (tx + tw > window.innerWidth - 8) tx = window.innerWidth - tw - 8;
+        if (ty < 8) ty = e.clientY + 14;
+        tip.style.left = tx + 'px';
+        tip.style.top = ty + 'px';
       });
     }
 
