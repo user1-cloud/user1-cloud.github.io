@@ -6,9 +6,8 @@ let ticking = false;
 let prevActiveIndex = -1;
 let programmaticScrolling = false;
 
-// 监听页面加载（Astro 专属）
+// 监听页面加载（Astro 专属；astro:page-load 已覆盖初始加载和视图过渡后的导航）
 document.addEventListener('astro:page-load', initToc);
-document.addEventListener('DOMContentLoaded', initToc);
 
 // 初始化目录
 export function initToc() {
@@ -98,13 +97,20 @@ function scrollTocToView(tocItem: HTMLLIElement) {
 }
 
 // 滚动监听
+let scrollSpyHandler: (() => void) | null = null;
+
 function setupScrollSpy() {
-  window.addEventListener('scroll', () => {
+  // 移除旧监听器，防止多次导航后累积
+  if (scrollSpyHandler) {
+    window.removeEventListener('scroll', scrollSpyHandler);
+  }
+  scrollSpyHandler = () => {
     if (!ticking) {
       requestAnimationFrame(updateActive);
       ticking = true;
     }
-  });
+  };
+  window.addEventListener('scroll', scrollSpyHandler);
   updateActive();
 }
 

@@ -1,3 +1,4 @@
+let observer: IntersectionObserver | null = null;
 let ticking = false;
 let pendingAdd: Element[] = [];
 let pendingRemove: Element[] = [];
@@ -11,7 +12,15 @@ function flush() {
 }
 
 document.addEventListener('astro:page-load', () => {
-  const observer = new IntersectionObserver((entries) => {
+  // 断开旧观察者，防止内存泄漏和已分离节点的回调污染
+  if (observer) {
+    observer.disconnect();
+    pendingAdd = [];
+    pendingRemove = [];
+    ticking = false;
+  }
+
+  observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
         pendingAdd.push(entry.target);
@@ -33,5 +42,5 @@ document.addEventListener('astro:page-load', () => {
     '.fade-down-on-scroll, .fade-up-on-scroll, .fade-left-on-scroll, .fade-right-on-scroll, .fade-scale-on-scroll, .fade-only-on-scroll'
   );
 
-  fadeElements.forEach((el) => observer.observe(el));
+  fadeElements.forEach((el) => observer!.observe(el));
 });
