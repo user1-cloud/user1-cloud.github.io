@@ -1,3 +1,7 @@
+// 防止 dev 模式下视图过渡导致脚本重复执行
+if (!(window as any).__sidebarCollapseLoaded) {
+  (window as any).__sidebarCollapseLoaded = true;
+
 // 右侧栏：折叠按钮绑定 + 状态同步
 // HtmlHead.astro 负责初始同步（<head> 中同步执行，避免 FOUC）
 // 此脚本负责按钮点击后的状态切换和视图过渡后的重新同步
@@ -35,3 +39,5 @@ document.addEventListener('astro:after-swap', () => {
   syncCollapse();
   initCollapse();
 });
+
+}

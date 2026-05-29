@@ -1,5 +1,9 @@
 import Fuse from 'fuse.js';
 
+// 防止 dev 模式下视图过渡导致脚本重复执行
+if (!(window as any).__searchLoaded) {
+  (window as any).__searchLoaded = true;
+
 interface SearchItem {
   title: string;
   description: string;
@@ -281,3 +285,5 @@ document.addEventListener('astro:before-swap', () => {
 // Initialize on page load (follows toc.ts pattern)
 document.addEventListener('astro:page-load', init);
 document.addEventListener('DOMContentLoaded', init);
+
+}

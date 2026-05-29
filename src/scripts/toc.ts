@@ -1,3 +1,7 @@
+// 防止 dev 模式下视图过渡导致脚本重复执行
+if (!(window as any).__tocLoaded) {
+  (window as any).__tocLoaded = true;
+
 // 存储标题与目录项的对应关系
 const headingElements: { element: HTMLElement; tocItem: HTMLLIElement }[] = [];
 const tocItemElements: HTMLLIElement[] = [];
@@ -10,7 +14,7 @@ let programmaticScrolling = false;
 document.addEventListener('astro:page-load', initToc);
 
 // 初始化目录
-export function initToc() {
+function initToc() {
   buildToc();
   setupScrollSpy();
 }
@@ -215,4 +219,6 @@ function updateActive() {
   // Phase 4: 用缓存的 rect 更新指示器
   updateRightIndicator(headingRects);
   ticking = false;
+}
+
 }

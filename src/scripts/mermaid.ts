@@ -1,3 +1,7 @@
+// 防止 dev 模式下视图过渡导致脚本重复执行
+if (!(window as any).__mermaidLoaded) {
+  (window as any).__mermaidLoaded = true;
+
 const MERMAID_CDN = 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js';
 
 function readCSS(name: string): string {
@@ -158,4 +162,6 @@ if (hasDiagrams()) {
   document.addEventListener('astro:page-load', () => {
     render();
   });
+}
+
 }

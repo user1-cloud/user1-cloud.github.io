@@ -1,8 +1,12 @@
 ---
-import '../../styles/global.scss';
 import type { ImageMetadata } from 'astro';
 import { SITE_TITLE } from '../../consts';
 import { ClientRouter } from 'astro:transitions';
+import globalCss from '../../styles/global.scss?url';
+import sidebarSharedCss from '../../styles/sidebar-shared.scss?url';
+import sidebarTocCss from '../../styles/sidebar-toc.scss?url';
+import blogPostCss from '../../styles/blog-post.scss?url';
+import sidebarTreeCss from '../../styles/sidebar-tree.scss?url';
 
 interface Props {
 	title: string;
@@ -40,6 +44,13 @@ if (image) {
 
 <!-- Canonical URL -->
 <link rel="canonical" href={canonicalURL} />
+
+	<!-- 样式表通过 <link> 加载，确保 dev 模式下视图过渡后样式不丢失 -->
+	<link rel="stylesheet" href={globalCss}>
+	<link rel="stylesheet" href={sidebarSharedCss}>
+	<link rel="stylesheet" href={sidebarTocCss}>
+	<link rel="stylesheet" href={blogPostCss}>
+	<link rel="stylesheet" href={sidebarTreeCss}>
 
 <!-- Primary Meta Tags -->
 <title>{title}</title>

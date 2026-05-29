@@ -12,12 +12,6 @@ import { getSidebarData } from '../lib/blogData';
 
 import SearchModal from '../components/blog/SearchModal.astro';
 
-// 专用css
-import '../styles/sidebar-shared.scss';
-import '../styles/sidebar-toc.scss';
-import '../styles/blog-post.scss';
-import '../styles/sidebar-tree.scss';
-
 type Props = CollectionEntry<'blog'>['data'];
 const { title, description, pubDate, updatedDate, heroImage, dir1, dir2, tags = [] } = Astro.props;
 

@@ -1,3 +1,7 @@
+// 防止 dev 模式下视图过渡导致脚本重复执行
+if (!(window as any).__fadeInOnScrollLoaded) {
+  (window as any).__fadeInOnScrollLoaded = true;
+
 let observer: IntersectionObserver | null = null;
 let ticking = false;
 let pendingAdd: Element[] = [];
@@ -12,7 +16,6 @@ function flush() {
 }
 
 document.addEventListener('astro:page-load', () => {
-  // 断开旧观察者，防止内存泄漏和已分离节点的回调污染
   if (observer) {
     observer.disconnect();
     pendingAdd = [];
@@ -44,3 +47,5 @@ document.addEventListener('astro:page-load', () => {
 
   fadeElements.forEach((el) => observer!.observe(el));
 });
+
+}

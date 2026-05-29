@@ -1,3 +1,7 @@
+// 防止 dev 模式下视图过渡导致脚本重复执行
+if (!(window as any).__sidebarTreeLoaded) {
+  (window as any).__sidebarTreeLoaded = true;
+
 const STORAGE_KEY = 'left-sidebar-state';
 
 interface State {
@@ -304,3 +308,5 @@ document.addEventListener('astro:after-swap', () => {
 });
 
 document.addEventListener('DOMContentLoaded', init);
+
+}
