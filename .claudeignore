@@ -57,4 +57,4 @@ lib
 
 # 博客（除了基本格式）
 src/content/blog/
-# !src\content\blog\英语\单词\六级常见重难点词汇.mdx
+!src\content\blog\数学\解析几何\常见二次曲面整理.mdx
