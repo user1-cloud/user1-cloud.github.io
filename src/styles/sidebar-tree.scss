@@ -67,7 +67,7 @@
   .ls-theme-dropdown {
     position: absolute;
     top: calc(100% + 4px);
-    left: 0;
+    right: 0;
     z-index: 9999;
     background: rgba(var(--background-rgb), 0.85);
     backdrop-filter: blur(20px);
@@ -363,7 +363,6 @@
       z-index: 2000;
       border-radius: 0 16px 16px 0;
       visibility: hidden;
-      overflow: hidden;
       transition: left 0.3s ease, visibility 0s 0.3s;
       display: flex;
       flex-direction: column;
