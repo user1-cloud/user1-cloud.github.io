@@ -1,0 +1,30 @@
+---
+import Layout from '../layouts/BlogPost.astro';
+import FriendLinks from '../components/widgets/FriendLinks.astro';
+
+interface FriendLink {
+  url: string;
+  image: string;
+  name: string;
+  description: string;
+}
+
+const friends: FriendLink[] = [
+  {
+    url: 'https://blog.maxqian.cn/',
+    image: 'https://blog.maxqian.cn/_astro/avatar.OT9EZtl0_BpeMu.webp',
+    name: '曼波\'s Blog',
+    description: '曼波波波',
+  },
+];
+---
+
+<Layout
+  title="友链"
+  description="友情链接"
+  pubDate={new Date('5 29 2026')}
+>
+  <h2>友链</h2>
+  <p>以下是一些值得推荐的站点👍：</p>
+  <FriendLinks links={friends} />
+</Layout>
