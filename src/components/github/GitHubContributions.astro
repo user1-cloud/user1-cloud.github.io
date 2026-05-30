@@ -6,23 +6,20 @@ const WEEKS = 53;
 const DAYS = 7;
 const CELL_SIZE = 12;
 const GAP = 3;
-const COL_WIDTH = CELL_SIZE + GAP; // 15px
 
-// 生成日期范围：最近 53 周的周日到本周六（含当前不完整的周）
 function pad(n: number) { return String(n).padStart(2, '0'); }
 function fmt(d: Date) { return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; }
 
 const today = new Date();
-const dayOfWeek = today.getDay(); // 0=Sun
+const dayOfWeek = today.getDay();
 const thisSaturday = new Date(today);
-thisSaturday.setDate(today.getDate() - dayOfWeek + 6); // this week's Saturday
+thisSaturday.setDate(today.getDate() - dayOfWeek + 6);
 
 const startDate = new Date(thisSaturday);
-startDate.setDate(thisSaturday.getDate() - WEEKS * 7 + 1); // go back 53*7 days
+startDate.setDate(thisSaturday.getDate() - WEEKS * 7 + 1);
 
 const todayStr = fmt(today);
 
-// 生成每周的 dates 数组
 type WeekDates = { date: string; month: number }[];
 const allWeeks: WeekDates[] = [];
 const cursor = new Date(startDate);
@@ -35,39 +32,63 @@ for (let w = 0; w < WEEKS; w++) {
   allWeeks.push(week);
 }
 
-// 计算月份标签
 const MONTH_NAMES = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
-const monthCols: { label: string; col: number }[] = [];
-let lastMonth = -1;
+const monthCols: { label: string; col: number; month: number }[] = [];
 for (let c = 0; c < allWeeks.length; c++) {
-  const m = allWeeks[c]![0]!.month;
-  if (m !== lastMonth) {
-    monthCols.push({ label: MONTH_NAMES[m]!, col: c });
-    lastMonth = m;
+  const week = allWeeks[c]!;
+  for (let d = 0; d < week.length; d++) {
+    const day = week[d]!;
+    if (day.date.endsWith('-01')) {
+      if (!monthCols.length || monthCols[monthCols.length - 1]!.month !== day.month) {
+        monthCols.push({ label: MONTH_NAMES[day.month]!, col: c, month: day.month });
+      }
+    }
   }
+}
+if (monthCols.length === 0 || monthCols[0]!.month !== allWeeks[0]![0]!.month) {
+  monthCols.unshift({
+    label: MONTH_NAMES[allWeeks[0]![0]!.month]!,
+    col: 0,
+    month: allWeeks[0]![0]!.month,
+  });
 }
 ---
 
 <div class="gh-contributions" data-username={GITHUB_USERNAME}>
   <div class="stat-label" style="text-align:center;margin-bottom:0.5rem;">我在GitHub上的贡献</div>
   <div class="gh-grid-wrapper" id="gh-grid-wrapper">
-    <!-- 月份标签 -->
-    <div class="gh-month-labels">
-      {monthCols.map((m, i) => {
-        const nextCol = i + 1 < monthCols.length ? monthCols[i + 1]!.col : WEEKS;
-        const span = nextCol - m.col;
-        return <span style={`width:${span * COL_WIDTH}px;flex-shrink:0;`}>{m.label}</span>;
-      })}
+    <div class="gh-grid-outer">
+      <!-- 固定星期栏 -->
+      <div class="gh-weekday-col" aria-hidden="true">
+        <span class="gh-weekday-spacer">月</span>
+        <div class="gh-weekday-labels">
+          <span style="grid-row:2;">Mon</span>
+          <span style="grid-row:4;">Wed</span>
+          <span style="grid-row:6;">Fri</span>
+        </div>
+      </div>
+      <!-- 可滚动区域：月份标签 + 格子合并在同一个 grid 里 -->
+      <div class="gh-scroll-area" id="gh-scroll-area">
+        <div
+          class="gh-grid"
+          id="gh-grid"
+          style={`grid-template-columns:repeat(${WEEKS},${CELL_SIZE}px);`}
+        >
+          <!-- 月份标签 — grid-row:1，显式放置 -->
+          {monthCols.map((m, i) => {
+            const nextCol = i + 1 < monthCols.length ? monthCols[i + 1]!.col : WEEKS;
+            const span = nextCol - m.col;
+            return <span class="gh-month-label" style={`grid-row:1;grid-column:${m.col + 1} / span ${span};`}>{m.label}</span>;
+          })}
+          <!-- 日期格子 — grid-row:2~8，用 grid-auto-flow:column 自动填充 -->
+          {allWeeks.flat().map(day => day.date > todayStr ? (
+            <div class="gh-cell-placeholder"></div>
+          ) : (
+            <div class="gh-cell" data-date={day.date}></div>
+          ))}
+        </div>
+      </div>
     </div>
-    <!-- 网格 — 未来日期渲染为占位（不可见） -->
-    <div class="gh-grid" id="gh-grid" style={`grid-template-columns:repeat(${WEEKS},${CELL_SIZE}px);`}>
-      {allWeeks.flat().map(day => day.date > todayStr ? (
-        <div class="gh-cell-placeholder"></div>
-      ) : (
-        <div class="gh-cell" data-date={day.date}></div>
-      ))}
-    </div>
-    <!-- 图例 -->
     <div class="gh-legend">
       <span class="gh-legend-label">Less</span>
       <div class="gh-legend-cell empty"></div>
@@ -83,60 +104,99 @@ for (let c = 0; c < allWeeks.length; c++) {
 <style>
   .gh-contributions {
     margin: 3rem auto;
-    max-width: 900px;
+    max-width: 920px;
     text-align: center;
   }
 
   .gh-grid-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
     padding: 1.25rem 1.25rem 1rem;
     background: rgba(var(--muted-rgb), 0.3);
     border: 1px solid var(--border);
     border-radius: 12px;
-    overflow-x: auto;
     max-width: 100%;
+  }
+
+  .gh-grid-outer {
+    display: flex;
+    align-items: stretch;
+  }
+
+  /* === 固定星期栏 === */
+  .gh-weekday-col {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    margin-right: 6px;
+    color: var(--foreground-dark);
+  }
+
+  .gh-weekday-spacer {
+    font-size: 0.65rem;
+    line-height: 1.15;
+    visibility: hidden;
+    margin-bottom: 3px; /* = 网格 gap，匹配 month label row 与首个日期行之间的间距 */
+  }
+
+  .gh-weekday-labels {
+    display: grid;
+    grid-template-rows: repeat(7, 12px);
+    gap: 3px;
+    font-size: 0.6rem;
+  }
+
+  .gh-weekday-labels span {
+    display: flex;
+    align-items: center;
+    line-height: 1;
+  }
+
+  /* === 可滚动区域 === */
+  .gh-scroll-area {
+    overflow-x: auto;
+    overflow-y: clip;
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-bottom: 6px;
 
     scrollbar-width: thin;
     scrollbar-color: var(--border) transparent;
   }
 
-  .gh-grid-wrapper::-webkit-scrollbar {
+  .gh-scroll-area::-webkit-scrollbar {
     height: 6px;
   }
 
-  .gh-grid-wrapper::-webkit-scrollbar-track {
+  .gh-scroll-area::-webkit-scrollbar-track {
     background: transparent;
     border-radius: 3px;
   }
 
-  .gh-grid-wrapper::-webkit-scrollbar-thumb {
+  .gh-scroll-area::-webkit-scrollbar-thumb {
     background: var(--border);
     border-radius: 3px;
   }
 
-  .gh-grid-wrapper::-webkit-scrollbar-thumb:hover {
+  .gh-scroll-area::-webkit-scrollbar-thumb:hover {
     background: var(--border-light);
   }
 
-  .gh-month-labels {
-    display: flex;
-    font-size: 0.65rem;
-    color: var(--foreground-dark);
-    white-space: nowrap;
-  }
-
-  .gh-month-labels span {
-    flex-shrink: 0;
-  }
-
+  /* === 主网格：8 行（1 行月份 + 7 行日期），auto-flow 按列填充 === */
   .gh-grid {
     display: grid;
-    grid-template-rows: repeat(7, 12px);
+    grid-template-rows: auto repeat(7, 12px);
     grid-auto-flow: column;
     gap: 3px;
+  }
+
+  /* 月份标签 — 在 grid row 1 */
+  .gh-month-label {
+    font-size: 0.65rem;
+    line-height: 1.15;
+    color: var(--foreground-dark);
+    white-space: nowrap;
   }
 
   .gh-cell {
@@ -180,10 +240,11 @@ for (let c = 0; c < allWeeks.length; c++) {
   .gh-legend {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: 3px;
     font-size: 0.7rem;
     color: var(--foreground-dark);
-    align-self: flex-end;
+    margin-top: 8px;
   }
 
   .gh-legend-label {
@@ -227,6 +288,15 @@ for (let c = 0; c < allWeeks.length; c++) {
     }
 
     .gh-grid {
+      grid-template-rows: auto repeat(7, 10px);
+      gap: 2px;
+    }
+
+    .gh-weekday-spacer {
+      margin-bottom: 2px;
+    }
+
+    .gh-weekday-labels {
       grid-template-rows: repeat(7, 10px);
       gap: 2px;
     }
@@ -266,9 +336,8 @@ for (let c = 0; c < allWeeks.length; c++) {
       var cells = document.querySelectorAll('#gh-grid .gh-cell[data-date]');
       if (!cells.length) return;
 
-      // 初始滚动到最右侧（最新贡献）
-      var wrapper = document.getElementById('gh-grid-wrapper');
-      if (wrapper) wrapper.scrollLeft = wrapper.scrollWidth;
+      var scrollArea = document.getElementById('gh-scroll-area');
+      if (scrollArea) scrollArea.scrollLeft = scrollArea.scrollWidth;
 
       try {
         var res = await fetch('https://github-contributions-api.deno.dev/' + USERNAME + '.json');
@@ -277,7 +346,6 @@ for (let c = 0; c < allWeeks.length; c++) {
         var weeks = json.contributions;
         if (!Array.isArray(weeks)) throw new Error('数据格式异常');
 
-        // Build date→{level, count} map from API response
         var dataMap = {};
         for (var w = 0; w < weeks.length; w++) {
           for (var d = 0; d < weeks[w].length; d++) {
@@ -289,7 +357,6 @@ for (let c = 0; c < allWeeks.length; c++) {
           }
         }
 
-        // Apply level classes to existing cells
         for (var i = 0; i < cells.length; i++) {
           var cell = cells[i];
           var date = cell.getAttribute('data-date');
@@ -302,7 +369,6 @@ for (let c = 0; c < allWeeks.length; c++) {
           }
         }
       } catch (err) {
-        // Cells remain as empty grid — no JS needed to show the grid
         console.warn('GitHub contributions fetch failed:', err.message);
       }
     }
