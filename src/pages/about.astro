@@ -1,5 +1,6 @@
 ---
-import { AVATAR_URL, EMAIL_QQ, EMAIL_OUTLOOK, GITHUB_USERNAME } from '../consts';
+import { AVATAR_URL, EMAIL_QQ, EMAIL_OUTLOOK, GITHUB_USERNAME,
+	GITHUB_PAGES_URL, CLOUDFLARE_PAGES_URL } from '../consts';
 import Layout from '../layouts/BlogPost.astro';
 import JsonLd from '../components/blog/JsonLd.astro';
 import ReadmeContent from '../../README.md';
@@ -52,6 +53,13 @@ const profilePageLd = {
 	<br>
 		Outlook：
 	<a href={`mailto:${EMAIL_OUTLOOK}`} target="_blank">{EMAIL_OUTLOOK}</a>
+	</p>
+
+	<h2>本站链接</h2>
+	<p>
+	<a href={CLOUDFLARE_PAGES_URL} target="_blank">{CLOUDFLARE_PAGES_URL}</a>（推荐）
+	<br>
+	<a href={GITHUB_PAGES_URL} target="_blank">{GITHUB_PAGES_URL}</a>（大陆可能无法访问）
 	</p>
 
 	<h2>

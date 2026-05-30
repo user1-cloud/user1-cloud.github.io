@@ -4,6 +4,10 @@ export const SITE_DESCRIPTION = '欢迎来到我的个人主页！';
 export const SITE_START_DATE = new Date('2026-04-23');
 export const GITHUB_USERNAME = 'user1-cloud';
 
+// 本网站链接
+export const GITHUB_PAGES_URL = 'https://user1-cloud.github.io';
+export const CLOUDFLARE_PAGES_URL = 'https://user1-cloud.pages.dev';
+
 // 社交/联系 URL
 export const BILIBILI_URL = 'https://space.bilibili.com/1454195719';
 export const QQ_SPACE_URL = 'https://user.qzone.qq.com/2931139019';
