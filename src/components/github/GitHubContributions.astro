@@ -1,107 +1,14 @@
 ---
-// GitHub 贡献墙 — 服务端渲染网格骨架，客户端着色
+// GitHub 贡献墙 — 完全客户端渲染，日期始终基于访问者当前时间
 import { GITHUB_USERNAME } from '../../consts';
-
-const WEEKS = 53;
-const DAYS = 7;
-const CELL_SIZE = 12;
-const GAP = 3;
-
-function pad(n: number) { return String(n).padStart(2, '0'); }
-function fmt(d: Date) { return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; }
-
-const today = new Date();
-const dayOfWeek = today.getDay();
-const thisSaturday = new Date(today);
-thisSaturday.setDate(today.getDate() - dayOfWeek + 6);
-
-const startDate = new Date(thisSaturday);
-startDate.setDate(thisSaturday.getDate() - WEEKS * 7 + 1);
-
-const todayStr = fmt(today);
-
-type WeekDates = { date: string; month: number }[];
-const allWeeks: WeekDates[] = [];
-const cursor = new Date(startDate);
-for (let w = 0; w < WEEKS; w++) {
-  const week: WeekDates = [];
-  for (let d = 0; d < DAYS; d++) {
-    week.push({ date: fmt(cursor), month: cursor.getMonth() });
-    cursor.setDate(cursor.getDate() + 1);
-  }
-  allWeeks.push(week);
-}
-
-const MONTH_NAMES = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
-const monthCols: { label: string; col: number; month: number }[] = [];
-for (let c = 0; c < allWeeks.length; c++) {
-  const week = allWeeks[c]!;
-  for (let d = 0; d < week.length; d++) {
-    const day = week[d]!;
-    if (day.date.endsWith('-01')) {
-      if (!monthCols.length || monthCols[monthCols.length - 1]!.month !== day.month) {
-        monthCols.push({ label: MONTH_NAMES[day.month]!, col: c, month: day.month });
-      }
-    }
-  }
-}
-if (monthCols.length === 0 || monthCols[0]!.month !== allWeeks[0]![0]!.month) {
-  monthCols.unshift({
-    label: MONTH_NAMES[allWeeks[0]![0]!.month]!,
-    col: 0,
-    month: allWeeks[0]![0]!.month,
-  });
-}
 ---
 
-<div class="gh-contributions" data-username={GITHUB_USERNAME}>
+<div class="gh-contributions" id="gh-contributions" data-username={GITHUB_USERNAME}>
   <div class="stat-label" style="text-align:center;margin-bottom:0.5rem;">我在GitHub上的贡献</div>
-  <div class="gh-grid-wrapper" id="gh-grid-wrapper">
-    <div class="gh-grid-outer">
-      <!-- 固定星期栏 -->
-      <div class="gh-weekday-col" aria-hidden="true">
-        <span class="gh-weekday-spacer">月</span>
-        <div class="gh-weekday-labels">
-          <span style="grid-row:2;">Mon</span>
-          <span style="grid-row:4;">Wed</span>
-          <span style="grid-row:6;">Fri</span>
-        </div>
-      </div>
-      <!-- 可滚动区域：月份标签 + 格子合并在同一个 grid 里 -->
-      <div class="gh-scroll-area" id="gh-scroll-area">
-        <div
-          class="gh-grid"
-          id="gh-grid"
-          style={`grid-template-columns:repeat(${WEEKS},${CELL_SIZE}px);`}
-        >
-          <!-- 月份标签 — grid-row:1，显式放置 -->
-          {monthCols.map((m, i) => {
-            const nextCol = i + 1 < monthCols.length ? monthCols[i + 1]!.col : WEEKS;
-            const span = nextCol - m.col;
-            return <span class="gh-month-label" style={`grid-row:1;grid-column:${m.col + 1} / span ${span};`}>{m.label}</span>;
-          })}
-          <!-- 日期格子 — grid-row:2~8，用 grid-auto-flow:column 自动填充 -->
-          {allWeeks.flat().map(day => day.date > todayStr ? (
-            <div class="gh-cell-placeholder"></div>
-          ) : (
-            <div class="gh-cell" data-date={day.date}></div>
-          ))}
-        </div>
-      </div>
-    </div>
-    <div class="gh-legend">
-      <span class="gh-legend-label">Less</span>
-      <div class="gh-legend-cell empty"></div>
-      <div class="gh-legend-cell level-1"></div>
-      <div class="gh-legend-cell level-2"></div>
-      <div class="gh-legend-cell level-3"></div>
-      <div class="gh-legend-cell level-4"></div>
-      <span class="gh-legend-label">More</span>
-    </div>
-  </div>
+  <div class="gh-grid-wrapper" id="gh-grid-wrapper"></div>
 </div>
 
-<style>
+<style is:global>
   .gh-contributions {
     margin: 3rem auto;
     max-width: 920px;
@@ -114,6 +21,15 @@ if (monthCols.length === 0 || monthCols[0]!.month !== allWeeks[0]![0]!.month) {
     border: 1px solid var(--border);
     border-radius: 12px;
     max-width: 100%;
+  }
+
+  /* 骨架屏加载动画 */
+  .gh-grid-wrapper.is-loading .gh-cell {
+    animation: gh-pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes gh-pulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.7; }
   }
 
   .gh-grid-outer {
@@ -134,7 +50,7 @@ if (monthCols.length === 0 || monthCols[0]!.month !== allWeeks[0]![0]!.month) {
     font-size: 0.65rem;
     line-height: 1.15;
     visibility: hidden;
-    margin-bottom: 3px; /* = 网格 gap，匹配 month label row 与首个日期行之间的间距 */
+    margin-bottom: 3px;
   }
 
   .gh-weekday-labels {
@@ -183,7 +99,7 @@ if (monthCols.length === 0 || monthCols[0]!.month !== allWeeks[0]![0]!.month) {
     background: var(--border-light);
   }
 
-  /* === 主网格：8 行（1 行月份 + 7 行日期），auto-flow 按列填充 === */
+  /* === 主网格 === */
   .gh-grid {
     display: grid;
     grid-template-rows: auto repeat(7, 12px);
@@ -191,7 +107,6 @@ if (monthCols.length === 0 || monthCols[0]!.month !== allWeeks[0]![0]!.month) {
     gap: 3px;
   }
 
-  /* 月份标签 — 在 grid row 1 */
   .gh-month-label {
     font-size: 0.65rem;
     line-height: 1.15;
@@ -231,10 +146,6 @@ if (monthCols.length === 0 || monthCols[0]!.month !== allWeeks[0]![0]!.month) {
   .gh-cell.level-4 {
     background: rgba(var(--accent-rgb), 1);
     border-color: var(--accent);
-  }
-
-  .gh-cell-placeholder {
-    visibility: hidden;
   }
 
   .gh-legend {
@@ -313,14 +224,122 @@ if (monthCols.length === 0 || monthCols[0]!.month !== allWeeks[0]![0]!.month) {
       border-radius: 2px;
     }
   }
-
 </style>
 
 <script>
   (function() {
-    var root = document.querySelector('.gh-contributions');
-    if (!root) return;
-    var USERNAME = root.getAttribute('data-username') || 'user1-cloud';
+    var WEEKS = 53;
+    var DAYS = 7;
+    var CELL_SIZE = 12;
+    var GAP = 3;
+    var MONTH_NAMES = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+    var GAP_MOBILE = 2;
+    var CELL_SIZE_MOBILE = 10;
+
+    function pad(n) { return String(n).padStart(2, '0'); }
+    function fmt(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+
+    function buildGrid(wrapper) {
+      var today = new Date();
+      today.setHours(0, 0, 0, 0);
+      var dayOfWeek = today.getDay();
+      var thisSaturday = new Date(today);
+      thisSaturday.setDate(today.getDate() - dayOfWeek + 6);
+
+      var startDate = new Date(thisSaturday);
+      startDate.setDate(thisSaturday.getDate() - WEEKS * 7 + 1);
+
+      var todayStr = fmt(today);
+
+      var allWeeks = [];
+      var cursor = new Date(startDate);
+      for (var w = 0; w < WEEKS; w++) {
+        var week = [];
+        for (var d = 0; d < DAYS; d++) {
+          week.push({ date: fmt(cursor), month: cursor.getMonth() });
+          cursor.setDate(cursor.getDate() + 1);
+        }
+        allWeeks.push(week);
+      }
+
+      // 计算月份标签
+      var monthCols = [];
+      for (var c = 0; c < allWeeks.length; c++) {
+        var wk = allWeeks[c];
+        for (var d2 = 0; d2 < wk.length; d2++) {
+          var day2 = wk[d2];
+          if (day2.date.endsWith('-01')) {
+            if (!monthCols.length || monthCols[monthCols.length - 1].month !== day2.month) {
+              monthCols.push({ label: MONTH_NAMES[day2.month], col: c, month: day2.month });
+            }
+          }
+        }
+      }
+      if (monthCols.length === 0 || monthCols[0].month !== allWeeks[0][0].month) {
+        monthCols.unshift({
+          label: MONTH_NAMES[allWeeks[0][0].month],
+          col: 0,
+          month: allWeeks[0][0].month,
+        });
+      }
+
+      var isMobile = window.innerWidth <= 760;
+      var cellSize = isMobile ? CELL_SIZE_MOBILE : CELL_SIZE;
+      var gapVal = isMobile ? GAP_MOBILE : GAP;
+      var rowHeight = isMobile ? 10 : 12;
+
+      var html = '<div class="gh-grid-outer">';
+      // 星期栏
+      html += '<div class="gh-weekday-col" aria-hidden="true">';
+      html += '<span class="gh-weekday-spacer">月</span>';
+      html += '<div class="gh-weekday-labels" style="grid-template-rows:repeat(7,' + rowHeight + 'px);gap:' + gapVal + 'px;">';
+      html += '<span style="grid-row:2;">Mon</span>';
+      html += '<span style="grid-row:4;">Wed</span>';
+      html += '<span style="grid-row:6;">Fri</span>';
+      html += '</div></div>';
+
+      // 可滚动区域
+      html += '<div class="gh-scroll-area" id="gh-scroll-area">';
+      html += '<div class="gh-grid" id="gh-grid" style="grid-template-columns:repeat(' + WEEKS + ',' + cellSize + 'px);grid-template-rows:auto repeat(7,' + rowHeight + 'px);grid-auto-flow:column;gap:' + gapVal + 'px;">';
+
+      // 月份标签
+      for (var i = 0; i < monthCols.length; i++) {
+        var m = monthCols[i];
+        var nextCol = i + 1 < monthCols.length ? monthCols[i + 1].col : WEEKS;
+        var span = nextCol - m.col;
+        html += '<span class="gh-month-label" style="grid-row:1;grid-column:' + (m.col + 1) + ' / span ' + span + ';">' + m.label + '</span>';
+      }
+
+      // 日期格子
+      for (var w2 = 0; w2 < allWeeks.length; w2++) {
+        for (var d3 = 0; d3 < allWeeks[w2].length; d3++) {
+          var day3 = allWeeks[w2][d3];
+          if (day3.date > todayStr) {
+            html += '<div style="width:' + cellSize + 'px;height:' + rowHeight + 'px;"></div>';
+          } else {
+            html += '<div class="gh-cell" data-date="' + day3.date + '" style="width:' + cellSize + 'px;height:' + rowHeight + 'px;border-radius:' + (isMobile ? '2px' : '3px') + ';"></div>';
+          }
+        }
+      }
+
+      html += '</div></div></div>';
+
+      // 图例
+      html += '<div class="gh-legend">';
+      html += '<span class="gh-legend-label">Less</span>';
+      html += '<div class="gh-legend-cell empty" style="width:' + cellSize + 'px;height:' + rowHeight + 'px;border-radius:' + (isMobile ? '2px' : '3px') + ';"></div>';
+      html += '<div class="gh-legend-cell level-1" style="width:' + cellSize + 'px;height:' + rowHeight + 'px;border-radius:' + (isMobile ? '2px' : '3px') + ';"></div>';
+      html += '<div class="gh-legend-cell level-2" style="width:' + cellSize + 'px;height:' + rowHeight + 'px;border-radius:' + (isMobile ? '2px' : '3px') + ';"></div>';
+      html += '<div class="gh-legend-cell level-3" style="width:' + cellSize + 'px;height:' + rowHeight + 'px;border-radius:' + (isMobile ? '2px' : '3px') + ';"></div>';
+      html += '<div class="gh-legend-cell level-4" style="width:' + cellSize + 'px;height:' + rowHeight + 'px;border-radius:' + (isMobile ? '2px' : '3px') + ';"></div>';
+      html += '<span class="gh-legend-label">More</span>';
+      html += '</div>';
+
+      wrapper.innerHTML = html;
+      wrapper.classList.add('is-loading');
+
+      return todayStr;
+    }
 
     function levelToNum(level) {
       switch (level) {
@@ -332,31 +351,23 @@ if (monthCols.length === 0 || monthCols[0]!.month !== allWeeks[0]![0]!.month) {
       }
     }
 
-    async function colorize() {
-      var cells = document.querySelectorAll('#gh-grid .gh-cell[data-date]');
-      if (!cells.length) return;
-
-      var scrollArea = document.getElementById('gh-scroll-area');
-      if (scrollArea) scrollArea.scrollLeft = scrollArea.scrollWidth;
-
+    async function colorize(username, wrapper) {
       try {
-        var res = await fetch('https://github-contributions-api.deno.dev/' + USERNAME + '.json');
+        var res = await fetch('https://github-contributions-api.deno.dev/' + username + '.json');
         if (!res.ok) throw new Error('HTTP ' + res.status);
         var json = await res.json();
-        var weeks = json.contributions;
-        if (!Array.isArray(weeks)) throw new Error('数据格式异常');
+        var weeksData = json.contributions;
+        if (!Array.isArray(weeksData)) throw new Error('数据格式异常');
 
         var dataMap = {};
-        for (var w = 0; w < weeks.length; w++) {
-          for (var d = 0; d < weeks[w].length; d++) {
-            var day = weeks[w][d];
-            dataMap[day.date] = {
-              level: levelToNum(day.contributionLevel),
-              count: day.contributionCount
-            };
+        for (var w = 0; w < weeksData.length; w++) {
+          for (var d = 0; d < weeksData[w].length; d++) {
+            var day = weeksData[w][d];
+            dataMap[day.date] = { level: levelToNum(day.contributionLevel), count: day.contributionCount };
           }
         }
 
+        var cells = wrapper.querySelectorAll('.gh-cell[data-date]');
         for (var i = 0; i < cells.length; i++) {
           var cell = cells[i];
           var date = cell.getAttribute('data-date');
@@ -368,14 +379,15 @@ if (monthCols.length === 0 || monthCols[0]!.month !== allWeeks[0]![0]!.month) {
             }
           }
         }
+
+        wrapper.classList.remove('is-loading');
       } catch (err) {
         console.warn('GitHub contributions fetch failed:', err.message);
+        wrapper.classList.remove('is-loading');
       }
     }
 
-    function setupTooltip() {
-      var grid = document.getElementById('gh-grid');
-      if (!grid) return;
+    function setupTooltip(wrapper) {
       var old = document.getElementById('gh-tooltip');
       if (old) old.remove();
       var tip = document.createElement('div');
@@ -383,8 +395,8 @@ if (monthCols.length === 0 || monthCols[0]!.month !== allWeeks[0]![0]!.month) {
       tip.style.cssText = 'position:fixed;pointer-events:none;z-index:9999;padding:4px 10px;border-radius:6px;background:var(--muted);color:var(--foreground);border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,0.15);font-size:0.75rem;white-space:nowrap;opacity:0;transition:opacity 0.15s;';
       document.body.appendChild(tip);
 
-      document.addEventListener('mousemove', function(e) {
-        var cell = e.target.closest('#gh-grid .gh-cell[data-date]');
+      wrapper.addEventListener('mousemove', function(e) {
+        var cell = e.target.closest('.gh-cell[data-date]');
         if (!cell || cell.dataset.count === undefined) {
           tip.style.opacity = '0';
           return;
@@ -402,12 +414,25 @@ if (monthCols.length === 0 || monthCols[0]!.month !== allWeeks[0]![0]!.month) {
       });
     }
 
-    setupTooltip();
+    function scrollToEnd() {
+      var scrollArea = document.getElementById('gh-scroll-area');
+      if (scrollArea) scrollArea.scrollLeft = scrollArea.scrollWidth;
+    }
 
-    colorize();
-    document.addEventListener('astro:page-load', function() {
-      setupTooltip();
-      colorize();
-    });
+    function init() {
+      var root = document.getElementById('gh-contributions');
+      if (!root) return;
+      var username = root.getAttribute('data-username') || 'user1-cloud';
+      var wrapper = document.getElementById('gh-grid-wrapper');
+      if (!wrapper) return;
+
+      buildGrid(wrapper);
+      setupTooltip(wrapper);
+      scrollToEnd();
+      colorize(username, wrapper);
+    }
+
+    init();
+    document.addEventListener('astro:page-load', init);
   })();
 </script>
